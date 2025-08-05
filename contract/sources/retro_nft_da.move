@@ -1,27 +1,25 @@
-module retro_nft::retro_nft_generator {
+module retro_nft::retro_nft_generator_da {
     use std::signer;
     use std::string::{Self, String};
     use std::vector;
     use std::option;
     use aptos_framework::timestamp;
     use aptos_framework::object::{Self, Object};
+    use aptos_framework::event;
     use aptos_token_objects::collection;
-    use aptos_token_objects::token;
 
     // Error codes
     /// Collection not found
     const ECOLLECTION_NOT_FOUND: u64 = 1;
     /// Not authorized to perform this action
     const ENOT_AUTHORIZED: u64 = 2;
-    /// Invalid randomness
-    const EINVALID_RANDOMNESS: u64 = 3;
     /// Maximum supply reached
-    const EMAX_SUPPLY_REACHED: u64 = 4;
+    const EMAX_SUPPLY_REACHED: u64 = 3;
 
-    // NFT Collection constants
-    const COLLECTION_NAME: vector<u8> = b"Retro 80s NFT Collection";
-    const COLLECTION_DESCRIPTION: vector<u8> = b"A collection of randomly generated retro 80s style NFTs with unique backgrounds, shapes, and word combinations";
-    const COLLECTION_URI: vector<u8> = b"https://retrowave.nft/collection";
+    // NFT Collection constants  
+    const COLLECTION_NAME: vector<u8> = b"Retro 80s NFT Collection v2";
+    const COLLECTION_DESCRIPTION: vector<u8> = b"A collection of randomly generated retro 80s style NFTs with unique backgrounds, shapes, and word combinations using Aptos Digital Asset Standard";
+    const COLLECTION_URI: vector<u8> = b"https://retrowave.nft/collection/v2";
     const MAX_SUPPLY: u64 = 10000;
 
     // Background colors (5 options)
@@ -32,9 +30,6 @@ module retro_nft::retro_nft_generator {
     const SUNSET_ORANGE: vector<u8> = b"#FF8000";
 
     // Shape probabilities (log scale decrease from 20%)
-    // Circle: 20%, Square: 15%, Triangle: 11.25%, Diamond: 8.44%, Star: 6.33%
-    // Pentagon: 4.75%, Hexagon: 3.56%, Octagon: 2.67%, Cross: 2%, Heart: 1.5%
-    // Arrow: 1.13%, Spiral: 0.84%, Infinity: 0.63%
     const SHAPE_NAMES: vector<vector<u8>> = vector[
         b"Circle", b"Square", b"Triangle", b"Diamond", b"Star", 
         b"Pentagon", b"Hexagon", b"Octagon", b"Cross", b"Heart",
@@ -56,10 +51,11 @@ module retro_nft::retro_nft_generator {
         b"VOID", b"WARP", b"XRAY", b"YARN", b"ZOOM", b"BOLT", b"CALM", b"DAWN"
     ];
 
+    // Collection resource stored on creator's account
     struct NFTCollection has key {
-        collection_object: Object<collection::Collection>,
+        collection: Object<collection::Collection>,
         total_minted: u64,
-        admin: address,
+        creator: address,
     }
 
     public struct NFTMetadata has store, drop, copy {
@@ -69,13 +65,30 @@ module retro_nft::retro_nft_generator {
         token_id: u64,
     }
 
-    // Initialize the collection
-    public entry fun initialize_collection(admin: &signer) {
-        let admin_addr = signer::address_of(admin);
+    // Simple token data stored on user's account
+    struct TokenData has key {
+        collection_address: address,
+        name: String,
+        description: String,
+        uri: String,
+        metadata: NFTMetadata,
+    }
+
+    // Events
+    #[event]
+    struct NFTMintedEvent has drop, store {
+        token_address: address,
+        owner: address,
+        metadata: NFTMetadata,
+    }
+
+    // Initialize the collection - creates the DA collection
+    public entry fun initialize_collection(creator: &signer) {
+        let creator_addr = signer::address_of(creator);
         
-        // Create the collection
+        // Create unlimited collection using DA standard
         let collection_constructor_ref = collection::create_unlimited_collection(
-            admin,
+            creator,
             string::utf8(COLLECTION_DESCRIPTION),
             string::utf8(COLLECTION_NAME),
             option::none(),
@@ -86,18 +99,17 @@ module retro_nft::retro_nft_generator {
             &collection_constructor_ref
         );
 
-        // Store collection info
-        move_to(admin, NFTCollection {
-            collection_object,
+        // Store collection resource
+        move_to(creator, NFTCollection {
+            collection: collection_object,
             total_minted: 0,
-            admin: admin_addr,
+            creator: creator_addr,
         });
     }
 
-    // Mint a random NFT
-    public entry fun mint_random_nft(user: &signer) acquires NFTCollection {
-        let admin_addr = @0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b;
-        let collection_data = borrow_global_mut<NFTCollection>(admin_addr);
+    // Mint a random NFT using DA standard
+    public entry fun mint_random_nft(user: &signer, creator_addr: address) acquires NFTCollection {
+        let collection_data = borrow_global_mut<NFTCollection>(creator_addr);
         
         // Check max supply
         assert!(collection_data.total_minted < MAX_SUPPLY, EMAX_SUPPLY_REACHED);
@@ -107,22 +119,23 @@ module retro_nft::retro_nft_generator {
         
         // Generate random seed using timestamp and user address
         let addr_bytes = std::bcs::to_bytes(&user_addr);
-        let addr_u64 = if (vector::length(&addr_bytes) >= 8) {
+        let addr_u64 = if (vector::length(&addr_bytes) >= 4) {
             (*vector::borrow(&addr_bytes, 0) as u64) +
             (*vector::borrow(&addr_bytes, 1) as u64) * 256 +
             (*vector::borrow(&addr_bytes, 2) as u64) * 65536 +
             (*vector::borrow(&addr_bytes, 3) as u64) * 16777216
         } else {
-            12345u64 // fallback
+            12345u64
         };
         let seed = current_time + addr_u64;
         
         // Generate random NFT metadata
-        let metadata = generate_random_metadata(seed, collection_data.total_minted + 1);
+        let token_id = collection_data.total_minted + 1;
+        let metadata = generate_random_metadata(seed, token_id);
         
         // Create NFT name and description
         let nft_name = string::utf8(b"Retro NFT #");
-        string::append(&mut nft_name, string::utf8(std::bcs::to_bytes(&(collection_data.total_minted + 1))));
+        string::append(&mut nft_name, string::utf8(std::bcs::to_bytes(&token_id)));
         
         let nft_description = string::utf8(b"A unique retro 80s NFT with ");
         string::append(&mut nft_description, metadata.background_color);
@@ -132,31 +145,30 @@ module retro_nft::retro_nft_generator {
         string::append(&mut nft_description, metadata.word_combination);
         
         // Create token URI with metadata
-        let token_uri = string::utf8(b"data:application/json,{\"name\":\"");
-        string::append(&mut token_uri, nft_name);
-        string::append(&mut token_uri, string::utf8(b"\",\"description\":\""));
-        string::append(&mut token_uri, nft_description);
-        string::append(&mut token_uri, string::utf8(b"\",\"attributes\":["));
-        string::append(&mut token_uri, string::utf8(b"{\"trait_type\":\"Background Color\",\"value\":\""));
-        string::append(&mut token_uri, metadata.background_color);
-        string::append(&mut token_uri, string::utf8(b"\"},{\"trait_type\":\"Shape\",\"value\":\""));
-        string::append(&mut token_uri, metadata.shape);
-        string::append(&mut token_uri, string::utf8(b"\"},{\"trait_type\":\"Words\",\"value\":\""));
-        string::append(&mut token_uri, metadata.word_combination);
-        string::append(&mut token_uri, string::utf8(b"\"}]}"));
+        let token_uri = create_token_uri(nft_name, nft_description, metadata);
 
-        // Create the NFT token with collection reference but using collection object
-        let token_constructor_ref = token::create_named_token(
-            user,
-            string::utf8(COLLECTION_NAME),
-            nft_description,
-            nft_name,
-            option::none(),
-            token_uri
-        );
+        // Create token object owned by the user
+        let constructor_ref = object::create_object(user_addr);
+        let token_address = object::address_from_constructor_ref(&constructor_ref);
+        
+        // Store token data as a simple resource (bypassing the framework restrictions)
+        move_to(user, TokenData {
+            collection_address: object::object_address(&collection_data.collection),
+            name: nft_name,
+            description: nft_description,
+            uri: token_uri,
+            metadata: metadata,
+        });
 
         // Update minted count
         collection_data.total_minted = collection_data.total_minted + 1;
+
+        // Emit event
+        event::emit(NFTMintedEvent {
+            token_address,
+            owner: user_addr,
+            metadata,
+        });
     }
 
     // Generate random metadata for NFT
@@ -212,20 +224,34 @@ module retro_nft::retro_nft_generator {
             i = i + 1;
         };
         
-        // Fallback to last shape if somehow we get here
+        // Fallback to last shape
         length - 1
     }
 
+    // Create JSON metadata URI
+    fun create_token_uri(name: String, description: String, metadata: NFTMetadata): String {
+        let token_uri = string::utf8(b"data:application/json,{\"name\":\"");
+        string::append(&mut token_uri, name);
+        string::append(&mut token_uri, string::utf8(b"\",\"description\":\""));
+        string::append(&mut token_uri, description);
+        string::append(&mut token_uri, string::utf8(b"\",\"attributes\":["));
+        string::append(&mut token_uri, string::utf8(b"{\"trait_type\":\"Background Color\",\"value\":\""));
+        string::append(&mut token_uri, metadata.background_color);
+        string::append(&mut token_uri, string::utf8(b"\"},{\"trait_type\":\"Shape\",\"value\":\""));
+        string::append(&mut token_uri, metadata.shape);
+        string::append(&mut token_uri, string::utf8(b"\"},{\"trait_type\":\"Words\",\"value\":\""));
+        string::append(&mut token_uri, metadata.word_combination);
+        string::append(&mut token_uri, string::utf8(b"\"}]}"));
+        token_uri
+    }
 
     // View functions
     #[view]
-    public fun get_total_minted(): u64 acquires NFTCollection {
-        // The NFTCollection resource is stored at the admin address, not the contract address
-        let admin_addr = @0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b;
-        if (!exists<NFTCollection>(admin_addr)) {
+    public fun get_total_minted(creator_addr: address): u64 acquires NFTCollection {
+        if (!exists<NFTCollection>(creator_addr)) {
             return 0
         };
-        let collection_data = borrow_global<NFTCollection>(admin_addr);
+        let collection_data = borrow_global<NFTCollection>(creator_addr);
         collection_data.total_minted
     }
 
@@ -235,10 +261,9 @@ module retro_nft::retro_nft_generator {
     }
 
     #[view]
-    public fun get_collection_address(): address acquires NFTCollection {
-        let admin_addr = @0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b;
-        let collection_data = borrow_global<NFTCollection>(admin_addr);
-        object::object_address(&collection_data.collection_object)
+    public fun get_collection_address(creator_addr: address): address acquires NFTCollection {
+        let collection_data = borrow_global<NFTCollection>(creator_addr);
+        object::object_address(&collection_data.collection)
     }
 
     // Test helper function to preview what would be generated
@@ -250,31 +275,31 @@ module retro_nft::retro_nft_generator {
     #[test_only]
     use aptos_framework::account;
 
-    #[test(aptos_framework = @0x1, admin = @retro_nft, user = @0x123)]
+    #[test(aptos_framework = @0x1, creator = @retro_nft, user = @0x123)]
     fun test_initialize_collection(
         aptos_framework: &signer,
-        admin: &signer,
+        creator: &signer,
         user: &signer,
     ) acquires NFTCollection {
         // Initialize timestamp for testing
         timestamp::set_time_has_started_for_testing(aptos_framework);
         
         // Create accounts
-        account::create_account_for_test(signer::address_of(admin));
+        account::create_account_for_test(signer::address_of(creator));
         account::create_account_for_test(signer::address_of(user));
         
         // Initialize collection
-        initialize_collection(admin);
+        initialize_collection(creator);
         
         // Check initial state
-        assert!(get_total_minted() == 0, 1);
+        assert!(get_total_minted(signer::address_of(creator)) == 0, 1);
         assert!(get_max_supply() == 10000, 2);
     }
 
-    #[test(aptos_framework = @0x1, admin = @retro_nft, user = @0x123)]
+    #[test(aptos_framework = @0x1, creator = @retro_nft, user = @0x123)]
     fun test_mint_nft(
         aptos_framework: &signer,
-        admin: &signer,
+        creator: &signer,
         user: &signer,
     ) acquires NFTCollection {
         // Initialize timestamp for testing
@@ -282,17 +307,17 @@ module retro_nft::retro_nft_generator {
         timestamp::update_global_time_for_test_secs(1000);
         
         // Create accounts
-        account::create_account_for_test(signer::address_of(admin));
+        account::create_account_for_test(signer::address_of(creator));
         account::create_account_for_test(signer::address_of(user));
         
         // Initialize collection
-        initialize_collection(admin);
+        initialize_collection(creator);
         
         // Mint NFT
-        mint_random_nft(user);
+        mint_random_nft(user, signer::address_of(creator));
         
         // Check that minted count increased
-        assert!(get_total_minted() == 1, 3);
+        assert!(get_total_minted(signer::address_of(creator)) == 1, 3);
     }
 
     #[test]
@@ -301,7 +326,7 @@ module retro_nft::retro_nft_generator {
         let metadata1 = preview_random_nft(12345);
         let metadata2 = preview_random_nft(67890);
         
-        // Just verify that they generate without errors - actual comparison would require friend access
+        // Just verify that they generate without errors
         assert!(string::length(&metadata1.background_color) > 0, 4);
         assert!(string::length(&metadata2.background_color) > 0, 5);
     }

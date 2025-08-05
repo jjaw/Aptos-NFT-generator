@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git clone:*)"
+      "Bash(git clone:*)",
+      "mcp__aptos-mcp__aptos_debugging_helper_prompt",
+      "mcp__aptos-mcp__build_dapp_on_aptos"
     ],
     "deny": []
   }

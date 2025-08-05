@@ -11,7 +11,7 @@ export const previewRandomNft = async (seed: number): Promise<NFTMetadata> => {
   try {
     const response = await aptos.view({
       payload: {
-        function: `${import.meta.env.VITE_MODULE_ADDRESS}::retro_nft_generator::preview_random_nft`,
+        function: `${import.meta.env.VITE_MODULE_ADDRESS}::retro_nft_generator_da::preview_random_nft`,
         functionArguments: [seed.toString()],
       },
     });

@@ -1,5 +1,4 @@
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
-import { useState } from "react";
 // Internal Components
 import { Header } from "@/components/Header";
 import { NFTGenerator } from "@/components/NFTGenerator";

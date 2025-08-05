@@ -1,15 +1,15 @@
 import { InputTransactionData } from "@aptos-labs/wallet-adapter-react";
 
 export type MintRandomNftArguments = {
-  user: string; // The user's account address
+  creatorAddress: string; // The creator's account address where collection is stored
 };
 
 export const mintRandomNft = (args: MintRandomNftArguments): InputTransactionData => {
-  const { user } = args;
+  const { creatorAddress } = args;
   return {
     data: {
-      function: `${import.meta.env.VITE_MODULE_ADDRESS}::retro_nft_generator::mint_random_nft`,
-      functionArguments: [],
+      function: `${import.meta.env.VITE_MODULE_ADDRESS}::retro_nft_generator_da::mint_random_nft`,
+      functionArguments: [creatorAddress],
     },
   };
 };

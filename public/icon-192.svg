@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ff6b9d"/>
+      <stop offset="50%" style="stop-color:#c471ed"/>
+      <stop offset="100%" style="stop-color:#12c2e9"/>
+    </radialGradient>
+    <radialGradient id="diamond" cx="50%" cy="50%" r="30%">
+      <stop offset="0%" style="stop-color:#ffd700"/>
+      <stop offset="100%" style="stop-color:#ff6b9d"/>
+    </radialGradient>
+  </defs>
+  
+  <circle cx="96" cy="96" r="93" fill="url(#bg)" stroke="#000" stroke-width="3"/>
+  
+  <polygon points="96,48 144,96 96,144 48,96" 
+           fill="url(#diamond)" stroke="#000" stroke-width="2"/>
+  
+  <polygon points="96,67.19999999999999 124.80000000000001,96 96,124.80000000000001 67.19999999999999,96" 
+           fill="rgba(255,255,255,0.8)"/>
+  
+  <circle cx="80.64" cy="80.64" r="11.52" fill="rgba(255,255,255,0.6)"/>
+</svg>

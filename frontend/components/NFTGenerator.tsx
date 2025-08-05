@@ -3,8 +3,10 @@ import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { mintRandomNft } from "@/entry-functions/mintRandomNft";
+import { initializeCollection } from "@/entry-functions/initializeCollection";
 import { getCollectionStats } from "@/view-functions/getCollectionStats";
 import { previewRandomNft } from "@/view-functions/previewRandomNft";
+import { checkCollectionExists } from "@/view-functions/checkCollectionExists";
 
 interface NFTMetadata {
   background_color: string;
@@ -20,16 +22,28 @@ export function NFTGenerator() {
   const [totalMinted, setTotalMinted] = useState<number>(0);
   const [maxSupply, setMaxSupply] = useState<number>(10000);
   const [previewNft, setPreviewNft] = useState<NFTMetadata | null>(null);
+  const [collectionInitialized, setCollectionInitialized] = useState<boolean>(false);
+  const [isInitializing, setIsInitializing] = useState(false);
 
   // Load collection stats
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const stats = await getCollectionStats();
+        // First check if collection exists (use account address if available)
+        const creatorAddress = account?.address.toString() || import.meta.env.VITE_MODULE_ADDRESS;
+        const collectionExists = await checkCollectionExists(creatorAddress);
+        setCollectionInitialized(collectionExists);
+        
+        // Then get stats
+        const stats = await getCollectionStats(creatorAddress);
         setTotalMinted(stats.totalMinted);
         setMaxSupply(stats.maxSupply);
       } catch (error) {
         console.error("Failed to load collection stats:", error);
+        // On error, assume collection is not initialized
+        setCollectionInitialized(false);
+        setTotalMinted(0);
+        setMaxSupply(10000);
       }
     };
 
@@ -54,6 +68,50 @@ export function NFTGenerator() {
     generatePreview();
   }, []);
 
+  const handleInitializeCollection = async () => {
+    if (!account) {
+      toast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet to initialize the collection",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsInitializing(true);
+    try {
+      const response = await signAndSubmitTransaction(initializeCollection());
+
+      toast({
+        title: "Collection Initialized! 🎉",
+        description: `Transaction: ${response.hash}`,
+        variant: "default",
+      });
+
+      // Refresh stats after initialization
+      setTimeout(async () => {
+        try {
+          const creatorAddress = account?.address.toString() || import.meta.env.VITE_MODULE_ADDRESS;
+          const stats = await getCollectionStats(creatorAddress);
+          setTotalMinted(stats.totalMinted);
+          setMaxSupply(stats.maxSupply);
+          setCollectionInitialized(true);
+        } catch (error) {
+          console.error("Failed to refresh stats:", error);
+        }
+      }, 2000);
+
+    } catch (error: any) {
+      toast({
+        title: "Initialization failed",
+        description: error.message || "An error occurred while initializing",
+        variant: "destructive",
+      });
+    } finally {
+      setIsInitializing(false);
+    }
+  };
+
   const handleMint = async () => {
     if (!account) {
       toast({
@@ -68,7 +126,7 @@ export function NFTGenerator() {
     try {
       const response = await signAndSubmitTransaction(
         mintRandomNft({
-          user: account.address,
+          creatorAddress: account.address.toString(),
         })
       );
 
@@ -81,7 +139,8 @@ export function NFTGenerator() {
       // Refresh stats
       setTimeout(async () => {
         try {
-          const stats = await getCollectionStats();
+          const creatorAddress = account?.address.toString() || import.meta.env.VITE_MODULE_ADDRESS;
+          const stats = await getCollectionStats(creatorAddress);
           setTotalMinted(stats.totalMinted);
         } catch (error) {
           console.error("Failed to refresh stats:", error);
@@ -227,22 +286,39 @@ export function NFTGenerator() {
               </ul>
             </div>
             
-            <Button
-              onClick={handleMint}
-              disabled={isLoading || totalMinted >= maxSupply}
-              className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-mono border border-cyan-400 text-lg py-6"
-            >
-              {isLoading ? (
-                <div className="flex items-center space-x-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>MINTING...</span>
-                </div>
-              ) : totalMinted >= maxSupply ? (
-                "SOLD OUT"
-              ) : (
-                "CLAIM NFT"
-              )}
-            </Button>
+            {!collectionInitialized ? (
+              <Button
+                onClick={handleInitializeCollection}
+                disabled={isInitializing}
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-mono border border-green-400 text-lg py-6"
+              >
+                {isInitializing ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>INITIALIZING...</span>
+                  </div>
+                ) : (
+                  "INITIALIZE COLLECTION"
+                )}
+              </Button>
+            ) : (
+              <Button
+                onClick={handleMint}
+                disabled={isLoading || totalMinted >= maxSupply}
+                className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-mono border border-cyan-400 text-lg py-6"
+              >
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>MINTING...</span>
+                  </div>
+                ) : totalMinted >= maxSupply ? (
+                  "SOLD OUT"
+                ) : (
+                  "CLAIM NFT"
+                )}
+              </Button>
+            )}
             
             <div className="text-center text-xs text-gray-400 font-mono">
               <p>Free mint • Gas fees apply</p>

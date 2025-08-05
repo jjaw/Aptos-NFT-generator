@@ -1,12 +1,12 @@
 [package]
-name = "retro_nft_generator"
-version = "1.0.0"
+name = "retro_nft_generator_da"
+version = "2.0.0"
 
 [addresses]
 retro_nft = "_"
 
 [dev-addresses]
-retro_nft = "0x123"
+retro_nft = "0x97bb039c18e47d6a1b7e542550ef7232b2cbc9e14eb05b5e47d7146bc8eb1946"
 
 [dependencies.AptosFramework]
 git = "https://github.com/aptos-labs/aptos-framework.git"

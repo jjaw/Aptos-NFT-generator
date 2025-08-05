@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PNG Icon Generator</title>
+    <style>
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        button { padding: 10px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h2>PNG Icon Generator for Aptos Connect</h2>
+    <p>This will generate the PNG icons needed for the web app manifest.</p>
+    
+    <canvas id="canvas192" width="192" height="192"></canvas>
+    <canvas id="canvas512" width="512" height="512"></canvas>
+    
+    <div>
+        <button onclick="generateIcon(192)">Generate 192x192 PNG</button>
+        <button onclick="generateIcon(512)">Generate 512x512 PNG</button>
+    </div>
+    
+    <script>
+        function drawIcon(ctx, size) {
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Scale factor for different sizes
+            const scale = size / 32;
+            
+            // Create gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#ff6b9d');
+            gradient.addColorStop(0.5, '#c471ed');
+            gradient.addColorStop(1, '#12c2e9');
+            
+            // Background circle
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - 5*scale, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2*scale;
+            ctx.stroke();
+            
+            // Central diamond (NFT symbol)
+            const centerX = size/2;
+            const centerY = size/2;
+            const diamondSize = size/4;
+            
+            const goldGradient = ctx.createLinearGradient(centerX - diamondSize, centerY - diamondSize, centerX + diamondSize, centerY + diamondSize);
+            goldGradient.addColorStop(0, '#ffd700');
+            goldGradient.addColorStop(1, '#ff6b9d');
+            
+            ctx.fillStyle = goldGradient;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY - diamondSize);
+            ctx.lineTo(centerX + diamondSize, centerY);
+            ctx.lineTo(centerX, centerY + diamondSize);
+            ctx.lineTo(centerX - diamondSize, centerY);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2*scale;
+            ctx.stroke();
+            
+            // Inner diamond detail
+            const innerSize = diamondSize * 0.6;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY - innerSize);
+            ctx.lineTo(centerX + innerSize, centerY);
+            ctx.lineTo(centerX, centerY + innerSize);
+            ctx.lineTo(centerX - innerSize, centerY);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Highlight
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.beginPath();
+            ctx.arc(centerX - diamondSize*0.3, centerY - diamondSize*0.3, diamondSize*0.3, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+        
+        function generateIcon(size) {
+            const canvas = document.getElementById('canvas' + size);
+            const ctx = canvas.getContext('2d');
+            
+            drawIcon(ctx, size);
+            
+            // Convert to blob and download
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'icon-' + size + '.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 'image/png');
+        }
+        
+        // Auto-generate on load
+        window.onload = function() {
+            drawIcon(document.getElementById('canvas192').getContext('2d'), 192);
+            drawIcon(document.getElementById('canvas512').getContext('2d'), 512);
+        };
+    </script>
+</body>
+</html>

@@ -5,22 +5,25 @@ export interface CollectionStats {
   maxSupply: number;
 }
 
-export const getCollectionStats = async (): Promise<CollectionStats> => {
+
+export const getCollectionStats = async (creatorAddress?: string): Promise<CollectionStats> => {
   try {
-    const [totalMintedResponse, maxSupplyResponse] = await Promise.all([
-      aptos.view({
-        payload: {
-          function: `${import.meta.env.VITE_MODULE_ADDRESS}::retro_nft_generator::get_total_minted`,
-          functionArguments: [],
-        },
-      }),
-      aptos.view({
-        payload: {
-          function: `${import.meta.env.VITE_MODULE_ADDRESS}::retro_nft_generator::get_max_supply`,
-          functionArguments: [],
-        },
-      }),
-    ]);
+    // Get max supply - this is a constant and doesn't require collection initialization
+    const maxSupplyResponse = await aptos.view({
+      payload: {
+        function: `${import.meta.env.VITE_MODULE_ADDRESS}::retro_nft_generator_da::get_max_supply`,
+        functionArguments: [],
+      },
+    });
+
+    // Get total minted - handle case where collection might not be initialized
+    const actualCreatorAddress = creatorAddress || import.meta.env.VITE_MODULE_ADDRESS;
+    const totalMintedResponse = await aptos.view({
+      payload: {
+        function: `${import.meta.env.VITE_MODULE_ADDRESS}::retro_nft_generator_da::get_total_minted`,
+        functionArguments: [actualCreatorAddress],
+      },
+    });
 
     return {
       totalMinted: Number(totalMintedResponse[0]),
@@ -28,6 +31,8 @@ export const getCollectionStats = async (): Promise<CollectionStats> => {
     };
   } catch (error) {
     console.error("Error fetching collection stats:", error);
+    // If we get an error, it likely means collection is not initialized
+    // Return default values with 0 totalMinted and fallback maxSupply
     return {
       totalMinted: 0,
       maxSupply: 10000,
