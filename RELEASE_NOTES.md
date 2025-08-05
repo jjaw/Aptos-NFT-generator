@@ -1,6 +1,6 @@
 # Retro NFT Generator v2.0.0 - Release Notes
 
-**Release Date**: January 8, 2025  
+**Release Date**: August 4, 2025  
 **Network**: Aptos Testnet  
 **Contract Address**: `0xd76342565d0b5034db58c21935f96dc717a6a770ea21e4d4cc7388731213d2ef`
 
