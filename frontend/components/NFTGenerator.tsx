@@ -29,8 +29,8 @@ export function NFTGenerator() {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        // First check if collection exists (use account address if available)
-        const creatorAddress = account?.address.toString() || import.meta.env.VITE_MODULE_ADDRESS;
+        // Use fixed creator address for the shared collection
+        const creatorAddress = import.meta.env.VITE_MODULE_ADDRESS;
         const collectionExists = await checkCollectionExists(creatorAddress);
         setCollectionInitialized(collectionExists);
         
@@ -91,7 +91,7 @@ export function NFTGenerator() {
       // Refresh stats after initialization
       setTimeout(async () => {
         try {
-          const creatorAddress = account?.address.toString() || import.meta.env.VITE_MODULE_ADDRESS;
+          const creatorAddress = import.meta.env.VITE_MODULE_ADDRESS;
           const stats = await getCollectionStats(creatorAddress);
           setTotalMinted(stats.totalMinted);
           setMaxSupply(stats.maxSupply);
@@ -126,7 +126,7 @@ export function NFTGenerator() {
     try {
       const response = await signAndSubmitTransaction(
         mintRandomNft({
-          creatorAddress: account.address.toString(),
+          creatorAddress: import.meta.env.VITE_MODULE_ADDRESS,
         })
       );
 
@@ -139,7 +139,7 @@ export function NFTGenerator() {
       // Refresh stats
       setTimeout(async () => {
         try {
-          const creatorAddress = account?.address.toString() || import.meta.env.VITE_MODULE_ADDRESS;
+          const creatorAddress = import.meta.env.VITE_MODULE_ADDRESS;
           const stats = await getCollectionStats(creatorAddress);
           setTotalMinted(stats.totalMinted);
         } catch (error) {

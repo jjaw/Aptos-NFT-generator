@@ -93,22 +93,30 @@ frontend/
 
 ### 🔴 Critical Issues
 
-#### 1. Resource Address Mismatch - Post-Deployment Bug
-**What**: Frontend failed with "Failed to borrow global resource" when calling view functions  
-**Why**: Contract stored `NFTCollection` resource at admin address but view functions looked at contract address  
-**When**: During frontend testing after deployment  
-**How Fixed**: Updated view functions to use hardcoded admin address `@0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`  
-**MCP Role**: ❌ **Standard debugging** - Aptos object deployment vs resource storage misunderstanding  
-**Contract Upgrade**: Required contract upgrade from v1.0 to v1.1
+#### 1. Collection Initialization and Address Resolution - Post-Deployment Bug
+**What**: Persistent "Failed to borrow global resource" errors during collection access and NFT minting  
+**Why**: Address mismatch between where collection was initialized vs where frontend looked for it  
+**When**: During frontend testing and team sharing setup  
+**How Fixed**: 
+- Updated frontend to use consistent module address for shared collection
+- Fixed collection detection logic to properly identify uninitialized collections
+- Resolved creator permission restrictions with simplified NFT storage pattern  
+**MCP Role**: ✅ **MCP Guided Solution** - Used MCP debugging helper and Aptos-specific guidance  
+**Contract Upgrade**: Multiple iterations to resolve collection access patterns
 
-```move
-// Fixed view functions
-#[view]
-public fun get_total_minted(): u64 acquires NFTCollection {
-    let admin_addr = @0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b;
-    let collection_data = borrow_global<NFTCollection>(admin_addr);
-    collection_data.total_minted
-}
+```typescript
+// Frontend: Fixed to use consistent creator address
+const creatorAddress = import.meta.env.VITE_MODULE_ADDRESS; // Shared collection
+// Instead of: account?.address.toString() // Individual collections
+
+// Move: Simplified NFT storage to avoid permission restrictions  
+move_to(user, TokenData {
+    collection_address: object::object_address(&collection_data.collection),
+    name: nft_name,
+    description: nft_description,
+    uri: token_uri,
+    metadata: metadata,
+});
 ```
 
 #### 2. Token Creation Object Reference Error - Post-Deployment Bug
@@ -227,7 +235,7 @@ let addr_u64 = (*vector::borrow(&addr_bytes, 0) as u64) +
 
 ### Testnet Deployment
 - **Admin Account**: `0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`
-- **Contract Object**: `0x67ae21d05b0b77e6cdf988ea7d029662383ba6df26ac4adb48977c19a1638651`
+- **Contract Object**: `0x97bb039c18e47d6a1b7e542550ef7232b2cbc9e14eb05b5e47d7146bc8eb1946`
 - **Collection Initialized**: ✅ Transaction `0xf277aaf7be14b96881e658a44e4effd90ccd2ad314786ad5e902811731b50407`
 - **Contract Upgrade v1.1**: ✅ Transaction `0x954632f5e1ebe443e1f8eb4c42f80af2c2e4281a6b29af8c030d957635daf24b` (Fixed resource address bug)
 - **Contract Upgrade v1.2**: ✅ Transaction `0xdab31eb49b02d0c37b7d1fc26a12c95be9d71afaba88703dd4f8f921c61be7a1` (Fixed token creation bug)
@@ -238,7 +246,7 @@ let addr_u64 = (*vector::borrow(&addr_bytes, 0) as u64) +
 ### Configuration
 ```env
 VITE_APP_NETWORK=testnet
-VITE_MODULE_ADDRESS=0x67ae21d05b0b77e6cdf988ea7d029662383ba6df26ac4adb48977c19a1638651
+VITE_MODULE_ADDRESS=0x97bb039c18e47d6a1b7e542550ef7232b2cbc9e14eb05b5e47d7146bc8eb1946
 VITE_APTOS_API_KEY=AG-3EDYMRBCDGVDC3KPG7JW28XD3RKBTXX5M
 ```
 
