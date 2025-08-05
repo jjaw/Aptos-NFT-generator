@@ -29,8 +29,10 @@ export function NFTGenerator() {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        // Use fixed creator address for the shared collection
-        const creatorAddress = import.meta.env.VITE_MODULE_ADDRESS;
+        // Use the connected user's address as the potential creator
+        const creatorAddress = account?.address.toString();
+        
+        // Check if collection exists at user's address
         const collectionExists = await checkCollectionExists(creatorAddress);
         setCollectionInitialized(collectionExists);
         
@@ -50,7 +52,7 @@ export function NFTGenerator() {
     loadStats();
     const interval = setInterval(loadStats, 10000); // Update every 10 seconds
     return () => clearInterval(interval);
-  }, []);
+  }, [account?.address]); // Reload when account changes
 
   // Generate preview
   const generatePreview = async () => {
@@ -126,7 +128,7 @@ export function NFTGenerator() {
     try {
       const response = await signAndSubmitTransaction(
         mintRandomNft({
-          creatorAddress: import.meta.env.VITE_MODULE_ADDRESS,
+          creatorAddress: account?.address.toString() || "",
         })
       );
 

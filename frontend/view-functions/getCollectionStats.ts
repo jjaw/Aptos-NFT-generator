@@ -16,7 +16,7 @@ export const getCollectionStats = async (creatorAddress?: string): Promise<Colle
       },
     });
 
-    // Get total minted - handle case where collection might not be initialized
+    // Get total minted - requires creator address
     const actualCreatorAddress = creatorAddress || import.meta.env.VITE_MODULE_ADDRESS;
     const totalMintedResponse = await aptos.view({
       payload: {

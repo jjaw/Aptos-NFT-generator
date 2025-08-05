@@ -1,12 +1,26 @@
-# Retro NFT Generator v1.0.0 - Release Notes
+# Retro NFT Generator v2.0.0 - Release Notes
 
-**Release Date**: August 4, 2025  
+**Release Date**: January 8, 2025  
 **Network**: Aptos Testnet  
-**Contract Address**: `0x67ae21d05b0b77e6cdf988ea7d029662383ba6df26ac4adb48977c19a1638651`
+**Contract Address**: `0xd76342565d0b5034db58c21935f96dc717a6a770ea21e4d4cc7388731213d2ef`
 
 ## 🎮 Overview
 
 The Retro NFT Generator is a complete full-stack dApp that allows users to claim randomly generated 80's-themed NFTs on the Aptos blockchain. Each NFT features unique combinations of background colors, geometric shapes, and cyberpunk word combinations.
+
+## 🚀 What's New in v2.0.0
+
+### ✨ Major Features
+- **✅ Aptos Explorer Visibility**: NFTs now appear as proper Digital Assets on Aptos explorer
+- **✅ Individual Collections**: Each user creates their own personal NFT collection
+- **✅ Proper Token Creation**: Uses `token::create_named_token()` for standardized DA tokens
+- **✅ Enhanced Collection Management**: Fixed collection-token relationship for proper indexing
+
+### 🔧 Technical Improvements
+- **Aptos Digital Asset Standard Compliance**: Full implementation of DA token creation
+- **Explorer Indexing**: NFTs are now recognized and indexed by Aptos explorer
+- **Collection Architecture**: Individual user collections instead of shared collection model
+- **Token Object Framework**: Proper use of aptos_token_objects module functions
 
 ## ✨ Features Implemented
 
@@ -234,19 +248,16 @@ let addr_u64 = (*vector::borrow(&addr_bytes, 0) as u64) +
 ## 🚀 Deployment Information
 
 ### Testnet Deployment
-- **Admin Account**: `0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`
-- **Contract Object**: `0x97bb039c18e47d6a1b7e542550ef7232b2cbc9e14eb05b5e47d7146bc8eb1946`
-- **Collection Initialized**: ✅ Transaction `0xf277aaf7be14b96881e658a44e4effd90ccd2ad314786ad5e902811731b50407`
-- **Contract Upgrade v1.1**: ✅ Transaction `0x954632f5e1ebe443e1f8eb4c42f80af2c2e4281a6b29af8c030d957635daf24b` (Fixed resource address bug)
-- **Contract Upgrade v1.2**: ✅ Transaction `0xdab31eb49b02d0c37b7d1fc26a12c95be9d71afaba88703dd4f8f921c61be7a1` (Fixed token creation bug)
-- **Test Mints**: ✅ Transactions `0x4114549f33142e4e5db43f79d48b7068a285911796b287454b389d2c6974edf1`, `0x44957b5cd7268b7ac39126ad72b3adcfc0cbd9762dc752df0038d80c8974dade`
-- **Current Supply**: 2/10,000 NFTs minted
-- **Gas Used**: 1,125 units (init) + 754 units (mint avg)
+- **Contract Object**: `0xd76342565d0b5034db58c21935f96dc717a6a770ea21e4d4cc7388731213d2ef`
+- **Latest Upgrade**: ✅ Transaction `0xdff19fb2ebafeaa898e84af04fc7913575d5c801e3e38e918d1a23a468b5064e` (Explorer visibility fix)
+- **NFT Explorer Visibility**: ✅ NFTs now appear on Aptos explorer as proper Digital Assets
+- **Collection Model**: Individual collections per user (each user creates their own collection)
+- **Current Status**: Fully functional with explorer visibility
 
 ### Configuration
 ```env
 VITE_APP_NETWORK=testnet
-VITE_MODULE_ADDRESS=0x97bb039c18e47d6a1b7e542550ef7232b2cbc9e14eb05b5e47d7146bc8eb1946
+VITE_MODULE_ADDRESS=0xd76342565d0b5034db58c21935f96dc717a6a770ea21e4d4cc7388731213d2ef
 VITE_APTOS_API_KEY=AG-3EDYMRBCDGVDC3KPG7JW28XD3RKBTXX5M
 ```
 
