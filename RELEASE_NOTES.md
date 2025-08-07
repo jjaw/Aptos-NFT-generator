@@ -1,5 +1,69 @@
 # Retro NFT Generator - Release Notes
 
+## v3.0.1 - Critical NFT Ownership Transfer Fix (August 7, 2025)
+
+**Release Date**: August 7, 2025  
+**Network**: Aptos Testnet  
+**Contract Address**: `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`
+**Live Site**: **[https://aptos-nft-generator.vercel.app/](https://aptos-nft-generator.vercel.app/)**
+**Status**: ✅ **CRITICAL FIX - Explorer Visibility Restored**
+
+### 🚨 **Critical Issue Resolved**
+
+**Problem**: After v3.0.0 production launch, users reported that while NFT minting transactions succeeded, the NFTs didn't appear when viewing user addresses in Aptos Explorer.
+
+**Root Cause**: The shared collection architecture created tokens with the resource account signer but failed to transfer ownership to users, leaving tokens at the resource account address.
+
+### 🔧 **Technical Fix Applied**
+
+#### **Ownership Transfer Implementation**
+```move
+// NEW: Added proper ownership transfer chain
+let token_constructor_ref = token::create_named_token(&resource_signer, ...);
+
+// CRITICAL FIX: Transfer token ownership to user for explorer visibility
+let transfer_ref = object::generate_transfer_ref(&token_constructor_ref);
+let linear_transfer_ref = object::generate_linear_transfer_ref(&transfer_ref);
+object::transfer_with_ref(linear_transfer_ref, user_addr);
+```
+
+### ✅ **Fix Results**
+
+- **✅ Explorer Visibility**: NFTs now appear in user addresses when viewed in Aptos Explorer
+- **✅ Maintains Benefits**: All shared collection advantages preserved (73% gas savings, unified collection)
+- **✅ No Additional Costs**: No extra gas fees for users
+- **✅ Backward Compatible**: Existing architecture unchanged
+
+### 🛠️ **Deployment Details**
+
+- **Fix Transaction**: [0x138d58ef451c13980578fd0aac5b1f2fe700c5527ea59e6c739b66fc1445b133](https://explorer.aptoslabs.com/txn/0x138d58ef451c13980578fd0aac5b1f2fe700c5527ea59e6c739b66fc1445b133?network=testnet)
+- **Contract Address**: Same as v3.0.0 - `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`
+- **Sequence Number**: 29 (updated version)
+- **Status**: ✅ **Live and Verified** - New NFTs now visible in explorer
+
+### 🎯 **User Impact**
+
+**Before Fix (v3.0.0)**:
+- ❌ NFTs invisible when viewing user addresses in explorer
+- ✅ Transactions succeeded  
+- ✅ Internal tracking worked
+- ❌ Poor user experience
+
+**After Fix (v3.0.1)**:
+- ✅ NFTs visible in user addresses on explorer
+- ✅ Transactions succeed
+- ✅ Internal tracking works  
+- ✅ Complete user experience
+
+### 📚 **Key Learning**
+
+This fix highlights the critical difference between **token creation** and **token ownership** in Aptos:
+- Token creation can be done by resource accounts for shared collections
+- Token ownership must be explicitly transferred to users for explorer visibility
+- Both operations are necessary for complete functionality
+
+---
+
 ## v3.0.0 - Production-Ready Shared Collection Architecture (August 7, 2025)
 
 **Release Date**: August 7, 2025  

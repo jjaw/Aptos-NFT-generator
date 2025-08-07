@@ -202,6 +202,11 @@ module retro_nft::retro_nft_generator_da {
             token_uri
         );
         
+        // CRITICAL FIX: Transfer token ownership to user for explorer visibility
+        let transfer_ref = object::generate_transfer_ref(&token_constructor_ref);
+        let linear_transfer_ref = object::generate_linear_transfer_ref(&transfer_ref);
+        object::transfer_with_ref(linear_transfer_ref, user_addr);
+        
         let token_address = object::address_from_constructor_ref(&token_constructor_ref);
         
         // Create token data for our records

@@ -4,6 +4,44 @@ A comprehensive evolution log showing the transformation from MVP concept to pro
 
 ---
 
+## 🚀 v3.0.1 - Critical NFT Ownership Fix (August 7, 2025)
+
+**Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)  
+**Live Site**: **[https://aptos-nft-generator.vercel.app/](https://aptos-nft-generator.vercel.app/)**  
+**Status**: ✅ **CRITICAL FIX - Explorer Visibility Restored**
+
+### 🚨 Critical Post-Launch Fix
+Immediate fix for a critical issue discovered after v3.0.0 production deployment where NFTs weren't appearing in user addresses on Aptos Explorer.
+
+### ✨ Key Fix
+- **🔧 Ownership Transfer**: Added proper token ownership transfer from resource account to users
+- **👁️ Explorer Visibility**: NFTs now appear when viewing user addresses in Aptos Explorer  
+- **⚡ Zero Impact**: Maintains all v3.0.0 benefits with no additional gas costs
+- **🔄 Backward Compatible**: No breaking changes to existing architecture
+
+### 🛠️ Technical Implementation
+```move
+// Added critical ownership transfer chain:
+let transfer_ref = object::generate_transfer_ref(&token_constructor_ref);
+let linear_transfer_ref = object::generate_linear_transfer_ref(&transfer_ref);
+object::transfer_with_ref(linear_transfer_ref, user_addr);
+```
+
+### 📊 Impact Metrics
+| Aspect | Before Fix (v3.0.0) | After Fix (v3.0.1) | Status |
+|--------|---------------------|---------------------|---------|
+| **Transaction Success** | ✅ Working | ✅ Working | No Change |
+| **Gas Costs** | 73% savings | 73% savings | No Change |
+| **User Experience** | ❌ NFTs invisible | ✅ NFTs visible | **Fixed** |
+| **Explorer Visibility** | ❌ Missing | ✅ Complete | **Fixed** |
+
+### 🔍 Root Cause & Solution
+**Issue**: Shared collection created tokens but didn't transfer ownership to users  
+**Solution**: Implemented proper Aptos object transfer pattern  
+**Result**: Complete user experience with maintained architectural benefits
+
+---
+
 ## 🚀 v3.0.0 - Production-Ready Shared Collection (August 7, 2025)
 
 **Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)  

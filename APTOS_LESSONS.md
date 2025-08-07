@@ -516,3 +516,107 @@ let resource_address = account::create_resource_address(
 ---
 
 **Final Production Verdict**: Successfully transformed from MVP to production-ready dApp through systematic architecture optimization and UX polish. The shared collection model achieved the goal of mass adoption readiness with zero user friction and 73% cost savings.
+
+---
+
+## 🔧 Critical Post-Launch Fix: NFT Ownership Transfer (v3.0.1)
+
+### New Challenge: Explorer Visibility with Shared Collections
+
+**Context**: After successful v3.0.0 production deployment, users reported that while NFT minting transactions succeeded, the NFTs didn't appear when viewing user addresses in Aptos Explorer.
+
+#### 7. **NFT Ownership Transfer Missing** 🔥🔥🔥
+**Problem**: NFTs were created successfully but didn't transfer ownership to users  
+**Root Cause Analysis**: 
+- Shared collection architecture created tokens with resource account signer
+- Tokens remained at resource account address instead of transferring to users
+- Internal `UserNFTs` tracking worked, but no actual blockchain ownership transfer occurred
+- Explorer shows tokens by ownership, not by internal contract tracking
+
+**Impact**: Users couldn't see their NFTs in Aptos Explorer when viewing their address
+
+**Technical Deep Dive**:
+```move
+// BROKEN (v3.0.0 original):
+let token_constructor_ref = token::create_named_token(
+    &resource_signer, // Resource account creates token
+    string::utf8(COLLECTION_NAME),
+    // ... other params
+);
+// Token stays at resource account address ❌
+```
+
+**Solution**: Added proper ownership transfer chain
+```move
+// FIXED (v3.0.1):
+let token_constructor_ref = token::create_named_token(
+    &resource_signer, // Resource account creates token
+    string::utf8(COLLECTION_NAME),
+    // ... other params
+);
+
+// CRITICAL FIX: Transfer token ownership to user for explorer visibility
+let transfer_ref = object::generate_transfer_ref(&token_constructor_ref);
+let linear_transfer_ref = object::generate_linear_transfer_ref(&transfer_ref);
+object::transfer_with_ref(linear_transfer_ref, user_addr); // ✅ Now owned by user!
+```
+
+**Results**: 
+- ✅ NFTs now appear in user addresses when viewed in Aptos Explorer
+- ✅ Maintains all shared collection benefits (gas savings, unified collection)
+- ✅ No additional gas costs for users
+- ✅ Backward compatible with existing architecture
+
+**Deployment**: 
+- **Transaction**: [0x138d58ef451c13980578fd0aac5b1f2fe700c5527ea59e6c739b66fc1445b133](https://explorer.aptoslabs.com/txn/0x138d58ef451c13980578fd0aac5b1f2fe700c5527ea59e6c739b66fc1445b133?network=testnet)
+- **Same Contract Address**: `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`
+- **Version**: Sequence number 29
+
+### 🎓 **Advanced Lessons: Shared Collection Architecture**
+
+#### 1. **Token Creation vs Token Ownership Are Separate**
+**Lesson**: Creating a token and owning a token are two distinct operations in Aptos  
+**Details**:
+- Token creation requires collection creator permissions (resource account)
+- Token ownership can be transferred to any address after creation
+- Explorer visibility depends on ownership, not creation location
+
+#### 2. **Transfer Reference Chain is Critical**
+**Lesson**: Aptos uses a specific pattern for token transfers that must be followed exactly  
+**Pattern**:
+```move
+1. ConstructorRef (from token creation)
+2. TransferRef (generated from ConstructorRef) 
+3. LinearTransferRef (generated from TransferRef)
+4. transfer_with_ref() (actual transfer operation)
+```
+
+#### 3. **Internal Tracking ≠ Blockchain Ownership**
+**Lesson**: Contract storage and blockchain ownership are completely separate concepts  
+**Application**: 
+- Use contract storage for business logic and metadata
+- Use blockchain ownership for actual token possession and explorer visibility
+- Both are needed for a complete solution
+
+#### 4. **Testing Must Include End-User Verification**
+**Lesson**: Technical tests passing doesn't guarantee user-visible functionality works  
+**Application**:
+- Always test with actual explorer visibility
+- Verify user experience, not just transaction success
+- Include ownership verification in testing process
+
+### 📊 **Updated MCP Effectiveness for Critical Issues**
+
+| Challenge Type | MCP Score | Notes |
+|---------------|-----------|-------|
+| **Basic Architecture** | 🔥🔥🔥🔥🔥 | Excellent guidance for structure |
+| **Token Creation** | 🔥🔥🔥🔥⚪ | Good for basic patterns |
+| **Ownership Transfer** | 🔥🔥⚪⚪⚪ | Limited guidance on transfer patterns |
+| **Explorer Integration** | 🔥⚪⚪⚪⚪ | No specific visibility requirements |
+| **End-User Testing** | 🔥⚪⚪⚪⚪ | Missing user experience validation |
+
+**Overall Post-Production MCP Score**: 🔥🔥🔥⚪⚪ (3/5) - Good foundation, gaps in advanced patterns
+
+---
+
+**Final Comprehensive Verdict**: Successfully achieved production-ready dApp with proper NFT ownership and explorer visibility. The shared collection model with ownership transfer provides the best of both worlds: gas optimization and user experience. Critical post-launch fixes demonstrate the importance of end-to-end user verification beyond technical testing.
