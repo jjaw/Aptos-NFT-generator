@@ -19,29 +19,43 @@ A **production-ready** full-stack dApp built on Aptos blockchain featuring a **s
 ## 📸 Screenshots
 
 ### Main Interface
-<!-- TODO: Add screenshot of main UI with retro theme and mint button -->
-![Main Interface Placeholder](https://via.placeholder.com/800x400/FF0080/FFFFFF?text=Main+Interface+Screenshot)
+
+![Main Interface](./public/screenshots/main-interface.png)  
 *The main dApp interface with retro 80s theme and one-click minting*
 
 ### Wallet Connection & Transaction
-<!-- TODO: Add screenshot of wallet selection and transaction approval -->
-![Wallet Connection Placeholder](https://via.placeholder.com/600x400/0080FF/FFFFFF?text=Wallet+Connection+Flow)
+
+<p float="left">
+  <img src="./public/screenshots/wallet-connection-a.png" width="48%" />
+  <img src="./public/screenshots/wallet-connection-b.png" width="48%" />
+</p>
+
 *Wallet connection process and transaction approval popup*
 
 ### NFT Preview System
-<!-- TODO: Add screenshot of preview generation with different traits -->
-![NFT Preview Placeholder](https://via.placeholder.com/500x400/8000FF/FFFFFF?text=NFT+Preview+System)
+
+<p float="left">
+  <img src="./public/screenshots/nft-preview-a.png" width="32%" />
+  <img src="./public/screenshots/nft-preview-b.png" width="32%" />
+  <img src="./public/screenshots/nft-preview-c.png" width="32%" />
+</p>
+
 *Preview different NFT combinations before minting*
 
 ### Explorer Visibility
-<!-- TODO: Add screenshot of NFTs showing up in Aptos Explorer -->
-![Explorer Visibility Placeholder](https://via.placeholder.com/700x400/00FF80/000000?text=Explorer+Visibility)
+
+![Explorer Visibility](./public/screenshots/explorer_visibility.png)  
 *NFTs appearing as proper Digital Assets on Aptos Explorer*
 
 ### Mobile Interface
-<!-- TODO: Add screenshot of responsive mobile UI -->
-![Mobile UI Placeholder](https://via.placeholder.com/300x600/FF8000/FFFFFF?text=Mobile+Interface)
+
+<p float="left">
+  <img src="./public/screenshots/mobile-a.png" width="48%" />
+  <img src="./public/screenshots/mobile-b.png" width="48%" />
+</p>
+
 *Responsive design optimized for mobile devices*
+
 
 ## ⚡ Performance Improvements
 
