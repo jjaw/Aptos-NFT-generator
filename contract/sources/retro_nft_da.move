@@ -299,6 +299,9 @@ module retro_nft::retro_nft_generator_da {
         string::append(&mut token_uri, name);
         string::append(&mut token_uri, string::utf8(b"\",\"description\":\""));
         string::append(&mut token_uri, description);
+        string::append(&mut token_uri, string::utf8(b"\",\"image\":\""));
+        // Add a simple placeholder image URL (you can replace with actual hosted image)
+        string::append(&mut token_uri, string::utf8(b"https://via.placeholder.com/400x400/FF0080/FFFFFF?text=Retro+NFT"));
         string::append(&mut token_uri, string::utf8(b"\",\"attributes\":["));
         string::append(&mut token_uri, string::utf8(b"{\"trait_type\":\"Background Color\",\"value\":\""));
         string::append(&mut token_uri, metadata.background_color);
