@@ -6,7 +6,7 @@ export interface CollectionStats {
 }
 
 
-export const getCollectionStats = async (creatorAddress?: string): Promise<CollectionStats> => {
+export const getCollectionStats = async (_creatorAddress?: string): Promise<CollectionStats> => {
   try {
     // Get max supply - this is a constant and doesn't require collection initialization
     const maxSupplyResponse = await aptos.view({
@@ -16,12 +16,11 @@ export const getCollectionStats = async (creatorAddress?: string): Promise<Colle
       },
     });
 
-    // Get total minted - requires creator address
-    const actualCreatorAddress = creatorAddress || import.meta.env.VITE_MODULE_ADDRESS;
+    // Get total minted from shared collection (ignore legacy creatorAddress parameter)
     const totalMintedResponse = await aptos.view({
       payload: {
         function: `${import.meta.env.VITE_MODULE_ADDRESS}::retro_nft_generator_da::get_total_minted`,
-        functionArguments: [actualCreatorAddress],
+        functionArguments: [],
       },
     });
 
@@ -30,8 +29,8 @@ export const getCollectionStats = async (creatorAddress?: string): Promise<Colle
       maxSupply: Number(maxSupplyResponse[0]),
     };
   } catch (error) {
-    console.error("Error fetching collection stats:", error);
-    // If we get an error, it likely means collection is not initialized
+    console.error("Error fetching shared collection stats:", error);
+    // If we get an error, it likely means shared collection is not initialized
     // Return default values with 0 totalMinted and fallback maxSupply
     return {
       totalMinted: 0,

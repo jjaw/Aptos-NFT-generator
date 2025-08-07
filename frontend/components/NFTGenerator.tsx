@@ -25,24 +25,21 @@ export function NFTGenerator() {
   const [collectionInitialized, setCollectionInitialized] = useState<boolean>(false);
   const [isInitializing, setIsInitializing] = useState(false);
 
-  // Load collection stats
+  // Load shared collection stats
   useEffect(() => {
     const loadStats = async () => {
       try {
-        // Use the connected user's address as the potential creator
-        const creatorAddress = account?.address.toString();
-        
-        // Check if collection exists at user's address
-        const collectionExists = await checkCollectionExists(creatorAddress);
+        // Check if shared collection exists
+        const collectionExists = await checkCollectionExists();
         setCollectionInitialized(collectionExists);
         
-        // Then get stats
-        const stats = await getCollectionStats(creatorAddress);
+        // Get stats from shared collection
+        const stats = await getCollectionStats();
         setTotalMinted(stats.totalMinted);
         setMaxSupply(stats.maxSupply);
       } catch (error) {
-        console.error("Failed to load collection stats:", error);
-        // On error, assume collection is not initialized
+        console.error("Failed to load shared collection stats:", error);
+        // On error, assume shared collection is not initialized
         setCollectionInitialized(false);
         setTotalMinted(0);
         setMaxSupply(10000);
@@ -52,7 +49,7 @@ export function NFTGenerator() {
     loadStats();
     const interval = setInterval(loadStats, 10000); // Update every 10 seconds
     return () => clearInterval(interval);
-  }, [account?.address]); // Reload when account changes
+  }, []); // No dependency on account - shared collection is global
 
   // Generate preview
   const generatePreview = async () => {
@@ -93,8 +90,7 @@ export function NFTGenerator() {
       // Refresh stats after initialization
       setTimeout(async () => {
         try {
-          const creatorAddress = import.meta.env.VITE_MODULE_ADDRESS;
-          const stats = await getCollectionStats(creatorAddress);
+          const stats = await getCollectionStats();
           setTotalMinted(stats.totalMinted);
           setMaxSupply(stats.maxSupply);
           setCollectionInitialized(true);
@@ -127,9 +123,7 @@ export function NFTGenerator() {
     setIsLoading(true);
     try {
       const response = await signAndSubmitTransaction(
-        mintRandomNft({
-          creatorAddress: account?.address.toString() || "",
-        })
+        mintRandomNft()
       );
 
       toast({
@@ -141,8 +135,7 @@ export function NFTGenerator() {
       // Refresh stats
       setTimeout(async () => {
         try {
-          const creatorAddress = import.meta.env.VITE_MODULE_ADDRESS;
-          const stats = await getCollectionStats(creatorAddress);
+          const stats = await getCollectionStats();
           setTotalMinted(stats.totalMinted);
         } catch (error) {
           console.error("Failed to refresh stats:", error);
@@ -279,7 +272,7 @@ export function NFTGenerator() {
                 🎯
               </div>
               <p className="text-gray-300 font-mono text-sm">
-                Each NFT is unique with randomized:
+                Mint from the shared collection! Each NFT is unique:
               </p>
               <ul className="text-cyan-300 font-mono text-xs mt-2 space-y-1">
                 <li>• Background Color (5 variations)</li>
@@ -300,7 +293,7 @@ export function NFTGenerator() {
                     <span>INITIALIZING...</span>
                   </div>
                 ) : (
-                  "INITIALIZE COLLECTION"
+                  "INITIALIZE SHARED COLLECTION"
                 )}
               </Button>
             ) : (
@@ -323,8 +316,8 @@ export function NFTGenerator() {
             )}
             
             <div className="text-center text-xs text-gray-400 font-mono">
-              <p>Free mint • Gas fees apply</p>
-              <p>Powered by Aptos blockchain</p>
+              <p>Shared Collection • Free mint • Gas fees apply</p>
+              <p>Anyone can claim • Powered by Aptos blockchain</p>
             </div>
           </div>
         </div>
