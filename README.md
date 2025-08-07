@@ -1,3 +1,5 @@
+live collection: https://aptos-nft-generator.vercel.app/
+
 # 🎮 Retro NFT Generator
 
 A full-stack dApp built on Aptos blockchain that generates unique 80s-themed NFTs with randomized backgrounds, shapes, and cyberpunk word combinations.
