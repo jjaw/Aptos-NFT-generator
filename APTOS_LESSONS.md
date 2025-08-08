@@ -435,7 +435,7 @@ VITE_APP_NETWORK=testnet
 VITE_APTOS_API_KEY=AG-3EDYMRBCDGVDC3KPG7JW28XD3RKBTXX5M
 ```
 
-**Impact**: Successfully launched production-ready dApp at https://aptos-nft-generator.vercel.app/
+**Impact**: Successfully launched production-ready dApp at https://www.aptosnft.com/
 
 ### 🎯 Production Deployment Success Metrics
 
@@ -448,7 +448,7 @@ VITE_APTOS_API_KEY=AG-3EDYMRBCDGVDC3KPG7JW28XD3RKBTXX5M
 | **User Friction** | High (setup required) | Zero (direct minting) | **Eliminated** |
 
 #### Production Readiness Achievements
-- ✅ **Live Site Deployed**: https://aptos-nft-generator.vercel.app/
+- ✅ **Live Site Deployed**: https://www.aptosnft.com/
 - ✅ **Mass Adoption Ready**: Shared collection supports unlimited concurrent users
 - ✅ **Zero Setup UX**: Users mint immediately after wallet connection
 - ✅ **Professional Polish**: Fixed favicon, wallet popups, and asset serving

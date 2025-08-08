@@ -46,7 +46,7 @@ Transform the current user-owned collection demo into a production-ready shared 
 - [x] Fix wallet popup broken images ✅
   - Transaction: [0x98665fda...](https://explorer.aptoslabs.com/txn/0x98665fda26e28fe6b0da59909821ef00719168e83f9d3743e3f2b14bedfac6f9?network=testnet)
 - [x] Deploy live site to production ✅
-  - Live at: [https://aptos-nft-generator.vercel.app/](https://aptos-nft-generator.vercel.app/)
+  - Live at: [https://www.aptosnft.com/](https://www.aptosnft.com/)
 - [x] Complete documentation updates ✅
   - README, RELEASE_NOTES, VERSION_HISTORY, APTOS_LESSONS all updated
 

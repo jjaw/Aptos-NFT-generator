@@ -5,7 +5,7 @@
 **Release Date**: August 7, 2025  
 **Network**: Aptos Testnet  
 **Contract Address**: `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`
-**Live Site**: **[https://aptos-nft-generator.vercel.app/](https://aptos-nft-generator.vercel.app/)**
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**
 **Status**: ✅ **CRITICAL FIX - Explorer Visibility Restored**
 
 ### 🚨 **Critical Issue Resolved**
@@ -69,7 +69,7 @@ This fix highlights the critical difference between **token creation** and **tok
 **Release Date**: August 7, 2025  
 **Network**: Aptos Testnet  
 **Contract Address**: `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`
-**Live Site**: **[https://aptos-nft-generator.vercel.app/](https://aptos-nft-generator.vercel.app/)**
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**
 **Status**: ✅ **Production Ready for Mass Adoption**
 
 ### 🎯 **Major Architecture Transformation**
@@ -91,7 +91,7 @@ This release represents a complete transformation from individual user collectio
 - **✅ Scalable Infrastructure**: Supports unlimited concurrent users
 
 #### 🚀 **Production Deployment Features**
-- **✅ Live on Vercel**: [https://aptos-nft-generator.vercel.app/](https://aptos-nft-generator.vercel.app/)
+- **✅ Live on Vercel**: [https://www.aptosnft.com/](https://www.aptosnft.com/)
 - **✅ Explorer Integration**: NFTs appear immediately on Aptos explorer
 - **✅ Wallet Compatibility**: Works with all major Aptos wallets
 - **✅ Mobile Responsive**: Optimized for all device sizes
@@ -114,7 +114,7 @@ This release represents a complete transformation from individual user collectio
 - **Fix**: Added proper image metadata to prevent broken images in wallet popups
 
 #### 4. Live Site Deployment ✅
-- **URL**: [https://aptos-nft-generator.vercel.app/](https://aptos-nft-generator.vercel.app/)
+- **URL**: [https://www.aptosnft.com/](https://www.aptosnft.com/)
 - **Status**: ✅ Live and fully functional
 - **Performance**: Optimized for production traffic
 
@@ -191,7 +191,7 @@ file favicon.ico
 - Frontend-backend contract address synchronization
 - Live site favicon and image serving
 **Solution**: Systematic verification of all deployment components  
-**Impact**: Successfully launched production-ready dApp at https://aptos-nft-generator.vercel.app/
+**Impact**: Successfully launched production-ready dApp at https://www.aptosnft.com/
 
 ### 📈 **Success Metrics**
 

@@ -7,7 +7,7 @@ A comprehensive evolution log showing the transformation from MVP concept to pro
 ## 🚀 v3.0.1 - Critical NFT Ownership Fix (August 7, 2025)
 
 **Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)  
-**Live Site**: **[https://aptos-nft-generator.vercel.app/](https://aptos-nft-generator.vercel.app/)**  
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**  
 **Status**: ✅ **CRITICAL FIX - Explorer Visibility Restored**
 
 ### 🚨 Critical Post-Launch Fix
@@ -45,7 +45,7 @@ object::transfer_with_ref(linear_transfer_ref, user_addr);
 ## 🚀 v3.0.0 - Production-Ready Shared Collection (August 7, 2025)
 
 **Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)  
-**Live Site**: **[https://aptos-nft-generator.vercel.app/](https://aptos-nft-generator.vercel.app/)**  
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**  
 **Status**: ✅ **Production Ready for Mass Adoption**
 
 ### 🎯 Major Transformation
@@ -201,5 +201,5 @@ Transform the Retro NFT Generator into a comprehensive NFT ecosystem on Aptos, s
 
 **Current Status**: Production-ready dApp successfully deployed and optimized for mass adoption. Ready for community growth and potential mainnet deployment.
 
-**Live Demo**: [https://aptos-nft-generator.vercel.app/](https://aptos-nft-generator.vercel.app/)  
+**Live Demo**: [https://www.aptosnft.com/](https://www.aptosnft.com/)  
 **Latest Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)

@@ -3,7 +3,7 @@
 A **production-ready** full-stack dApp built on Aptos blockchain featuring a **shared collection architecture** for mass adoption. Generate unique 80s-themed NFTs with randomized backgrounds, shapes, and cyberpunk word combinations - **no setup required!**
 
 ## 🚀 **Try It Live!**
-### **[https://aptos-nft-generator.vercel.app/](https://aptos-nft-generator.vercel.app/)**
+### **[https://www.aptosnft.com/](https://www.aptosnft.com/)**
 *Connect your Aptos wallet and mint your retro NFT in seconds!*
 
 ![Retro NFT Generator](https://img.shields.io/badge/Aptos-NFT_Generator-00D4AA?style=for-the-badge&logo=aptos)
@@ -228,7 +228,7 @@ npm run lint
 ### Current Production Deployment
 - **Network**: Aptos Testnet  
 - **Contract Address**: `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`
-- **Live Site**: [https://aptos-nft-generator.vercel.app/](https://aptos-nft-generator.vercel.app/)
+- **Live Site**: [https://www.aptosnft.com/](https://www.aptosnft.com/)
 - **Deployment Transaction**: [View on Explorer](https://explorer.aptoslabs.com/txn/0xa55872ac8b2ddd76c31e82ceb8782ded97e39ac0b747fba13fa9bc7c5a2bc178?network=testnet)
 - **Collection Initialization**: [View Transaction](https://explorer.aptoslabs.com/txn/0xc3b9dc0f38f5fb1117abca7adb4b6c9842e5bee481761e11d281b5ab442855a3?network=testnet)
 - **Status**: ✅ **Production Ready** - Live and functional
@@ -421,7 +421,7 @@ mcp__aptos-mcp__list_aptos_resources
 - **✅ Mass Adoption Ready**: Optimized for high-traffic deployment  
 - **✅ 73% Gas Savings**: Significant cost reduction for users
 - **✅ Zero Setup Required**: Streamlined user experience
-- **🚀 Live on Vercel**: [https://aptos-nft-generator.vercel.app/](https://aptos-nft-generator.vercel.app/)
+- **🚀 Live Site**: [https://www.aptosnft.com/](https://www.aptosnft.com/)
 
 **Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet) | **Version**: 3.0.1 | **Network**: Aptos Testnet
 
