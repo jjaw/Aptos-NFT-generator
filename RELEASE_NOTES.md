@@ -1,5 +1,75 @@
 # Retro NFT Generator - Release Notes
 
+## v3.1.0 - Gas Station Integration for Zero-Fee NFT Claims (August 11, 2025)
+
+**Release Date**: August 11, 2025  
+**Network**: Aptos Testnet  
+**Contract Address**: `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**
+**Status**: ✅ **ZERO-FEE TRANSACTIONS ENABLED**
+
+### 🎉 **Major Feature: Gas Station Integration**
+
+**Enhancement**: Users can now claim NFTs with **zero network fees** through Aptos Labs Gas Station integration.
+
+**Impact**: Removes all financial barriers to entry for new users, providing a true Web2-like experience for NFT claiming.
+
+### ✅ **Gas Station Implementation**
+
+#### **Infrastructure Setup**
+- **Gas Station API Key**: `AG-BECEO21T3XDXFTVP71YMMZ8IHA7UCACME`
+- **Fee Payer Account**: `0xf1d9f5c0f7a2f4d0460daf60abbaf08be82ae80cab278db33b50595cfe2f4150`
+- **Sponsored Function**: `mint_random_nft` - Users pay zero fees for NFT claiming
+- **Contract Coverage**: 1 contract properly configured for sponsorship
+
+#### **Technical Integration**
+```typescript
+// Gas Station Transaction Submitter
+const gasStationTransactionSubmitter = new GasStationTransactionSubmitter({
+  network: NETWORK,
+  apiKey: GAS_STATION_API_KEY,
+});
+
+// Aptos Config with Gas Station Plugin
+const config = new AptosConfig({ 
+  network: NETWORK, 
+  clientConfig: { API_KEY: APTOS_API_KEY },
+  pluginSettings: {
+    TRANSACTION_SUBMITTER: gasStationTransactionSubmitter,
+  },
+});
+```
+
+### 🛠️ **Implementation Journey & Challenges**
+
+This integration required extensive troubleshooting and multiple approaches. **See [GAS_STATION_IMPLEMENTATION.md](./GAS_STATION_IMPLEMENTATION.md) for complete technical details.**
+
+### 🚀 **User Experience Improvements**
+
+**Before v3.1.0**:
+- ❌ Users paid small gas fees (~$0.001) for NFT claims
+- ✅ Functional but had financial barrier
+
+**After v3.1.0**:
+- ✅ **Zero network fees** for all NFT claims
+- ✅ True Web2-like user experience
+- ✅ No barriers to entry for new users
+- ✅ Gas Station handles all transaction costs
+
+### 📦 **Dependencies Added**
+```bash
+npm install @aptos-labs/gas-station-client@latest
+```
+
+### 🎯 **Success Metrics**
+
+- ✅ **Gas Station Configured**: Aptos Build dashboard shows "Contracts: 1"
+- ✅ **Zero-Fee Claims**: Users pay $0.00 for NFT transactions
+- ✅ **Seamless Integration**: No changes to user interface required
+- ✅ **Production Ready**: Live deployment with sponsored transactions
+
+---
+
 ## v3.0.1 - Critical NFT Ownership Transfer Fix (August 7, 2025)
 
 **Release Date**: August 7, 2025  
