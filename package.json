@@ -12,6 +12,7 @@
     "fmt": "npm run _fmt -- --write"
   },
   "dependencies": {
+    "@aptos-labs/gas-station-client": "^2.0.2",
     "@aptos-labs/ts-sdk": "latest",
     "@aptos-labs/wallet-adapter-ant-design": "latest",
     "@aptos-labs/wallet-adapter-react": "latest",
