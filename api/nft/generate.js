@@ -17,8 +17,10 @@ module.exports = (req, res) => {
     });
   }
   
-  // Handle URL decoding for words parameter
-  const decodedWords = typeof words === 'string' ? words : String(words);
+  // Handle URL decoding for words parameter (may be double-encoded from data URI)
+  let decodedWords = typeof words === 'string' ? words : String(words);
+  // Handle double-encoded URLs (%2520 -> %20 -> space)
+  decodedWords = decodeURIComponent(decodedWords.replace(/%2520/g, '%20'));
 
   // Generate SVG based on shape
   const getShapeSVG = (shapeName) => {
