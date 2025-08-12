@@ -4,6 +4,42 @@ A comprehensive evolution log showing the transformation from MVP concept to pro
 
 ---
 
+## 🚀 v3.3.0 - Major Randomization & Content Expansion (August 12, 2025)
+
+**Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)  
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**  
+**Status**: ✅ **MAJOR RANDOMIZATION & CONTENT UPGRADE**
+
+### 💥 Critical Problems Solved
+**Consecutive Shape Duplicates**: Fixed hash-based randomization eliminating patterns like NFTs #37-40 having identical shapes  
+**Garbage NFT Names**: Fixed "Retro NFT #$" display issue - now shows proper "Retro NFT #42"  
+**Limited Content Variety**: Expanded from 5 to 13 colors and 40 to 100 words for massive variety increase
+
+### ✨ Major Improvements
+- **🎨 Content Expansion**: 13 colors (160% more) + 100 words (150% more) = 3,963% more unique combinations
+- **🔀 Hash-Based Randomization**: Separate domains eliminate consecutive duplicates while preserving rarity
+- **🏷️ Fixed NFT Names**: Proper number-to-string conversion for readable token names
+- **📊 Quality Assurance**: Maintains logarithmic shape rarity (Circle 20% → Infinity 0.63%)
+
+### 🛠️ Technical Implementation
+```move
+// Hash-based randomization with separate domains
+let bg_seed = seed + (token_id << 4) + 0x1000;     // Background colors
+let shape_seed = seed + (token_id << 8) + 0x2000;   // Shape selection  
+let word_base_seed = seed + (token_id << 16) + 0x3000; // Word combinations
+```
+
+### 📊 Impact Metrics
+| Aspect | Before (v3.2.0) | After (v3.3.0) | Improvement |
+|--------|------------------|-----------------|-------------|
+| **Unique Combinations** | ~4.16M | ~169M | **3,963% increase** |
+| **Background Colors** | 5 | 13 | **160% more variety** |
+| **Word Vocabulary** | 40 | 100 | **150% expansion** |
+| **Consecutive Duplicates** | ❌ Present | ✅ Eliminated | **Pattern-free** |
+| **NFT Names** | ❌ Garbage | ✅ Readable | **Fixed display** |
+
+---
+
 ## 🚀 v3.2.0 - NFT Explorer Image Display Fix (August 12, 2025)
 
 **Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)  
@@ -239,11 +275,12 @@ v1.0.0: Basic Concept → v2.0.0: Individual Collections → v3.0.0: Shared Coll
 ```
 
 ### Key Metrics Progression
-| Version | Gas Cost | User Steps | Time to Mint | Collection Model |
-|---------|----------|------------|--------------|------------------|
-| v1.0.0 | Unknown | Multiple | Unknown | Concept |
-| v2.0.0 | ~6,200 | 2 steps | ~30 sec | Individual |
-| v3.0.0 | ~1,676 | 1 step | ~10 sec | Shared |
+| Version | Gas Cost | User Steps | Time to Mint | Collection Model | Content Variety |
+|---------|----------|------------|--------------|------------------|----------------|
+| v1.0.0 | Unknown | Multiple | Unknown | Concept | Basic |
+| v2.0.0 | ~6,200 | 2 steps | ~30 sec | Individual | 5 colors, 40 words |
+| v3.0.0 | ~1,676 | 1 step | ~10 sec | Shared | 5 colors, 40 words |
+| v3.3.0 | ~1,676 | 1 step | ~10 sec | Shared | **13 colors, 100 words** |
 
 ### Technical Maturity
 - **v1.0.0**: Learning and experimentation
@@ -288,7 +325,8 @@ Transform the Retro NFT Generator into a comprehensive NFT ecosystem on Aptos, s
 
 ---
 
-**Current Status**: Production-ready dApp successfully deployed and optimized for mass adoption. Ready for community growth and potential mainnet deployment.
+**Current Status**: Production-ready dApp with enhanced randomization and massive content variety. Fixed critical user experience issues and ready for scaled adoption.
 
 **Live Demo**: [https://www.aptosnft.com/](https://www.aptosnft.com/)  
-**Latest Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)
+**Latest Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)  
+**Version**: v3.3.0 - Major randomization and content improvements deployed
