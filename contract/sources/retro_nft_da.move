@@ -397,28 +397,35 @@ module retro_nft::retro_nft_generator_da {
         encoded
     }
 
-    // Create JSON metadata URI
-    fun create_token_uri(name: String, description: String, metadata: NFTMetadata): String {
-        let token_uri = string::utf8(b"data:application/json,{\"name\":\"");
-        string::append(&mut token_uri, name);
-        string::append(&mut token_uri, string::utf8(b"\",\"description\":\""));
-        string::append(&mut token_uri, description);
-        string::append(&mut token_uri, string::utf8(b"\",\"image\":\""));
+    // Create HTTP metadata URI (industry standard approach)
+    fun create_token_uri(_name: String, _description: String, metadata: NFTMetadata): String {
+        let token_uri = string::utf8(b"https://www.aptosnft.com/api/nft/metadata/");
         
-        // Generate unique image URL based on NFT attributes and encode for data URI
-        let image_url = generate_image_url(metadata);
-        let encoded_image_url = url_encode_for_data_uri(image_url);
-        string::append(&mut token_uri, encoded_image_url);
+        // Convert token ID to string and append
+        let token_id_str = to_string(metadata.token_id);
+        string::append(&mut token_uri, token_id_str);
         
-        string::append(&mut token_uri, string::utf8(b"\",\"attributes\":["));
-        string::append(&mut token_uri, string::utf8(b"{\"trait_type\":\"Background Color\",\"value\":\""));
-        string::append(&mut token_uri, metadata.background_color);
-        string::append(&mut token_uri, string::utf8(b"\"},{\"trait_type\":\"Shape\",\"value\":\""));
-        string::append(&mut token_uri, metadata.shape);
-        string::append(&mut token_uri, string::utf8(b"\"},{\"trait_type\":\"Words\",\"value\":\""));
-        string::append(&mut token_uri, metadata.word_combination);
-        string::append(&mut token_uri, string::utf8(b"\"}]}"));
         token_uri
+    }
+
+    // Helper function to convert u64 to string
+    fun to_string(value: u64): String {
+        if (value == 0) {
+            return string::utf8(b"0")
+        };
+        
+        let buffer = vector::empty<u8>();
+        let temp_value = value;
+        
+        while (temp_value > 0) {
+            let digit = ((temp_value % 10) as u8) + 48; // Convert to ASCII
+            vector::push_back(&mut buffer, digit);
+            temp_value = temp_value / 10;
+        };
+        
+        // Reverse the buffer since we built it backwards
+        vector::reverse(&mut buffer);
+        string::utf8(buffer)
     }
 
     // View functions - use shared collection address
