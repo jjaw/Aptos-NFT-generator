@@ -176,7 +176,7 @@ module retro_nft::retro_nft_generator_da {
         
         // Create NFT name and description
         let nft_name = string::utf8(b"Retro NFT #");
-        string::append(&mut nft_name, string::utf8(std::bcs::to_bytes(&token_id)));
+        string::append(&mut nft_name, to_string(token_id));
         
         let nft_description = string::utf8(b"A unique retro 80s NFT with ");
         string::append(&mut nft_description, metadata.background_color);
