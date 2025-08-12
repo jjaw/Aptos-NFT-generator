@@ -7,7 +7,7 @@ A **production-ready** full-stack dApp built on Aptos blockchain featuring a **s
 *Connect your Aptos wallet and mint your retro NFT in seconds!*
 
 ![Retro NFT Generator](https://img.shields.io/badge/Aptos-NFT_Generator-00D4AA?style=for-the-badge&logo=aptos)
-![Version](https://img.shields.io/badge/version-3.0.1-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-3.3.0-blue?style=for-the-badge)
 ![Network](https://img.shields.io/badge/network-testnet-orange?style=for-the-badge)
 ![Status](https://img.shields.io/badge/status-Production_Ready-green?style=for-the-badge)
 
@@ -71,9 +71,9 @@ A **production-ready** full-stack dApp built on Aptos blockchain featuring a **s
 
 ### 🎨 NFT Generation
 - **Random Generation**: Each NFT has unique combinations of:
-  - 5 retro background colors (Neon Pink, Electric Blue, Cyber Purple, Laser Green, Sunset Orange)
+  - 13 retro background colors (Neon Pink, Electric Blue, Cyber Purple, Laser Green, Sunset Orange, Acid Yellow, Hot Magenta, Plasma Cyan, Retro Red, Volt Lime, Neon Violet, Chrome Silver, Golden Amber)
   - 13 geometric shapes with logarithmic rarity distribution (Circle → Infinity: 20% → 0.63%)
-  - 3 random 4-letter tech words from curated cyberpunk vocabulary (40 words total)
+  - 3 random 4-letter tech words from expanded cyberpunk vocabulary (100 words total)
 - **Limited Supply**: Maximum 10,000 NFTs per collection
 - **Rarity System**: Weighted probability distribution for shape rarity
 - **Metadata Standards**: JSON embedded with trait attributes for marketplace compatibility
@@ -285,12 +285,20 @@ subdir = "aptos-token-objects"
 
 ## 🎨 NFT Attributes
 
-### Background Colors (5 options, equal probability)
+### Background Colors (13 options, equal probability)
 - **Neon Pink**: `#FF0080`
 - **Electric Blue**: `#0080FF`
 - **Cyber Purple**: `#8000FF`
 - **Laser Green**: `#00FF80`
 - **Sunset Orange**: `#FF8000`
+- **Acid Yellow**: `#FFFF00`
+- **Hot Magenta**: `#FF0040`
+- **Plasma Cyan**: `#00FFFF`
+- **Retro Red**: `#FF4000`
+- **Volt Lime**: `#80FF00`
+- **Neon Violet**: `#4000FF`
+- **Chrome Silver**: `#C0C0C0`
+- **Golden Amber**: `#FFBF00`
 
 ### Shapes (13 options, logarithmic rarity)
 | Shape | Rarity | Probability |
@@ -310,8 +318,8 @@ subdir = "aptos-token-objects"
 | Infinity | Mythic | 0.63% |
 
 ### Word Combinations
-3 random words selected from 40 cyberpunk/tech terms:
-`NEON, WAVE, GLOW, BEAM, FLUX, SYNC, GRID, CODE, BYTE, HACK, ECHO, VIBE, NOVA, ZETA, APEX, CORE, EDGE, FLOW, HYPE, IRIS, JADE, KILO, LOOP, MAZE, NEXT, OMNI, PACE, QUAD, RAVE, SAGE, TECH, UNIT, VOID, WARP, XRAY, YARN, ZOOM, BOLT, CALM, DAWN`
+3 random words selected from 100 cyberpunk/tech terms:
+`NEON, WAVE, GLOW, BEAM, FLUX, SYNC, GRID, CODE, BYTE, HACK, ECHO, VIBE, NOVA, ZETA, APEX, CORE, EDGE, FLOW, HYPE, IRIS, JADE, KILO, LOOP, MAZE, NEXT, OMNI, PACE, QUAD, RAVE, SAGE, TECH, UNIT, VOID, WARP, XRAY, YARN, ZOOM, BOLT, CALM, DAWN, FURY, GATE, HERO, ICON, JACK, KICK, LOCK, MECH, NODE, OPEN, PEAK, QUIT, RISK, SLIM, TANK, USER, VERY, WILD, XBOX, YEAR, ZERO, ATOM, BLUE, CHIP, DATA, EPIC, FAST, GOLD, HARD, ITEM, JOLT, KEEP, LOAD, MEGA, NANO, OPAL, PLUG, QUIZ, RUSH, SOUL, TIDE, UBER, VOLT, WISE, OXEN, YOGI, ZINC, ALTO, BETA, CURE, DUNE, ECHO, FIRE, GURU, HOPE, ICON, JUMP, KING, LION, MINT, NOVA, ONYX, PURE, QUIT`
 
 ## 🔍 Explorer Integration
 
@@ -324,10 +332,10 @@ Your NFTs will be visible on the Aptos Explorer:
 ## 📚 Technical Details
 
 ### Randomization Algorithm
-- **Seed Generation**: `timestamp + address_bytes_to_u64`
-- **Background**: Simple modulo (`seed % 5`)
-- **Shape**: Weighted selection using cumulative probability arrays
-- **Words**: Three independent selections with different prime modifiers
+- **Seed Generation**: `timestamp + address_bytes_to_u64 + (token_id * 12345)`
+- **Background**: Hash-based randomization (`(seed + (token_id << 4) + 0x1000) % 13`)
+- **Shape**: Hash-based weighted selection using cumulative probability arrays
+- **Words**: Hash-based selections with XOR operations for better distribution
 
 ### Gas Optimization
 - Efficient metadata generation using string concatenation
@@ -423,7 +431,7 @@ mcp__aptos-mcp__list_aptos_resources
 - **✅ Zero Setup Required**: Streamlined user experience
 - **🚀 Live Site**: [https://www.aptosnft.com/](https://www.aptosnft.com/)
 
-**Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet) | **Version**: 3.0.1 | **Network**: Aptos Testnet
+**Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet) | **Version**: 3.3.0 | **Network**: Aptos Testnet
 
 **📚 Version History**: See [VERSION_HISTORY.md](VERSION_HISTORY.md) for complete evolution from MVP to production-ready dApp
 
