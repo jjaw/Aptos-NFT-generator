@@ -298,6 +298,62 @@ module retro_nft::retro_nft_generator_da {
         length - 1
     }
 
+    // Generate compact SVG shape based on shape name
+    fun get_shape_svg(shape: String): String {
+        let shape_bytes = *string::bytes(&shape);
+        
+        if (shape_bytes == b"Circle") {
+            string::utf8(b"<circle cx=\"200\" cy=\"200\" r=\"60\" fill=\"white\" opacity=\"0.9\"/>")
+        } else if (shape_bytes == b"Square") {
+            string::utf8(b"<rect x=\"140\" y=\"140\" width=\"120\" height=\"120\" fill=\"white\" opacity=\"0.9\"/>")
+        } else if (shape_bytes == b"Triangle") {
+            string::utf8(b"<polygon points=\"200,140 260,260 140,260\" fill=\"white\" opacity=\"0.9\"/>")
+        } else if (shape_bytes == b"Diamond") {
+            string::utf8(b"<polygon points=\"200,140 260,200 200,260 140,200\" fill=\"white\" opacity=\"0.9\"/>")
+        } else if (shape_bytes == b"Star") {
+            string::utf8(b"<polygon points=\"200,140 210,170 240,170 220,190 230,220 200,200 170,220 180,190 160,170 190,170\" fill=\"white\" opacity=\"0.9\"/>")
+        } else if (shape_bytes == b"Pentagon") {
+            string::utf8(b"<polygon points=\"200,140 230,160 220,200 180,200 170,160\" fill=\"white\" opacity=\"0.9\"/>")
+        } else if (shape_bytes == b"Hexagon") {
+            string::utf8(b"<polygon points=\"200,140 230,160 230,200 200,220 170,200 170,160\" fill=\"white\" opacity=\"0.9\"/>")
+        } else if (shape_bytes == b"Octagon") {
+            string::utf8(b"<polygon points=\"180,145 220,145 235,160 235,200 220,215 180,215 165,200 165,160\" fill=\"white\" opacity=\"0.9\"/>")
+        } else if (shape_bytes == b"Cross") {
+            string::utf8(b"<polygon points=\"185,140 215,140 215,170 245,170 245,200 215,200 215,230 185,230 185,200 155,200 155,170 185,170\" fill=\"white\" opacity=\"0.9\"/>")
+        } else if (shape_bytes == b"Heart") {
+            string::utf8(b"<path d=\"M200,160 C190,150 175,150 170,165 C165,180 185,200 200,220 C215,200 235,180 230,165 C225,150 210,150 200,160\" fill=\"white\" opacity=\"0.9\"/>")
+        } else if (shape_bytes == b"Arrow") {
+            string::utf8(b"<polygon points=\"200,140 230,170 215,170 215,230 185,230 185,170 170,170\" fill=\"white\" opacity=\"0.9\"/>")
+        } else if (shape_bytes == b"Spiral") {
+            string::utf8(b"<path d=\"M200,140 Q230,140 230,170 Q230,200 200,200 Q170,200 170,170 Q170,155 185,155 Q200,155 200,170\" stroke=\"white\" stroke-width=\"6\" fill=\"none\" opacity=\"0.9\"/>")
+        } else if (shape_bytes == b"Infinity") {
+            string::utf8(b"<path d=\"M170,190 Q185,175 200,190 Q215,205 230,190 Q215,175 200,190 Q185,205 170,190\" stroke=\"white\" stroke-width=\"6\" fill=\"none\" opacity=\"0.9\"/>")
+        } else {
+            // Default fallback
+            string::utf8(b"<circle cx=\"200\" cy=\"200\" r=\"60\" fill=\"white\" opacity=\"0.9\"/>")
+        }
+    }
+
+    // Generate image URL with metadata parameters
+    fun generate_image_url(metadata: NFTMetadata): String {
+        // Create a compact URL with parameters for a hosted image generator
+        let image_url = string::utf8(b"https://www.aptosnft.com/api/nft/generate?bg=");
+        
+        // Add background color (remove # prefix for URL)
+        let color_without_hash = string::sub_string(&metadata.background_color, 1, string::length(&metadata.background_color));
+        string::append(&mut image_url, color_without_hash);
+        
+        // Add shape parameter
+        string::append(&mut image_url, string::utf8(b"&shape="));
+        string::append(&mut image_url, metadata.shape);
+        
+        // Add words parameter
+        string::append(&mut image_url, string::utf8(b"&words="));
+        string::append(&mut image_url, metadata.word_combination);
+        
+        image_url
+    }
+
     // Create JSON metadata URI
     fun create_token_uri(name: String, description: String, metadata: NFTMetadata): String {
         let token_uri = string::utf8(b"data:application/json,{\"name\":\"");
@@ -305,8 +361,11 @@ module retro_nft::retro_nft_generator_da {
         string::append(&mut token_uri, string::utf8(b"\",\"description\":\""));
         string::append(&mut token_uri, description);
         string::append(&mut token_uri, string::utf8(b"\",\"image\":\""));
-        // Add a simple placeholder image URL (you can replace with actual hosted image)
-        string::append(&mut token_uri, string::utf8(b"https://via.placeholder.com/400x400/FF0080/FFFFFF?text=Retro+NFT"));
+        
+        // Generate unique image URL based on NFT attributes
+        let image_url = generate_image_url(metadata);
+        string::append(&mut token_uri, image_url);
+        
         string::append(&mut token_uri, string::utf8(b"\",\"attributes\":["));
         string::append(&mut token_uri, string::utf8(b"{\"trait_type\":\"Background Color\",\"value\":\""));
         string::append(&mut token_uri, metadata.background_color);
