@@ -144,6 +144,117 @@ Each deployment builds successfully but the API endpoint remains inaccessible.
 
 ---
 
+## v3.2.0 Technical Implementation Details - HTTP Metadata API
+
+### 🛠️ **Detailed Technical Implementation**
+
+After identifying that data URI metadata format was causing parsing issues in NFT explorers, we implemented industry-standard HTTP metadata endpoints. Here's the complete technical implementation:
+
+#### **1. HTTP Metadata API Endpoint (`/api/nft/metadata.js`)**
+```javascript
+module.exports = (req, res) => {
+  // Allow GET and HEAD requests (HEAD is used by NFT explorers)
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // For HEAD requests, only send headers
+  if (req.method === 'HEAD') {
+    return res.status(200).end();
+  }
+
+  const { id } = req.query;
+  const tokenId = parseInt(id);
+  
+  const metadata = generateMetadata(tokenId);
+  
+  const nftMetadata = {
+    name: `Retro NFT #${tokenId}`,
+    description: `A unique retro 80s NFT with ${metadata.backgroundColor} background...`,
+    image: imageUrl,
+    attributes: [
+      { trait_type: "Background Color", value: metadata.backgroundColor },
+      { trait_type: "Shape", value: metadata.shape },
+      { trait_type: "Words", value: metadata.wordCombination }
+    ]
+  };
+
+  // Set proper headers for explorer compatibility
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Cache-Control', 'public, max-age=31536000');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  
+  return res.status(200).json(nftMetadata);
+};
+```
+
+#### **2. Smart Contract HTTP URL Generation**
+```move
+// NEW: HTTP metadata endpoint approach
+fun create_token_uri(_name: String, _description: String, metadata: NFTMetadata): String {
+    let token_uri = string::utf8(b"https://www.aptosnft.com/api/nft/metadata?id=");
+    let token_id_str = to_string(metadata.token_id);
+    string::append(&mut token_uri, token_id_str);
+    token_uri
+}
+```
+
+#### **3. URL Encoding Handling**
+```javascript
+// Handle URL decoding for words parameter (may be double-encoded from data URI)
+let decodedWords = typeof words === 'string' ? words : String(words);
+// Handle double-encoded URLs (%2520 -> %20 -> space)
+decodedWords = decodeURIComponent(decodedWords.replace(/%2520/g, '%20'));
+```
+
+#### **4. Alternative RESTful Endpoint (`/api/nft/metadata/[id].js`)**
+For clean URL structure: `https://www.aptosnft.com/api/nft/metadata/29`
+
+#### **5. Complete Testing Procedure**
+```bash
+# 1. Test metadata endpoint
+curl "https://www.aptosnft.com/api/nft/metadata?id=29"
+
+# Expected JSON response:
+# {
+#   "name": "Retro NFT #29",
+#   "image": "https://www.aptosnft.com/api/nft/generate?bg=FF0080&shape=Star&words=GRID%20IRIS%20FLOW"
+# }
+
+# 2. Test image generation from metadata
+curl "https://www.aptosnft.com/api/nft/generate?bg=FF0080&shape=Star&words=GRID%20IRIS%20FLOW"
+
+# Expected: SVG content
+```
+
+#### **6. What Worked vs What Didn't**
+
+**❌ What Didn't Work:**
+- **Data URI Format**: `data:application/json,{...}` had JSON parsing truncation
+- **TypeScript ES Modules**: Caused 404 errors in Vercel deployment
+- **Complex URL Encoding**: Escape characters in data URIs failed
+- **Missing HEAD Support**: Explorers couldn't verify image availability
+
+**✅ What Worked:**
+- **HTTP Endpoints**: Industry standard JSON metadata serving
+- **JavaScript CommonJS**: Reliable Vercel serverless function format
+- **Proper Headers**: Content-Type and CORS for explorer compatibility  
+- **HEAD Request Support**: Image verification for NFT explorers
+
+#### **7. Working Architecture Flow**
+```
+Token URI: https://www.aptosnft.com/api/nft/metadata?id=29
+↓
+Metadata JSON: {
+  "name": "Retro NFT #29",
+  "image": "https://www.aptosnft.com/api/nft/generate?bg=FF0080&shape=Star&words=GRID%20IRIS%20FLOW"
+}
+↓
+SVG Image: Custom retro-themed NFT image
+```
+
+---
+
 ## v3.3.0 Update - Critical Randomization & Display Fixes (August 12, 2025)
 
 ### 🚨 **Additional Issues Discovered & Resolved**
