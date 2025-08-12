@@ -1,7 +1,9 @@
 // Vercel API Route for NFT Image Generation
 // URL: https://www.aptosnft.com/api/nft/generate
 
-export default function handler(req, res) {
+import { VercelRequest, VercelResponse } from '@vercel/node';
+
+export default function handler(req: VercelRequest, res: VercelResponse) {
   // Only allow GET requests
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
