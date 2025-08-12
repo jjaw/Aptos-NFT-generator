@@ -23,7 +23,7 @@ export function GET(request: Request) {
 
   // Generate SVG based on shape
   const getShapeSVG = (shapeName: string) => {
-    const shapes = {
+    const shapes: { [key: string]: string } = {
       'Circle': '<circle cx="200" cy="200" r="60" fill="white" opacity="0.9"/>',
       'Square': '<rect x="140" y="140" width="120" height="120" fill="white" opacity="0.9"/>',
       'Triangle': '<polygon points="200,140 260,260 140,260" fill="white" opacity="0.9"/>',
