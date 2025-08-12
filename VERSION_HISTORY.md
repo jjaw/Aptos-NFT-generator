@@ -55,7 +55,7 @@ let word_base_seed = seed + (token_id << 16) + 0x3000; // Word combinations
 - **🎨 Custom Image Display**: NFTs now show proper retro-themed SVG images in all wallet explorers
 - **📡 HTTP Metadata API**: Implemented proper JSON metadata endpoints following industry standards
 - **🔧 Explorer Compatibility**: Added HEAD request support and proper CORS headers
-- **📚 Complete Documentation**: Detailed implementation guide in `nft-on-explorer.md`
+- **📚 Complete Documentation**: Detailed implementation guide integrated into comprehensive `nft-in-wallet.md`
 
 ### 🛠️ Technical Implementation
 

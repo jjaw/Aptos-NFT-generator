@@ -187,7 +187,7 @@ module.exports = (req, res) => {
 
 ### 🔍 **Investigation Journey**
 
-This release involved extensive troubleshooting to solve the NFT image display problem. **See [nft-on-explorer.md](./nft-on-explorer.md) for complete technical details.**
+This release involved extensive troubleshooting to solve the NFT image display problem. **See [nft-in-wallet.md](./nft-in-wallet.md) for complete technical implementation details and the full development journey.**
 
 #### **Approaches That Failed ❌**
 1. **Data URI Format**: JSON parsing truncation at `{"name":"Retro NFT"`
@@ -219,7 +219,7 @@ This release involved extensive troubleshooting to solve the NFT image display p
 ### 📦 **Files Added**
 - `/api/nft/metadata.js` - Query parameter metadata endpoint
 - `/api/nft/metadata/[id].js` - Path parameter metadata endpoint  
-- `nft-on-explorer.md` - Complete implementation documentation
+- **Enhanced `nft-in-wallet.md`** - Complete implementation documentation integrated into comprehensive development journal
 
 ### 🎯 **Success Metrics**
 

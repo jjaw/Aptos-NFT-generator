@@ -417,7 +417,9 @@ mcp__aptos-mcp__list_aptos_resources
 
 ## 📞 Support
 
-- **Documentation**: Check [APTOS_LESSONS.md](APTOS_LESSONS.md) for detailed development insights
+- **Complete Development Journey**: See [nft-in-wallet.md](nft-in-wallet.md) for the full "zero to production" story with all technical challenges and solutions
+- **Version History**: Check [VERSION_HISTORY.md](VERSION_HISTORY.md) for detailed evolution from MVP to production-ready dApp
+- **Technical Insights**: Review [APTOS_LESSONS.md](APTOS_LESSONS.md) for MCP analysis and debugging lessons
 - **Issues**: Open an issue in this repository
 - **Community**: Join the Aptos Discord for general support
 
