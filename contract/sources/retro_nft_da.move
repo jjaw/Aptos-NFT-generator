@@ -260,8 +260,8 @@ module retro_nft::retro_nft_generator_da {
 
     // Generate random metadata for NFT
     fun generate_random_metadata(seed: u64, token_id: u64): NFTMetadata {
-        // Generate background color using hash-based randomization (13 colors)
-        let bg_seed = seed + (token_id << 4) + 0x1000;
+        // Generate background color using prime-multiplication entropy mixing (13 colors)
+        let bg_seed = (seed ^ (token_id * 982451)) * 1000037 ^ 0x1000;
         let bg_index = (bg_seed % 13);
         let background_color = if (bg_index == 0) {
             string::utf8(NEON_PINK)
@@ -291,14 +291,14 @@ module retro_nft::retro_nft_generator_da {
             string::utf8(GOLDEN_AMBER)
         };
 
-        // Generate shape using hash-based randomization for better distribution
-        let shape_seed = seed + (token_id << 8) + 0x2000;
+        // Generate shape using prime-multiplication entropy mixing for dramatic variance
+        let shape_seed = (seed ^ (token_id * 999983)) * 1000003 ^ 0x2000;
         let shape_rand = (shape_seed % 10000);
         let shape_index = get_shape_index(shape_rand);
         let shape = string::utf8(*vector::borrow(&SHAPE_NAMES, shape_index));
 
-        // Generate three random words using hash-based approach
-        let word_base_seed = seed + (token_id << 16) + 0x3000;
+        // Generate three random words using prime-multiplication entropy mixing
+        let word_base_seed = (seed ^ (token_id * 999979)) * 1000039 ^ 0x3000;
         let word1_index = (word_base_seed % vector::length(&FOUR_LETTER_WORDS));
         let word2_index = ((word_base_seed ^ (token_id * 1000003)) % vector::length(&FOUR_LETTER_WORDS));
         let word3_index = ((word_base_seed ^ (token_id * 2000003)) % vector::length(&FOUR_LETTER_WORDS));
@@ -562,5 +562,37 @@ module retro_nft::retro_nft_generator_da {
         // Just verify that they generate without errors
         assert!(string::length(&metadata1.background_color) > 0, 4);
         assert!(string::length(&metadata2.background_color) > 0, 5);
+    }
+    
+    #[test]
+    fun test_consecutive_nft_randomization() {
+        // Test the exact scenario that was failing: consecutive NFTs 45-50
+        let base_seed = 1691234567u64; // Representative timestamp
+        
+        let metadata_45 = generate_random_metadata(base_seed, 45);
+        let metadata_46 = generate_random_metadata(base_seed, 46);
+        let metadata_47 = generate_random_metadata(base_seed, 47);
+        let metadata_48 = generate_random_metadata(base_seed, 48);
+        let metadata_49 = generate_random_metadata(base_seed, 49);
+        let metadata_50 = generate_random_metadata(base_seed, 50);
+        
+        // Extract shapes
+        let shape_45 = metadata_45.shape;
+        let shape_46 = metadata_46.shape;
+        let shape_47 = metadata_47.shape;
+        let shape_48 = metadata_48.shape;
+        let shape_49 = metadata_49.shape;
+        let shape_50 = metadata_50.shape;
+        
+        // Count unique shapes - simple approach
+        let all_same = (shape_45 == shape_46) && (shape_46 == shape_47) && 
+                      (shape_47 == shape_48) && (shape_48 == shape_49) && (shape_49 == shape_50);
+        
+        // Assert that NOT ALL shapes are identical (the bug we're fixing)
+        assert!(!all_same, 100); // Error code 100 means all shapes were identical - randomization failed
+        
+        // Also test that we have some variation in first 4 (the original failing pattern)
+        let first_four_same = (shape_45 == shape_46) && (shape_46 == shape_47) && (shape_47 == shape_48);
+        assert!(!first_four_same, 101); // Error code 101 means first 4 shapes identical - still failing
     }
 }

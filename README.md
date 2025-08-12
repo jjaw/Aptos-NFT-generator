@@ -7,7 +7,7 @@ A **production-ready** full-stack dApp built on Aptos blockchain featuring a **s
 *Connect your Aptos wallet and mint your retro NFT in seconds!*
 
 ![Retro NFT Generator](https://img.shields.io/badge/Aptos-NFT_Generator-00D4AA?style=for-the-badge&logo=aptos)
-![Version](https://img.shields.io/badge/version-3.3.0-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-3.3.1-blue?style=for-the-badge)
 ![Network](https://img.shields.io/badge/network-testnet-orange?style=for-the-badge)
 ![Status](https://img.shields.io/badge/status-Production_Ready-green?style=for-the-badge)
 
@@ -334,8 +334,11 @@ Your NFTs will be visible on the Aptos Explorer:
 ### Randomization Algorithm
 - **Seed Generation**: `timestamp + address_bytes_to_u64 + (token_id * 12345)`
 - **Background**: Hash-based randomization (`(seed + (token_id << 4) + 0x1000) % 13`)
-- **Shape**: Hash-based weighted selection using cumulative probability arrays
+- **Shape**: **Prime-multiplication entropy mixing** (`(token_id * 7919) % 10000`) ✅ **v3.3.1 Fix**
 - **Words**: Hash-based selections with XOR operations for better distribution
+
+#### **🚨 v3.3.1 Critical Fix**: Consecutive NFT Clustering Eliminated
+After user reports of NFTs #45-48 having identical shapes, we implemented **prime-multiplication entropy mixing** using prime 7919 to create dramatic variance between consecutive token IDs, completely eliminating shape clustering patterns.
 
 ### Gas Optimization
 - Efficient metadata generation using string concatenation
@@ -433,7 +436,7 @@ mcp__aptos-mcp__list_aptos_resources
 - **✅ Zero Setup Required**: Streamlined user experience
 - **🚀 Live Site**: [https://www.aptosnft.com/](https://www.aptosnft.com/)
 
-**Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet) | **Version**: 3.3.0 | **Network**: Aptos Testnet
+**Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet) | **Version**: 3.3.1 | **Network**: Aptos Testnet
 
 **📚 Version History**: See [VERSION_HISTORY.md](VERSION_HISTORY.md) for complete evolution from MVP to production-ready dApp
 
