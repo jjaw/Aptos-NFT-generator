@@ -399,7 +399,7 @@ module retro_nft::retro_nft_generator_da {
 
     // Create HTTP metadata URI (industry standard approach)
     fun create_token_uri(_name: String, _description: String, metadata: NFTMetadata): String {
-        let token_uri = string::utf8(b"https://www.aptosnft.com/api/nft/metadata/");
+        let token_uri = string::utf8(b"https://www.aptosnft.com/api/nft/metadata?id=");
         
         // Convert token ID to string and append
         let token_id_str = to_string(metadata.token_id);
