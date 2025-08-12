@@ -11,6 +11,9 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
   // Extract parameters from query string
   const { bg, shape, words } = req.query;
+  
+  // Handle URL decoding for words parameter (spaces may come as + or %20)
+  const decodedWords = typeof words === 'string' ? decodeURIComponent(words.replace(/\+/g, ' ')) : words;
 
   // Validate required parameters
   if (!bg || !shape || !words) {
@@ -45,7 +48,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     <rect width="400" height="400" fill="#${bg}"/>
     ${getShapeSVG(shape)}
     <rect x="50" y="320" width="300" height="40" rx="5" fill="black" opacity="0.7"/>
-    <text x="200" y="345" text-anchor="middle" fill="white" font-family="monospace" font-size="16" font-weight="bold">${words.replace(/\+/g, ' ')}</text>
+    <text x="200" y="345" text-anchor="middle" fill="white" font-family="monospace" font-size="16" font-weight="bold">${decodedWords}</text>
   </svg>`;
 
   // Set headers for SVG response
