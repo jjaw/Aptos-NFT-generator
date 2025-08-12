@@ -3,7 +3,7 @@ name = "retro_nft_generator_da"
 version = "2.0.0"
 
 [addresses]
-retro_nft = "_"
+retro_nft = "0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b"
 
 [dev-addresses]
 retro_nft = "0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b"
