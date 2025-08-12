@@ -167,10 +167,11 @@ module retro_nft::retro_nft_generator_da {
         } else {
             12345u64
         };
-        let seed = current_time + addr_u64;
-        
         // Generate random NFT metadata
         let token_id = collection_data.total_minted + 1;
+        
+        // Include token_id in seed to ensure uniqueness across rapid mints
+        let seed = current_time + addr_u64 + (token_id * 12345);
         let metadata = generate_random_metadata(seed, token_id);
         
         // Create NFT name and description
