@@ -334,6 +334,25 @@ module retro_nft::retro_nft_generator_da {
         }
     }
 
+    // URL encode spaces as %20 for proper URL formatting
+    fun url_encode_spaces(text: String): String {
+        let encoded = string::utf8(b"");
+        let length = string::length(&text);
+        let i = 0;
+        
+        while (i < length) {
+            let char_bytes = string::sub_string(&text, i, i + 1);
+            if (char_bytes == string::utf8(b" ")) {
+                string::append(&mut encoded, string::utf8(b"%20"));
+            } else {
+                string::append(&mut encoded, char_bytes);
+            };
+            i = i + 1;
+        };
+        
+        encoded
+    }
+
     // Generate image URL with metadata parameters
     fun generate_image_url(metadata: NFTMetadata): String {
         // Create a compact URL with parameters for a hosted image generator
@@ -347,9 +366,10 @@ module retro_nft::retro_nft_generator_da {
         string::append(&mut image_url, string::utf8(b"&shape="));
         string::append(&mut image_url, metadata.shape);
         
-        // Add words parameter
+        // Add words parameter (URL encode spaces as %20)
         string::append(&mut image_url, string::utf8(b"&words="));
-        string::append(&mut image_url, metadata.word_combination);
+        let encoded_words = url_encode_spaces(metadata.word_combination);
+        string::append(&mut image_url, encoded_words);
         
         image_url
     }
