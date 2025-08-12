@@ -2,8 +2,8 @@
 // URL: https://www.aptosnft.com/api/nft/generate
 
 module.exports = (req, res) => {
-  // Only allow GET requests
-  if (req.method !== 'GET') {
+  // Allow GET and HEAD requests (HEAD is used by NFT explorers to verify images)
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
@@ -53,7 +53,13 @@ module.exports = (req, res) => {
   res.setHeader('Content-Type', 'image/svg+xml');
   res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
   res.setHeader('Access-Control-Allow-Origin', '*'); // Allow CORS for NFT wallets
+  res.setHeader('Content-Length', Buffer.byteLength(svg, 'utf8'));
 
-  // Return the SVG
+  // For HEAD requests, only send headers (no body)
+  if (req.method === 'HEAD') {
+    return res.status(200).end();
+  }
+
+  // Return the SVG for GET requests
   return res.send(svg);
 };
