@@ -29,12 +29,20 @@ module retro_nft::retro_nft_generator_da {
     const COLLECTION_URI: vector<u8> = b"https://retrowave.nft/collection/2025-01-08-unique";
     const MAX_SUPPLY: u64 = 10000;
 
-    // Background colors (5 options)
+    // Background colors (13 options)
     const NEON_PINK: vector<u8> = b"#FF0080";
     const ELECTRIC_BLUE: vector<u8> = b"#0080FF";
     const CYBER_PURPLE: vector<u8> = b"#8000FF";
     const LASER_GREEN: vector<u8> = b"#00FF80";
     const SUNSET_ORANGE: vector<u8> = b"#FF8000";
+    const ACID_YELLOW: vector<u8> = b"#FFFF00";
+    const HOT_MAGENTA: vector<u8> = b"#FF0040";
+    const PLASMA_CYAN: vector<u8> = b"#00FFFF";
+    const RETRO_RED: vector<u8> = b"#FF4000";
+    const VOLT_LIME: vector<u8> = b"#80FF00";
+    const NEON_VIOLET: vector<u8> = b"#4000FF";
+    const CHROME_SILVER: vector<u8> = b"#C0C0C0";
+    const GOLDEN_AMBER: vector<u8> = b"#FFBF00";
 
     // Shape probabilities (log scale decrease from 20%)
     const SHAPE_NAMES: vector<vector<u8>> = vector[
@@ -49,13 +57,21 @@ module retro_nft::retro_nft_generator_da {
         7663, 7747, 7810
     ];
 
-    // Four-letter words for combinations
+    // Four-letter words for combinations (100 words)
     const FOUR_LETTER_WORDS: vector<vector<u8>> = vector[
         b"NEON", b"WAVE", b"GLOW", b"BEAM", b"FLUX", b"SYNC", b"GRID", b"CODE",
         b"BYTE", b"HACK", b"ECHO", b"VIBE", b"NOVA", b"ZETA", b"APEX", b"CORE",
         b"EDGE", b"FLOW", b"HYPE", b"IRIS", b"JADE", b"KILO", b"LOOP", b"MAZE",
         b"NEXT", b"OMNI", b"PACE", b"QUAD", b"RAVE", b"SAGE", b"TECH", b"UNIT",
-        b"VOID", b"WARP", b"XRAY", b"YARN", b"ZOOM", b"BOLT", b"CALM", b"DAWN"
+        b"VOID", b"WARP", b"XRAY", b"YARN", b"ZOOM", b"BOLT", b"CALM", b"DAWN",
+        b"FURY", b"GATE", b"HERO", b"ICON", b"JACK", b"KICK", b"LOCK", b"MECH",
+        b"NODE", b"OPEN", b"PEAK", b"QUIT", b"RISK", b"SLIM", b"TANK", b"USER",
+        b"VERY", b"WILD", b"XBOX", b"YEAR", b"ZERO", b"ATOM", b"BLUE", b"CHIP",
+        b"DATA", b"EPIC", b"FAST", b"GOLD", b"HARD", b"ITEM", b"JOLT", b"KEEP",
+        b"LOAD", b"MEGA", b"NANO", b"OPAL", b"PLUG", b"QUIZ", b"RUSH", b"SOUL",
+        b"TIDE", b"UBER", b"VOLT", b"WISE", b"OXEN", b"YOGI", b"ZINC", b"ALTO",
+        b"BETA", b"CURE", b"DUNE", b"ECHO", b"FIRE", b"GURU", b"HOPE", b"ICON",
+        b"JUMP", b"KING", b"LION", b"MINT", b"NOVA", b"ONYX", b"PURE", b"QUIT"
     ];
 
     // Collection resource stored at shared address
@@ -244,8 +260,9 @@ module retro_nft::retro_nft_generator_da {
 
     // Generate random metadata for NFT
     fun generate_random_metadata(seed: u64, token_id: u64): NFTMetadata {
-        // Generate background color (simple modulo for 5 colors)
-        let bg_index = (seed % 5);
+        // Generate background color using hash-based randomization (13 colors)
+        let bg_seed = seed + (token_id << 4) + 0x1000;
+        let bg_index = (bg_seed % 13);
         let background_color = if (bg_index == 0) {
             string::utf8(NEON_PINK)
         } else if (bg_index == 1) {
@@ -254,20 +271,37 @@ module retro_nft::retro_nft_generator_da {
             string::utf8(CYBER_PURPLE)
         } else if (bg_index == 3) {
             string::utf8(LASER_GREEN)
-        } else {
+        } else if (bg_index == 4) {
             string::utf8(SUNSET_ORANGE)
+        } else if (bg_index == 5) {
+            string::utf8(ACID_YELLOW)
+        } else if (bg_index == 6) {
+            string::utf8(HOT_MAGENTA)
+        } else if (bg_index == 7) {
+            string::utf8(PLASMA_CYAN)
+        } else if (bg_index == 8) {
+            string::utf8(RETRO_RED)
+        } else if (bg_index == 9) {
+            string::utf8(VOLT_LIME)
+        } else if (bg_index == 10) {
+            string::utf8(NEON_VIOLET)
+        } else if (bg_index == 11) {
+            string::utf8(CHROME_SILVER)
+        } else {
+            string::utf8(GOLDEN_AMBER)
         };
 
-        // Generate shape using weighted probabilities
-        let shape_rand = ((seed / 7) % 10000);
+        // Generate shape using hash-based randomization for better distribution
+        let shape_seed = seed + (token_id << 8) + 0x2000;
+        let shape_rand = (shape_seed % 10000);
         let shape_index = get_shape_index(shape_rand);
         let shape = string::utf8(*vector::borrow(&SHAPE_NAMES, shape_index));
 
-        // Generate three random words
-        let word_seed = seed / 13;
-        let word1_index = (word_seed % vector::length(&FOUR_LETTER_WORDS));
-        let word2_index = ((word_seed / 17) % vector::length(&FOUR_LETTER_WORDS));
-        let word3_index = ((word_seed / 23) % vector::length(&FOUR_LETTER_WORDS));
+        // Generate three random words using hash-based approach
+        let word_base_seed = seed + (token_id << 16) + 0x3000;
+        let word1_index = (word_base_seed % vector::length(&FOUR_LETTER_WORDS));
+        let word2_index = ((word_base_seed ^ (token_id * 1000003)) % vector::length(&FOUR_LETTER_WORDS));
+        let word3_index = ((word_base_seed ^ (token_id * 2000003)) % vector::length(&FOUR_LETTER_WORDS));
         
         let word_combination = string::utf8(*vector::borrow(&FOUR_LETTER_WORDS, word1_index));
         string::append(&mut word_combination, string::utf8(b" "));
