@@ -1,7 +1,7 @@
 // Vercel API Route for NFT Image Generation
 // URL: https://www.aptosnft.com/api/nft/generate
 
-export default function handler(req: any, res: any) {
+module.exports = (req, res) => {
   // Only allow GET requests
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -21,8 +21,8 @@ export default function handler(req: any, res: any) {
   const decodedWords = typeof words === 'string' ? words : String(words);
 
   // Generate SVG based on shape
-  const getShapeSVG = (shapeName: string) => {
-    const shapes: { [key: string]: string } = {
+  const getShapeSVG = (shapeName) => {
+    const shapes = {
       'Circle': '<circle cx="200" cy="200" r="60" fill="white" opacity="0.9"/>',
       'Square': '<rect x="140" y="140" width="120" height="120" fill="white" opacity="0.9"/>',
       'Triangle': '<polygon points="200,140 260,260 140,260" fill="white" opacity="0.9"/>',
@@ -56,4 +56,4 @@ export default function handler(req: any, res: any) {
 
   // Return the SVG
   return res.send(svg);
-}
+};

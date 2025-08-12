@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/nft/generate.ts": {
+    "api/nft/generate.js": {
       "maxDuration": 10
     }
   },
