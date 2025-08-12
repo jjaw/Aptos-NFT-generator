@@ -1,25 +1,24 @@
 // Vercel API Route for NFT Image Generation
 // URL: https://www.aptosnft.com/api/nft/generate
 
-export function GET(request: Request) {
-  // Extract parameters from URL
-  const url = new URL(request.url);
-  const bg = url.searchParams.get('bg');
-  const shape = url.searchParams.get('shape');
-  const words = url.searchParams.get('words');
+export default function handler(req: any, res: any) {
+  // Only allow GET requests
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Extract parameters from query string
+  const { bg, shape, words } = req.query;
   
   // Validate required parameters
   if (!bg || !shape || !words) {
-    return new Response(JSON.stringify({ 
+    return res.status(400).json({ 
       error: 'Missing required parameters: bg, shape, words' 
-    }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' }
     });
   }
   
-  // Handle URL decoding for words parameter (already decoded by URLSearchParams)
-  const decodedWords = words;
+  // Handle URL decoding for words parameter
+  const decodedWords = typeof words === 'string' ? words : String(words);
 
   // Generate SVG based on shape
   const getShapeSVG = (shapeName: string) => {
@@ -50,13 +49,11 @@ export function GET(request: Request) {
     <text x="200" y="345" text-anchor="middle" fill="white" font-family="monospace" font-size="16" font-weight="bold">${decodedWords}</text>
   </svg>`;
 
-  // Return the SVG with proper headers
-  return new Response(svg, {
-    status: 200,
-    headers: {
-      'Content-Type': 'image/svg+xml',
-      'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
-      'Access-Control-Allow-Origin': '*' // Allow CORS for NFT wallets
-    }
-  });
+  // Set headers for SVG response
+  res.setHeader('Content-Type', 'image/svg+xml');
+  res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow CORS for NFT wallets
+
+  // Return the SVG
+  return res.send(svg);
 }
