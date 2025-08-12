@@ -1,5 +1,126 @@
 # Retro NFT Generator - Release Notes
 
+## v3.2.0 - NFT Explorer Image Display Fix (August 12, 2025)
+
+**Release Date**: August 12, 2025  
+**Network**: Aptos Testnet  
+**Contract Address**: `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**
+**Status**: ✅ **CRITICAL FIX - Custom NFT Images Now Display in Explorers**
+
+### 🚨 **Critical Issue Resolved**
+
+**Problem**: Despite successful NFT minting and Gas Station integration, users reported that NFTs displayed default Aptos avatars instead of custom retro SVG images in wallet explorers.
+
+**Root Cause**: Data URI metadata format (`data:application/json,{...}`) had parsing limitations that prevented proper JSON interpretation by NFT explorers.
+
+**Solution**: Migrated to industry-standard HTTP metadata endpoints that serve proper JSON responses.
+
+### ✨ **Key Achievements**
+
+#### **🎨 Custom Image Display Fixed**
+- NFTs now show proper retro-themed SVG images in all wallet explorers
+- Unique combinations of neon colors, geometric shapes, and cyberpunk words
+- No more generic Aptos avatar placeholders
+
+#### **📡 HTTP Metadata API Implementation**
+- **Query Parameter Endpoint**: `https://www.aptosnft.com/api/nft/metadata?id=29`
+- **Path Parameter Endpoint**: `https://www.aptosnft.com/api/nft/metadata/29`
+- **Proper JSON Response**: Industry standard metadata format
+
+#### **🔧 Explorer Compatibility**
+- Added HEAD request support for image verification
+- Implemented proper Content-Type and CORS headers
+- Compatible with all major NFT wallet explorers
+
+### 🛠️ **Technical Implementation Details**
+
+#### **Smart Contract Updates**
+```move
+// NEW: HTTP metadata URLs instead of data URIs
+fun create_token_uri(_name: String, _description: String, metadata: NFTMetadata): String {
+    let token_uri = string::utf8(b"https://www.aptosnft.com/api/nft/metadata?id=");
+    let token_id_str = to_string(metadata.token_id);
+    string::append(&mut token_uri, token_id_str);
+    token_uri
+}
+```
+
+#### **API Endpoint Implementation**
+```javascript
+// Vercel serverless function with proper headers
+module.exports = (req, res) => {
+  // Allow GET and HEAD requests
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const nftMetadata = {
+    name: `Retro NFT #${tokenId}`,
+    description: `A unique retro 80s NFT with ${metadata.backgroundColor} background...`,
+    image: imageUrl,
+    attributes: [...]
+  };
+
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  return res.status(200).json(nftMetadata);
+};
+```
+
+### 🔍 **Investigation Journey**
+
+This release involved extensive troubleshooting to solve the NFT image display problem. **See [nft-on-explorer.md](./nft-on-explorer.md) for complete technical details.**
+
+#### **Approaches That Failed ❌**
+1. **Data URI Format**: JSON parsing truncation at `{"name":"Retro NFT"`
+2. **TypeScript API**: ES modules caused 404 errors in Vercel deployment
+3. **URL Encoding Fixes**: Complex escape characters in data URIs still failed
+4. **Missing HEAD Support**: Explorers couldn't verify image availability
+
+#### **Solutions That Worked ✅**
+1. **HTTP Endpoints**: Industry standard JSON metadata serving
+2. **JavaScript CommonJS**: Reliable Vercel serverless function format
+3. **Proper Headers**: Content-Type and CORS for explorer compatibility
+4. **HEAD Request Support**: Image verification for NFT explorers
+
+### 🚀 **User Experience Improvements**
+
+**Before v3.2.0**:
+- ❌ NFTs showed default Aptos avatars in explorers
+- ❌ Metadata parsing failed with data URI format
+- ✅ Zero fees maintained (Gas Station working)
+- ✅ Minting transactions succeeded
+
+**After v3.2.0**:
+- ✅ **Custom retro SVG images display properly**
+- ✅ **Proper JSON metadata serving**
+- ✅ **Explorer compatibility achieved**
+- ✅ Zero fees maintained (Gas Station working)
+- ✅ Complete end-to-end NFT experience
+
+### 📦 **Files Added**
+- `/api/nft/metadata.js` - Query parameter metadata endpoint
+- `/api/nft/metadata/[id].js` - Path parameter metadata endpoint  
+- `nft-on-explorer.md` - Complete implementation documentation
+
+### 🎯 **Success Metrics**
+
+- ✅ **Custom Images**: NFTs display unique retro-themed SVGs
+- ✅ **Explorer Compatibility**: Works across all major wallet explorers
+- ✅ **HTTP Standard**: Proper JSON metadata responses
+- ✅ **Performance**: 1-year cache headers for optimization
+- ✅ **Maintained Features**: Gas Station zero-fee experience preserved
+
+### 📚 **Key Learnings**
+
+1. **Industry Standards Matter**: Data URIs are not well-supported by NFT explorers
+2. **HTTP Endpoints Required**: Proper JSON serving is essential for compatibility
+3. **Headers Critical**: Content-Type and CORS headers enable proper functionality
+4. **Testing Essential**: Must verify in actual wallet environments, not just API testing
+
+---
+
 ## v3.1.0 - Gas Station Integration for Zero-Fee NFT Claims (August 11, 2025)
 
 **Release Date**: August 11, 2025  

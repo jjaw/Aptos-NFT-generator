@@ -4,6 +4,95 @@ A comprehensive evolution log showing the transformation from MVP concept to pro
 
 ---
 
+## 🚀 v3.2.0 - NFT Explorer Image Display Fix (August 12, 2025)
+
+**Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)  
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**  
+**Status**: ✅ **CRITICAL FIX - Custom NFT Images Now Display in Explorers**
+
+### 🚨 Critical Issue Resolved
+**Problem**: NFTs showed default Aptos avatars instead of custom retro SVG images in wallet explorers  
+**Root Cause**: Data URI metadata format had parsing limitations preventing image display  
+**Solution**: Migrated to industry-standard HTTP metadata endpoints
+
+### ✨ Key Achievements
+- **🎨 Custom Image Display**: NFTs now show proper retro-themed SVG images in all wallet explorers
+- **📡 HTTP Metadata API**: Implemented proper JSON metadata endpoints following industry standards
+- **🔧 Explorer Compatibility**: Added HEAD request support and proper CORS headers
+- **📚 Complete Documentation**: Detailed implementation guide in `nft-on-explorer.md`
+
+### 🛠️ Technical Implementation
+
+#### **HTTP Metadata Endpoints**
+- **Query Parameter**: `https://www.aptosnft.com/api/nft/metadata?id=29`
+- **Path Parameter**: `https://www.aptosnft.com/api/nft/metadata/29` 
+- **Response Format**: Proper JSON with image URLs
+
+#### **Smart Contract Updates**
+```move
+// NEW: HTTP metadata URLs instead of data URIs
+fun create_token_uri(_name: String, _description: String, metadata: NFTMetadata): String {
+    let token_uri = string::utf8(b"https://www.aptosnft.com/api/nft/metadata?id=");
+    let token_id_str = to_string(metadata.token_id);
+    string::append(&mut token_uri, token_id_str);
+    token_uri
+}
+```
+
+#### **API Implementation**
+```javascript
+// Vercel serverless function with proper headers
+module.exports = (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  return res.status(200).json(nftMetadata);
+};
+```
+
+### 🔍 Investigation Journey
+
+#### **What Didn't Work**
+1. **Data URI Format**: `data:application/json,{...}` had JSON parsing truncation
+2. **TypeScript API**: ES modules caused 404 errors in Vercel deployment  
+3. **URL Encoding**: Complex escape characters in data URIs failed
+4. **Missing HEAD Support**: Explorers couldn't verify image availability
+
+#### **What Worked**
+1. **HTTP Endpoints**: Industry standard JSON metadata serving
+2. **JavaScript CommonJS**: Reliable Vercel serverless function format
+3. **Proper Headers**: Content-Type and CORS for explorer compatibility
+4. **HEAD Request Support**: Image verification for NFT explorers
+
+### 📊 Impact Metrics
+| Aspect | Before Fix (v3.1.0) | After Fix (v3.2.0) | Status |
+|--------|---------------------|---------------------|---------|
+| **NFT Images** | ❌ Default avatars | ✅ Custom retro SVGs | **Fixed** |
+| **Explorer Display** | ❌ Broken metadata | ✅ Proper JSON | **Fixed** |
+| **API Compatibility** | ❌ Data URI limits | ✅ HTTP standard | **Fixed** |
+| **Gas Station** | ✅ Zero fees | ✅ Zero fees | Maintained |
+
+### 🎯 User Experience Transformation
+**Before**: Users saw generic Aptos avatars despite successful NFT minting  
+**After**: Users see unique retro-themed SVG images with neon colors, shapes, and words
+
+---
+
+## 🚀 v3.1.0 - Gas Station Integration for Zero-Fee NFT Claims (August 11, 2025)
+
+**Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)  
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**  
+**Status**: ✅ **ZERO-FEE TRANSACTIONS ENABLED**
+
+### 🎉 Major Feature: Gas Station Integration
+**Enhancement**: Users can now claim NFTs with **zero network fees** through Aptos Labs Gas Station integration.
+
+### ✅ Technical Implementation
+- **Gas Station API Key**: Configured for sponsored transactions
+- **Fee Payer Account**: Handles all transaction costs
+- **Zero-Fee Experience**: Complete Web2-like user experience
+
+---
+
 ## 🚀 v3.0.1 - Critical NFT Ownership Fix (August 7, 2025)
 
 **Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)  
