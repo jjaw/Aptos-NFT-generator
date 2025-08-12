@@ -374,6 +374,29 @@ module retro_nft::retro_nft_generator_da {
         image_url
     }
 
+    // URL encode special characters for data URI
+    fun url_encode_for_data_uri(text: String): String {
+        let encoded = string::utf8(b"");
+        let length = string::length(&text);
+        let i = 0;
+        
+        while (i < length) {
+            let char_bytes = string::sub_string(&text, i, i + 1);
+            if (char_bytes == string::utf8(b"%")) {
+                string::append(&mut encoded, string::utf8(b"%25"));
+            } else if (char_bytes == string::utf8(b"\"")) {
+                string::append(&mut encoded, string::utf8(b"%22"));
+            } else if (char_bytes == string::utf8(b" ")) {
+                string::append(&mut encoded, string::utf8(b"%20"));
+            } else {
+                string::append(&mut encoded, char_bytes);
+            };
+            i = i + 1;
+        };
+        
+        encoded
+    }
+
     // Create JSON metadata URI
     fun create_token_uri(name: String, description: String, metadata: NFTMetadata): String {
         let token_uri = string::utf8(b"data:application/json,{\"name\":\"");
@@ -382,9 +405,10 @@ module retro_nft::retro_nft_generator_da {
         string::append(&mut token_uri, description);
         string::append(&mut token_uri, string::utf8(b"\",\"image\":\""));
         
-        // Generate unique image URL based on NFT attributes
+        // Generate unique image URL based on NFT attributes and encode for data URI
         let image_url = generate_image_url(metadata);
-        string::append(&mut token_uri, image_url);
+        let encoded_image_url = url_encode_for_data_uri(image_url);
+        string::append(&mut token_uri, encoded_image_url);
         
         string::append(&mut token_uri, string::utf8(b"\",\"attributes\":["));
         string::append(&mut token_uri, string::utf8(b"{\"trait_type\":\"Background Color\",\"value\":\""));
