@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { mintRandomNft } from "@/entry-functions/mintRandomNft";
+import { mintTrulyRandomNft } from "@/entry-functions/mintTrulyRandomNft";
 import { initializeCollection } from "@/entry-functions/initializeCollection";
 import { getCollectionStats } from "@/view-functions/getCollectionStats";
 import { previewRandomNft } from "@/view-functions/previewRandomNft";
@@ -123,7 +123,7 @@ export function NFTGenerator() {
     setIsLoading(true);
     try {
       const response = await signAndSubmitTransaction(
-        mintRandomNft()
+        mintTrulyRandomNft()
       );
 
       toast({
