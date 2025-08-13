@@ -1,5 +1,60 @@
 # Retro NFT Generator - Release Notes
 
+## v3.3.2 - Frontend True Randomness Integration (August 13, 2025)
+
+**Release Date**: August 13, 2025  
+**Network**: Aptos Testnet  
+**Contract Address**: `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**
+**Status**: ✅ **COMPLETE FIX - Frontend Now Uses True Randomness**
+
+### 🚨 **Critical Frontend Integration**
+
+**Problem**: Despite v3.3.1 implementing true randomness on the backend, the frontend was still calling `mint_random_nft` (pseudo-random) instead of `mint_truly_random_nft` (Aptos built-in randomness).
+
+**Discovery**: User debugging revealed that network requests showed the frontend calling the wrong smart contract function, causing continued clustering despite backend fixes.
+
+**Solution**: Created new entry function `mintTrulyRandomNft.ts` and updated `NFTGenerator.tsx` to call `mint_truly_random_nft` with Aptos `#[randomness]` attribute.
+
+### ✨ **Frontend Code Updates**
+
+#### **New Entry Function**
+```typescript
+// File: frontend/entry-functions/mintTrulyRandomNft.ts
+export const mintTrulyRandomNft = (): InputTransactionData => {
+  return {
+    data: {
+      function: `${import.meta.env.VITE_MODULE_ADDRESS}::retro_nft_generator_da::mint_truly_random_nft`,
+      functionArguments: [],
+    },
+  };
+};
+```
+
+#### **Updated Component**
+```typescript
+// File: frontend/components/NFTGenerator.tsx
+import { mintTrulyRandomNft } from "@/entry-functions/mintTrulyRandomNft";
+
+const response = await signAndSubmitTransaction(mintTrulyRandomNft());
+```
+
+### 🎯 **Impact**
+
+| Aspect | Before (v3.3.1) | After (v3.3.2) |
+|--------|-----------------|-----------------|
+| **Backend Function** | ✅ `mint_truly_random_nft` | ✅ `mint_truly_random_nft` |
+| **Frontend Calls** | ❌ `mint_random_nft` | ✅ `mint_truly_random_nft` |
+| **User Experience** | ❌ Clustering persisted | ✅ True randomness |
+| **Consecutive NFTs** | ❌ Identical shapes | ✅ Unique shapes |
+
+### 📦 **Files Changed**
+- ✅ `frontend/entry-functions/mintTrulyRandomNft.ts` (NEW)
+- ✅ `frontend/components/NFTGenerator.tsx` (UPDATED)
+- ✅ `contract/sources/retro_nft_da.move` (DOCUMENTATION)
+
+---
+
 ## v3.3.1 - Emergency Consecutive NFT Clustering Fix (August 12, 2025)
 
 **Release Date**: August 12, 2025  

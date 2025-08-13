@@ -337,8 +337,11 @@ Your NFTs will be visible on the Aptos Explorer:
 - **Shape**: **Prime-multiplication entropy mixing** (`(token_id * 7919) % 10000`) ✅ **v3.3.1 Fix**
 - **Words**: Hash-based selections with XOR operations for better distribution
 
-#### **🚨 v3.3.1 Critical Fix**: Consecutive NFT Clustering Eliminated
-After user reports of NFTs #45-48 having identical shapes, we implemented **prime-multiplication entropy mixing** using prime 7919 to create dramatic variance between consecutive token IDs, completely eliminating shape clustering patterns.
+#### **🚨 v3.3.2 Complete Fix**: Frontend Now Uses True Randomness
+Critical frontend update ensures the website uses **Aptos built-in randomness** (`mint_truly_random_nft`) instead of pseudo-random algorithms, completely eliminating consecutive NFT clustering patterns for all users.
+
+#### **🚨 v3.3.1 Backend Fix**: True Randomness Implementation  
+Implemented **Aptos `#[randomness]` attribute** with `mint_truly_random_nft` function using cryptographically secure randomness, providing the foundation for cluster-free NFT generation.
 
 ### Gas Optimization
 - Efficient metadata generation using string concatenation
@@ -353,14 +356,14 @@ After user reports of NFTs #45-48 having identical shapes, we implemented **prim
 
 ## 🐛 Known Issues
 
-1. **Randomness**: Uses pseudo-random generation (not cryptographically secure)
+1. ~~**Randomness**: Uses pseudo-random generation (not cryptographically secure)~~ ✅ **FIXED in v3.3.2** - Now uses Aptos built-in cryptographic randomness
 2. **Metadata Storage**: JSON embedded in URI (consider IPFS for production)
 3. **Gas Costs**: Could be optimized further for lower transaction fees
 4. **Error Handling**: Frontend needs more robust error messages
 
 ## 🔮 Future Enhancements
 
-- [ ] True randomness using Aptos randomness API
+- [x] ~~True randomness using Aptos randomness API~~ ✅ **COMPLETED in v3.3.2**
 - [ ] IPFS metadata storage
 - [ ] Rarity analytics and scoring
 - [ ] Collection marketplace integration
