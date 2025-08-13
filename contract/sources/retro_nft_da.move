@@ -703,6 +703,10 @@ module retro_nft::retro_nft_generator_da {
         generate_random_metadata(seed, 0)
     }
 
+    // Note: Individual NFT metadata is embedded in token descriptions
+    // The frontend API should parse descriptions like:
+    // "A unique retro 80s NFT with #FF0040 background, Hexagon shape, and words: HARD GATE VOLT"
+
 
     #[test(aptos_framework = @0x1, admin = @retro_nft, user = @0x123)]
     fun test_initialize_shared_collection(
