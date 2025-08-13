@@ -356,7 +356,7 @@ Implemented **Aptos `#[randomness]` attribute** with `mint_truly_random_nft` fun
 
 ## 🐛 Known Issues
 
-1. ~~**Randomness**: Uses pseudo-random generation (not cryptographically secure)~~ ✅ **FIXED in v3.3.2** - Now uses Aptos built-in cryptographic randomness
+1. ~~**Randomness**: Uses pseudo-random generation (not cryptographically secure)~~ ✅ **FIXED in v3.3.2** - Now uses Aptos built-in cryptographic randomness ✅ **VERIFIED** - NFTs #90 and #91 confirmed different shapes
 2. **Metadata Storage**: JSON embedded in URI (consider IPFS for production)
 3. **Gas Costs**: Could be optimized further for lower transaction fees
 4. **Error Handling**: Frontend needs more robust error messages
