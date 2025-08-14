@@ -31,54 +31,83 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // The easier way: Calculate the token object address deterministically
-    // Based on how Aptos generates object addresses for tokens
-    
-    // We need to find the token by searching through recent minting transactions
-    // and looking for the token creation events that include descriptions
-    
     const APTOS_API_URL = 'https://fullnode.testnet.aptoslabs.com/v1';
+    const INDEXER_API_URL = 'https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql';
     const MODULE_ADDRESS = '0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b';
     
-    // Query recent transactions from the module address to find minting events
-    const txResponse = await fetch(`${APTOS_API_URL}/accounts/${MODULE_ADDRESS}/transactions?limit=200`);
-    
-    if (!txResponse.ok) {
-      throw new Error(`Failed to fetch transactions: ${txResponse.status}`);
-    }
-    
-    const transactions = await txResponse.json();
-    
-    // Search through transactions for our token ID
     let tokenDescription = null;
     
-    for (const tx of transactions) {
-      if (tx.success && tx.events) {
-        for (const event of tx.events) {
-          // Look for events that contain token descriptions
-          if (event.data && event.data.description) {
-            // Check if this description contains our token ID
-            const tokenIdMatch = event.data.description.match(/Retro NFT #(\d+)/);
-            if (tokenIdMatch && parseInt(tokenIdMatch[1]) === tokenId) {
-              tokenDescription = event.data.description;
-              break;
+    // Try the Aptos Indexer GraphQL API first for scalable token lookup
+    try {
+      const graphqlQuery = {
+        query: `
+          query GetTokenData($token_name: String!) {
+            current_token_datas_v2(
+              where: {
+                token_name: {_eq: $token_name}
+                creator_address: {_eq: "${MODULE_ADDRESS}"}
+              }
+              limit: 1
+            ) {
+              description
+              token_name
             }
           }
+        `,
+        variables: {
+          token_name: `Retro NFT #${tokenId}`
         }
-        if (tokenDescription) break;
+      };
+      
+      const indexerResponse = await fetch(INDEXER_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(graphqlQuery)
+      });
+      
+      if (indexerResponse.ok) {
+        const indexerData = await indexerResponse.json();
+        if (indexerData.data?.current_token_datas_v2?.length > 0) {
+          tokenDescription = indexerData.data.current_token_datas_v2[0].description;
+        }
+      }
+    } catch (indexerError) {
+      console.log('Indexer lookup failed, falling back to transaction search:', indexerError.message);
+    }
+    
+    // Fallback: Search recent transactions if indexer fails
+    if (!tokenDescription) {
+      const txResponse = await fetch(`${APTOS_API_URL}/accounts/${MODULE_ADDRESS}/transactions?limit=500`);
+      
+      if (txResponse.ok) {
+        const transactions = await txResponse.json();
+        
+        for (const tx of transactions) {
+          if (tx.success && tx.events) {
+            for (const event of tx.events) {
+              if (event.data && event.data.description) {
+                const tokenIdMatch = event.data.description.match(/Retro NFT #(\d+)/);
+                if (tokenIdMatch && parseInt(tokenIdMatch[1]) === tokenId) {
+                  tokenDescription = event.data.description;
+                  break;
+                }
+              }
+            }
+            if (tokenDescription) break;
+          }
+        }
       }
     }
     
-    // If we didn't find it in recent transactions, try the indexer approach
+    // If still not found, return 404
     if (!tokenDescription) {
-      // Search for the specific token in the indexer (if available)
-      // For now, return a helpful error
       return res.status(404).json({
-        error: 'Token not found in recent transactions',
+        error: 'Token not found',
         tokenId: tokenId,
-        message: 'Token may be older than the search window or may not exist.',
-        searchedTransactions: transactions.length,
-        note: 'This API now reads real blockchain data. For testing, try recently minted tokens.'
+        message: 'Token may not exist or may not be indexed yet.',
+        note: 'This API reads real blockchain data. Make sure the token ID exists.'
       });
     }
     
