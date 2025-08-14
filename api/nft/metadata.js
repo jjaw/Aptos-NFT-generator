@@ -69,9 +69,12 @@ module.exports = async (req, res) => {
       
       if (indexerResponse.ok) {
         const indexerData = await indexerResponse.json();
+        console.log('Indexer response for token', tokenId, ':', JSON.stringify(indexerData, null, 2));
         if (indexerData.data?.current_token_datas_v2?.length > 0) {
           tokenDescription = indexerData.data.current_token_datas_v2[0].description;
         }
+      } else {
+        console.log('Indexer response failed:', indexerResponse.status, await indexerResponse.text());
       }
     } catch (indexerError) {
       console.log('Indexer lookup failed, falling back to transaction search:', indexerError.message);
