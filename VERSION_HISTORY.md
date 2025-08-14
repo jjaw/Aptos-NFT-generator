@@ -4,6 +4,57 @@ A comprehensive evolution log showing the transformation from MVP concept to pro
 
 ---
 
+## 🚀 v3.3.3 - Metadata API Blockchain Integration (August 14, 2025)
+
+**Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)  
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**  
+**Status**: ✅ **COMPLETE FIX - NFT Images Now Match Blockchain Reality**
+
+### 🚨 Critical NFT Display Issue Resolved
+**Final Solution**: Completely rewrote metadata API to read from Aptos blockchain instead of generating fake data, ensuring NFT images match their actual on-chain descriptions.
+
+### 💥 Root Cause Discovery
+**Issue**: NFTs #91-96 all showed circles despite having different shapes in blockchain descriptions  
+**Investigation**: NFT #96 blockchain description showed "Hexagon shape" but image API generated circle  
+**Solution**: Replaced pseudo-random metadata generation with Aptos Indexer API integration
+
+### ✨ Technical Implementation
+- **Aptos Indexer Integration**: Uses GraphQL API to query `current_token_datas_v2` table
+- **Blockchain Data Parsing**: Extracts background color, shape, and words from token descriptions
+- **CORS Headers**: Added comprehensive cross-origin support for NFT explorers
+- **Scalable Architecture**: Handles all 10,000 NFTs in collection with efficient indexer queries
+
+### 🔧 API Code Changes
+```javascript
+// NEW: Blockchain-first metadata API
+const graphqlQuery = {
+  query: `query GetTokenData($token_name: String!) {
+    current_token_datas_v2(where: {token_name: {_eq: $token_name}}, limit: 1) {
+      description token_name collection_id
+    }
+  }`,
+  variables: { token_name: `Retro NFT #${tokenId}` }
+};
+
+// Parse real blockchain description
+const metadata = parseTokenDescription(tokenDescription);
+// "A unique retro 80s NFT with #FF0040 background, Hexagon shape, and words: HARD GATE VOLT"
+```
+
+### 📊 Impact Metrics  
+| Aspect | Before (Fake Data) | After (Blockchain) | Status |
+|--------|-------------------|-------------------|--------|
+| **Data Source** | ❌ Pseudo-random | ✅ Aptos blockchain | **Fixed** |
+| **Image Accuracy** | ❌ Wrong shapes/colors | ✅ Matches descriptions | **Fixed** |
+| **NFT #96 Display** | ❌ Circle (wrong) | ✅ Hexagon (correct) | **Fixed** |
+| **Scalability** | ❌ Limited search | ✅ 10,000 token support | **Fixed** |
+
+### 🎯 User Impact
+**Before**: NFT explorers showed incorrect images that didn't match blockchain reality  
+**After**: All NFTs display correctly with images matching their actual blockchain metadata
+
+---
+
 ## 🚀 v3.3.2 - Frontend True Randomness Integration (August 13, 2025)
 
 **Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)  

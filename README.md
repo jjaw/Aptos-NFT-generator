@@ -7,7 +7,7 @@ A **production-ready** full-stack dApp built on Aptos blockchain featuring a **s
 *Connect your Aptos wallet and mint your retro NFT in seconds!*
 
 ![Retro NFT Generator](https://img.shields.io/badge/Aptos-NFT_Generator-00D4AA?style=for-the-badge&logo=aptos)
-![Version](https://img.shields.io/badge/version-3.3.1-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-3.3.3-blue?style=for-the-badge)
 ![Network](https://img.shields.io/badge/network-testnet-orange?style=for-the-badge)
 ![Status](https://img.shields.io/badge/status-Production_Ready-green?style=for-the-badge)
 
@@ -239,6 +239,7 @@ npm run lint
 - **Gas Optimized**: 73% lower costs than individual collection model
 - **Zero Setup Required**: Users can mint immediately after wallet connection
 - **Explorer Verified**: NFTs appear correctly on Aptos explorer
+- **Blockchain-Accurate Metadata**: API reads from Aptos Indexer for true data integrity
 
 ### Deploy to Vercel
 ```bash
@@ -357,13 +358,15 @@ Implemented **Aptos `#[randomness]` attribute** with `mint_truly_random_nft` fun
 ## 🐛 Known Issues
 
 1. ~~**Randomness**: Uses pseudo-random generation (not cryptographically secure)~~ ✅ **FIXED in v3.3.2** - Now uses Aptos built-in cryptographic randomness ✅ **VERIFIED** - NFTs #90 and #91 confirmed different shapes
-2. **Metadata Storage**: JSON embedded in URI (consider IPFS for production)
-3. **Gas Costs**: Could be optimized further for lower transaction fees
-4. **Error Handling**: Frontend needs more robust error messages
+2. ~~**Metadata API**: Generated fake data instead of reading blockchain reality~~ ✅ **FIXED in v3.3.3** - Now uses Aptos Indexer for accurate metadata ✅ **VERIFIED** - NFT images match blockchain descriptions
+3. **Metadata Storage**: JSON embedded in URI (consider IPFS for production)
+4. **Gas Costs**: Could be optimized further for lower transaction fees
+5. **Error Handling**: Frontend needs more robust error messages
 
 ## 🔮 Future Enhancements
 
 - [x] ~~True randomness using Aptos randomness API~~ ✅ **COMPLETED in v3.3.2**
+- [x] ~~Blockchain-accurate metadata API~~ ✅ **COMPLETED in v3.3.3**
 - [ ] IPFS metadata storage
 - [ ] Rarity analytics and scoring
 - [ ] Collection marketplace integration

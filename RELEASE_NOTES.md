@@ -1,5 +1,56 @@
 # Retro NFT Generator - Release Notes
 
+## v3.3.3 - Metadata API Blockchain Integration (August 14, 2025)
+
+**Release Date**: August 14, 2025  
+**Network**: Aptos Testnet  
+**Contract Address**: `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**
+**Status**: ✅ **COMPLETE FIX - NFT Images Now Match Blockchain Reality**
+
+### 🚨 **Critical NFT Display Issue Resolved**
+
+**Problem**: NFTs #91-96 all showed circles despite having different shapes in their blockchain descriptions. NFT #96 blockchain showed "Hexagon shape" but the image API generated a circle.
+
+**Discovery**: The metadata API was generating fake pseudo-random data instead of reading the actual NFT descriptions from the Aptos blockchain.
+
+**Solution**: Completely rewrote the metadata API to use the Aptos Indexer GraphQL API, ensuring images match their actual on-chain descriptions.
+
+### ✨ **Technical Implementation**
+
+#### **Aptos Indexer Integration**
+```javascript
+// File: api/nft/metadata.js - NEW blockchain-first approach
+const graphqlQuery = {
+  query: `query GetTokenData($token_name: String!) {
+    current_token_datas_v2(where: {token_name: {_eq: $token_name}}, limit: 1) {
+      description token_name collection_id
+    }
+  }`,
+  variables: { token_name: `Retro NFT #${tokenId}` }
+};
+
+// Parse real blockchain description
+const metadata = parseTokenDescription(tokenDescription);
+// "A unique retro 80s NFT with #FF0040 background, Hexagon shape, and words: HARD GATE VOLT"
+```
+
+### 🔧 **Key Features**
+- **Blockchain Data Source**: Reads from Aptos `current_token_datas_v2` table
+- **CORS Support**: Added comprehensive headers for NFT explorers
+- **Scalable Architecture**: Handles all 10,000 NFTs efficiently
+- **Fallback System**: Transaction search if indexer fails
+
+### 📊 **Impact**
+| Aspect | Before | After |
+|--------|--------|-------|
+| Data Source | Fake pseudo-random | Real blockchain |
+| Image Accuracy | Wrong shapes/colors | Matches descriptions |
+| NFT #96 Display | Circle (wrong) | Hexagon (correct) |
+| User Trust | Broken | Restored |
+
+---
+
 ## v3.3.2 - Frontend True Randomness Integration (August 13, 2025)
 
 **Release Date**: August 13, 2025  
