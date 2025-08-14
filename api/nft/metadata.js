@@ -45,12 +45,12 @@ module.exports = async (req, res) => {
             current_token_datas_v2(
               where: {
                 token_name: {_eq: $token_name}
-                creator_address: {_eq: "${MODULE_ADDRESS}"}
               }
               limit: 1
             ) {
               description
               token_name
+              collection_id
             }
           }
         `,
