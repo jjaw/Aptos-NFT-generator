@@ -13,9 +13,9 @@
   },
   "dependencies": {
     "@aptos-labs/gas-station-client": "^2.0.2",
-    "@aptos-labs/ts-sdk": "latest",
-    "@aptos-labs/wallet-adapter-ant-design": "latest",
-    "@aptos-labs/wallet-adapter-react": "latest",
+    "@aptos-labs/ts-sdk": "^1.39.0",
+    "@aptos-labs/wallet-adapter-ant-design": "^5.1.3",
+    "@aptos-labs/wallet-adapter-react": "^7.0.4",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-toast": "^1.2.1",
     "@tanstack/react-query": "^5.51.23",
@@ -31,9 +31,9 @@
     "@types/node": "^20.14.1",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
-    "@vercel/node": "^5.3.11",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vercel/node": "^2.3.0",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.19",
     "dotenv": "16.3.1",
@@ -43,9 +43,9 @@
     "postcss": "^8.4.38",
     "prettier": "^3.3.2",
     "tailwindcss": "^3.4.3",
-    "typescript": "^5.2.2",
-    "vercel": "^35.2.4",
-    "vite": "^5.2.0",
+    "typescript": "^5.6.0",
+    "vercel": "^32.0.1",
+    "vite": "^7.1.2",
     "vite-plugin-notifier": "^0.1.5"
   }
 }

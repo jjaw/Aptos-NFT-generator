@@ -1,4 +1,4 @@
-import { WalletSelector } from "@aptos-labs/wallet-adapter-ant-design";
+import { CustomWalletSelector } from "./CustomWalletSelector";
 
 export function Header() {
   return (
@@ -18,7 +18,7 @@ export function Header() {
               <span>TESTNET</span>
             </span>
           </div>
-          <WalletSelector />
+          <CustomWalletSelector />
         </div>
       </div>
     </div>

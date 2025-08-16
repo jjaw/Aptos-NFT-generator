@@ -1,29 +1,26 @@
+// frontend/components/WalletProvider.tsx
 import { PropsWithChildren } from "react";
 import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
-// Internal components
 import { useToast } from "@/components/ui/use-toast";
-// Internal constants
 import { APTOS_API_KEY, NETWORK } from "@/constants";
-// Internal utils
-import { aptosClient } from "@/utils/aptosClient";
 
 export function WalletProvider({ children }: PropsWithChildren) {
   const { toast } = useToast();
 
   return (
     <AptosWalletAdapterProvider
-      autoConnect={true}
-      dappConfig={{ 
-        network: NETWORK, 
-        aptosApiKeys: {[NETWORK]: APTOS_API_KEY},
-        transactionSubmitter: aptosClient().config.getTransactionSubmitter(),
+      autoConnect
+      dappConfig={{
+        network: NETWORK,
+        // keep using the per-network map your version expects
+        aptosApiKeys: { [NETWORK]: APTOS_API_KEY },
       }}
       onError={(error) => {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: error || "Unknown wallet error",
-        });
+        const msg =
+          error && typeof error === "object" && "message" in (error as any)
+            ? String((error as any).message)
+            : String(error ?? "Unknown wallet error");
+        toast({ variant: "destructive", title: "Wallet error", description: msg });
       }}
     >
       {children}
