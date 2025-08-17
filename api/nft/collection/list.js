@@ -93,17 +93,10 @@ module.exports = async (req, res) => {
             order_by: $order_by
           ) {
             token_name
+            token_data_id
             token_uri
             description
             last_transaction_timestamp
-          }
-          
-          current_token_datas_v2_aggregate(
-            where: $where
-          ) {
-            aggregate {
-              count
-            }
           }
         }
       `,
@@ -137,7 +130,8 @@ module.exports = async (req, res) => {
     }
 
     const tokens = data.data?.current_token_datas_v2 || [];
-    const totalCount = data.data?.current_token_datas_v2_aggregate?.aggregate?.count || 0;
+    // Since aggregate query is not available, estimate total count for pagination
+    const totalCount = tokens.length === limitNum ? offsetNum + limitNum + 1 : offsetNum + tokens.length;
 
     // Try to get cached rarity data
     let rarityData = null;
