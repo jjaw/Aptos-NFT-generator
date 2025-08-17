@@ -60,8 +60,7 @@ function generateMockToken(id: number): MockToken {
   const wordCombination = `${WORDS[word1Index]} ${WORDS[word2Index]} ${WORDS[word3Index]}`;
   
   // Generate rarity score using deterministic but varied approach
-  const shapeRarity = shape.probability;
-  const bgRarity = 1 / BACKGROUND_COLORS.length;
+  // Note: shapeRarity and bgRarity could be used for more sophisticated rarity calculation in the future
   
   // Use a more realistic rarity distribution
   // Most tokens should be common, with few rare ones
