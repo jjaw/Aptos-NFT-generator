@@ -65,10 +65,12 @@ module.exports = async (req, res) => {
         orderBy = [{ last_transaction_timestamp: 'desc' }];
         break;
       case 'id_asc':
-        orderBy = [{ token_name: 'asc' }];
+        // Use transaction timestamp for proper numerical ordering (oldest first = lowest ID)
+        orderBy = [{ last_transaction_timestamp: 'asc' }];
         break;
       case 'id_desc':
-        orderBy = [{ token_name: 'desc' }];
+        // Use transaction timestamp for proper numerical ordering (newest first = highest ID)
+        orderBy = [{ last_transaction_timestamp: 'desc' }];
         break;
       case 'rarity_desc':
         // For demo, we'll sort by token_name and add rarity in post-processing
