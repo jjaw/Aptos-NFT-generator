@@ -93,13 +93,9 @@ module.exports = async (req, res) => {
             order_by: $order_by
           ) {
             token_name
-            token_data_id_hash
             token_uri
             description
             last_transaction_timestamp
-            current_token_data {
-              metadata
-            }
           }
           
           current_token_datas_v2_aggregate(
