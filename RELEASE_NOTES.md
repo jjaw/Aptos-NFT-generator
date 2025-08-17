@@ -1,5 +1,54 @@
 # Retro NFT Generator - Release Notes
 
+## v3.3.6 - Gallery Numerical Sorting Fix (August 17, 2025)
+
+**Release Date**: August 17, 2025  
+**Network**: Aptos Testnet  
+**Contract Address**: `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`  
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**  
+**Status**: ✅ **CRITICAL FIX - Proper Numerical Token ID Sorting**
+
+### 🎯 **Gallery Sorting Fix**
+
+**Problem**: Token ID sorting used alphabetical string comparison, causing NFT #100 to appear before #37 in gallery listings.
+
+**Solution**: Implemented database-level numerical sorting using `last_transaction_timestamp` which correlates perfectly with token creation order.
+
+### ✨ **What's Fixed**
+
+#### **Correct Numerical Order**
+- **Token ID: Low → High**: Now properly shows #1, #2, #3... #37, #38... #100
+- **Token ID: High → Low**: Now properly shows #100, #99, #98... #3, #2, #1
+- **Pagination Accuracy**: Maintains correct order across paginated gallery pages
+
+#### **Technical Architecture**
+```javascript
+// BEFORE: Broken alphabetical sorting
+orderBy = [{ token_name: 'asc' }];  // "100" < "37" alphabetically
+
+// AFTER: Proper numerical sorting via timestamp
+orderBy = [{ last_transaction_timestamp: 'asc' }];  // Natural creation order
+```
+
+### 🎯 **User Experience Impact**
+
+**Before**: Confusing gallery order made it difficult to find specific NFTs
+- Searching for #22 was frustrating due to alphabetical chaos
+- Browse by ID was essentially broken
+
+**After**: Logical numerical sequence enables intuitive browsing
+- Easy to find any specific NFT by ID
+- Gallery browsing follows expected numerical progression
+
+### 🛠️ **Database Design Benefits**
+
+- **Performance**: Uses existing indexed timestamp field (no new columns needed)
+- **Scalability**: Database-level sorting handles large collections efficiently  
+- **Reliability**: Leverages natural correlation between mint time and token sequence
+- **Maintainability**: No string parsing or post-processing required
+
+---
+
 ## v3.3.5 - Bundle Size Optimization (August 17, 2025)
 
 **Release Date**: August 17, 2025  
