@@ -81,7 +81,6 @@ module.exports = async (req, res) => {
     const graphqlQuery = {
       query: `
         query GetCollectionTokens(
-          $collection_id: String!,
           $limit: Int!,
           $offset: Int!,
           $where: current_token_datas_v2_bool_exp!,
@@ -113,7 +112,6 @@ module.exports = async (req, res) => {
         }
       `,
       variables: {
-        collection_id: COLLECTION_NAME,
         limit: limitNum,
         offset: offsetNum,
         where: whereClause,
