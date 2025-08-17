@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
 
   try {
     const INDEXER_API_URL = 'https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql';
-    const COLLECTION_NAME = 'Retro 80s NFT Collection 2025-01-08-v2-unique';
+    const COLLECTION_NAME = '0x7981b8f6eda3d2b0ce7ee77ce99dbcf9b26e2cfd1b50bf6cf7ad97fb6b99d575';
     
     // Parse query parameters
     const { 
@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
 
     // Build GraphQL query
     let whereClause = {
-      collection_name: { _eq: COLLECTION_NAME },
+      collection_id: { _eq: COLLECTION_NAME },
       // Note: In a real implementation, we'd also filter by creator_address
       // creator_address: { _eq: process.env.APTOS_CREATOR_ADDRESS }
     };
@@ -81,7 +81,6 @@ module.exports = async (req, res) => {
     const graphqlQuery = {
       query: `
         query GetCollectionTokens(
-          $collection_name: String!,
           $limit: Int!,
           $offset: Int!,
           $where: current_token_datas_v2_bool_exp!,
@@ -94,26 +93,14 @@ module.exports = async (req, res) => {
             order_by: $order_by
           ) {
             token_name
-            token_data_id_hash
+            token_data_id
             token_uri
             description
             last_transaction_timestamp
-            current_token_data {
-              metadata
-            }
-          }
-          
-          current_token_datas_v2_aggregate(
-            where: $where
-          ) {
-            aggregate {
-              count
-            }
           }
         }
       `,
       variables: {
-        collection_name: COLLECTION_NAME,
         limit: limitNum,
         offset: offsetNum,
         where: whereClause,
@@ -143,7 +130,8 @@ module.exports = async (req, res) => {
     }
 
     const tokens = data.data?.current_token_datas_v2 || [];
-    const totalCount = data.data?.current_token_datas_v2_aggregate?.aggregate?.count || 0;
+    // Since aggregate query is not available, estimate total count for pagination
+    const totalCount = tokens.length === limitNum ? offsetNum + limitNum + 1 : offsetNum + tokens.length;
 
     // Try to get cached rarity data
     let rarityData = null;

@@ -19,35 +19,25 @@ module.exports = async (req, res) => {
 
   try {
     const INDEXER_API_URL = 'https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql';
-    const COLLECTION_NAME = 'Retro 80s NFT Collection 2025-01-08-v2-unique';
+    const COLLECTION_NAME = '0x7981b8f6eda3d2b0ce7ee77ce99dbcf9b26e2cfd1b50bf6cf7ad97fb6b99d575';
 
     // Query to get all tokens in the collection for trait analysis
     const graphqlQuery = {
       query: `
-        query GetCollectionTraits($collection_name: String!) {
+        query GetCollectionTraits($collection_id: String!) {
           current_token_datas_v2(
             where: {
-              collection_name: { _eq: $collection_name }
+              collection_id: { _eq: $collection_id }
             }
             limit: 10000
           ) {
             token_name
             description
           }
-          
-          current_token_datas_v2_aggregate(
-            where: {
-              collection_name: { _eq: $collection_name }
-            }
-          ) {
-            aggregate {
-              count
-            }
-          }
         }
       `,
       variables: {
-        collection_name: COLLECTION_NAME
+        collection_id: COLLECTION_NAME
       }
     };
 
@@ -72,7 +62,7 @@ module.exports = async (req, res) => {
     }
 
     const tokens = data.data?.current_token_datas_v2 || [];
-    const totalMinted = data.data?.current_token_datas_v2_aggregate?.aggregate?.count || 0;
+    const totalMinted = tokens.length; // Use actual token count since aggregate is not available
 
     // Initialize trait counters
     const traitCounts = {

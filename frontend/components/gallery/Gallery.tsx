@@ -83,12 +83,17 @@ export function Gallery() {
         
         const response = await fetch(`/api/nft/collection/list?${queryString}`);
         
+        console.log('API Response status:', response.status);
+        console.log('API Response headers:', response.headers.get('content-type'));
+        
         if (response.ok && response.headers.get('content-type')?.includes('application/json')) {
           const data = await response.json();
           console.log('Received API data:', data);
           return data;
         } else {
-          throw new Error('API not available or returned invalid content');
+          const responseText = await response.text();
+          console.log('API Response text:', responseText);
+          throw new Error(`API failed: ${response.status} - ${responseText}`);
         }
       } catch (apiError) {
         console.warn('API failed, using mock data:', apiError);
