@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
 
   try {
     const INDEXER_API_URL = 'https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql';
-    const COLLECTION_NAME = 'Retro 80s NFT Collection 2025-01-08-v2-unique';
+    const COLLECTION_NAME = '0x7981b8f6eda3d2b0ce7ee77ce99dbcf9b26e2cfd1b50bf6cf7ad97fb6b99d575';
     
     // Parse query parameters
     const { 
