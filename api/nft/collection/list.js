@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
 
     // Build GraphQL query
     let whereClause = {
-      collection_name: { _eq: COLLECTION_NAME },
+      collection_id: { _eq: COLLECTION_NAME },
       // Note: In a real implementation, we'd also filter by creator_address
       // creator_address: { _eq: process.env.APTOS_CREATOR_ADDRESS }
     };
@@ -81,7 +81,7 @@ module.exports = async (req, res) => {
     const graphqlQuery = {
       query: `
         query GetCollectionTokens(
-          $collection_name: String!,
+          $collection_id: String!,
           $limit: Int!,
           $offset: Int!,
           $where: current_token_datas_v2_bool_exp!,
@@ -113,7 +113,7 @@ module.exports = async (req, res) => {
         }
       `,
       variables: {
-        collection_name: COLLECTION_NAME,
+        collection_id: COLLECTION_NAME,
         limit: limitNum,
         offset: offsetNum,
         where: whereClause,
