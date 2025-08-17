@@ -1,0 +1,122 @@
+/* Gallery-specific responsive styles */
+
+/* Custom scrollbar for webkit browsers */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34, 211, 238, 0.3) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(34, 211, 238, 0.3);
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 211, 238, 0.5);
+}
+
+/* Responsive grid improvements */
+@media (max-width: 640px) {
+  .token-grid {
+    gap: 0.75rem; /* Smaller gaps on mobile */
+  }
+  
+  .token-card {
+    font-size: 0.875rem; /* Smaller text on mobile */
+  }
+}
+
+/* Touch-friendly improvements for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .token-card:hover {
+    transform: none; /* Disable hover transforms on touch devices */
+  }
+  
+  .filter-checkbox {
+    min-width: 44px; /* Ensure touch targets are large enough */
+    min-height: 44px;
+  }
+}
+
+/* High-contrast mode support */
+@media (prefers-contrast: high) {
+  .border-cyan-400\/30 {
+    border-color: #22d3ee;
+  }
+  
+  .text-gray-400 {
+    color: #d1d5db;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .token-card,
+  .rarity-badge,
+  .filter-sidebar {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .animate-pulse {
+    animation: none !important;
+  }
+  
+  .animate-spin {
+    animation: none !important;
+  }
+}
+
+/* Focus management for keyboard navigation */
+.token-card:focus-visible,
+.filter-checkbox:focus-visible,
+.nav-link:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 2px;
+}
+
+/* Loading states */
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Tablet-specific adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .gallery-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Large screen optimizations */
+@media (min-width: 1280px) {
+  .token-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+}

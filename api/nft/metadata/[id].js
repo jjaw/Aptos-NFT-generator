@@ -1,7 +1,9 @@
-// Vercel API Route for NFT Metadata
+// Vercel API Route for NFT Metadata with Rarity Data
 // URL: https://www.aptosnft.com/api/nft/metadata/[id]
 
-module.exports = (req, res) => {
+const { calculateRarityForToken } = require('../../../lib/rarity');
+
+module.exports = async (req, res) => {
   // Allow GET and HEAD requests
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -59,25 +61,65 @@ module.exports = (req, res) => {
   const encodedWords = encodeURIComponent(metadata.wordCombination);
   const imageUrl = `https://www.aptosnft.com/api/nft/generate?bg=${bgColor}&shape=${metadata.shape}&words=${encodedWords}`;
 
+  // Create attributes array
+  const attributes = [
+    {
+      trait_type: "Background Color",
+      value: metadata.backgroundColor
+    },
+    {
+      trait_type: "Shape", 
+      value: metadata.shape
+    },
+    {
+      trait_type: "Words",
+      value: metadata.wordCombination
+    }
+  ];
+
+  // Try to get rarity data from cache
+  let rarity = null;
+  try {
+    // Check if we have cached rarity data
+    if (global.rarityCache && global.rarityCache.data) {
+      const cachedToken = global.rarityCache.data.tokens.find(t => t.tokenId === tokenId.toString());
+      if (cachedToken && cachedToken.rarity) {
+        rarity = cachedToken.rarity;
+      } else {
+        // Calculate rarity on-demand using cached trait counts
+        rarity = calculateRarityForToken(
+          attributes,
+          global.rarityCache.data.traitCounts,
+          global.rarityCache.data.totalMinted
+        );
+      }
+    } else {
+      // Fallback: fetch trait data for rarity calculation
+      try {
+        const traitsResponse = await fetch(`${req.headers.host ? `https://${req.headers.host}` : 'http://localhost:3000'}/api/nft/collection/traits`);
+        if (traitsResponse.ok) {
+          const traitsData = await traitsResponse.json();
+          rarity = calculateRarityForToken(
+            attributes,
+            traitsData.traits,
+            traitsData.stats.totalMinted
+          );
+        }
+      } catch (fetchError) {
+        console.log('Could not fetch traits for rarity calculation:', fetchError.message);
+      }
+    }
+  } catch (rarityError) {
+    console.log('Error calculating rarity:', rarityError.message);
+  }
+
   // Create the metadata JSON
   const nftMetadata = {
     name: `Retro NFT #${tokenId}`,
     description: `A unique retro 80s NFT with ${metadata.backgroundColor} background, ${metadata.shape} shape, and words: ${metadata.wordCombination}`,
     image: imageUrl,
-    attributes: [
-      {
-        trait_type: "Background Color",
-        value: metadata.backgroundColor
-      },
-      {
-        trait_type: "Shape", 
-        value: metadata.shape
-      },
-      {
-        trait_type: "Words",
-        value: metadata.wordCombination
-      }
-    ]
+    attributes,
+    ...(rarity && { rarity })
   };
 
   // Set headers for JSON response

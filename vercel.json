@@ -2,6 +2,12 @@
   "functions": {
     "api/nft/generate.js": {
       "maxDuration": 10
+    },
+    "api/nft/collection/*.js": {
+      "maxDuration": 30
+    },
+    "api/nft/rarity/*.js": {
+      "maxDuration": 60
     }
   },
   "headers": [
@@ -17,6 +23,41 @@
           "value": "*"
         }
       ]
+    },
+    {
+      "source": "/api/nft/collection/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, HEAD, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/nft/collection/list",
+      "destination": "/api/nft/collection/list.js"
+    },
+    {
+      "source": "/api/nft/collection/traits",
+      "destination": "/api/nft/collection/traits.js"
+    },
+    {
+      "source": "/api/nft/collection/stats",
+      "destination": "/api/nft/collection/stats.js"
+    },
+    {
+      "source": "/api/nft/rarity/refresh",
+      "destination": "/api/nft/rarity/refresh.js"
     }
   ]
 }

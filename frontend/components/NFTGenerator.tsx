@@ -325,3 +325,6 @@ export function NFTGenerator() {
     </div>
   );
 }
+
+// Default export for lazy loading
+export default NFTGenerator;
