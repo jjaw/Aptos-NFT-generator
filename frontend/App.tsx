@@ -1,12 +1,26 @@
+import { lazy, Suspense } from "react";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 // Internal Components
 import { Header } from "@/components/Header";
-import { NFTGenerator } from "@/components/NFTGenerator";
-import { Gallery } from "@/components/gallery/Gallery";
-import { TokenDetail } from "@/components/token/TokenDetail";
+
 // Gallery styles
 import "./gallery.css";
+
+// Lazy-loaded components
+const Gallery = lazy(() => import("@/components/gallery/Gallery"));
+const TokenDetail = lazy(() => import("@/components/token/TokenDetail"));
+const NFTGenerator = lazy(() => import("@/components/NFTGenerator"));
+
+// Loading component for lazy-loaded routes
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+      <div className="text-cyan-400 font-mono text-sm">Loading...</div>
+    </div>
+  </div>
+);
 
 function App() {
   const { connected } = useWallet();
@@ -22,10 +36,18 @@ function App() {
         <div className="relative z-10">
           <Routes>
             {/* Gallery Route - Public, no wallet required */}
-            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/gallery" element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <Gallery />
+              </Suspense>
+            } />
             
             {/* Token Detail Route - Public, no wallet required */}
-            <Route path="/token/:id" element={<TokenDetail />} />
+            <Route path="/token/:id" element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <TokenDetail />
+              </Suspense>
+            } />
             
             {/* Mint Route - Requires wallet connection */}
             <Route path="/mint" element={
@@ -43,7 +65,9 @@ function App() {
                 </div>
 
                 {connected ? (
-                  <NFTGenerator />
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <NFTGenerator />
+                  </Suspense>
                 ) : (
                   <div className="max-w-md mx-auto">
                     <div className="bg-black/50 backdrop-blur-sm border border-cyan-400 rounded-lg p-8 text-center shadow-2xl shadow-pink-500/25">

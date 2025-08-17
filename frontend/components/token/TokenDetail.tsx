@@ -229,3 +229,6 @@ export function TokenDetail() {
     </div>
   );
 }
+
+// Default export for lazy loading
+export default TokenDetail;

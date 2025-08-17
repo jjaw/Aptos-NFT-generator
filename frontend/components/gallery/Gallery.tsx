@@ -248,3 +248,6 @@ export function Gallery() {
     </div>
   );
 }
+
+// Default export for lazy loading
+export default Gallery;
