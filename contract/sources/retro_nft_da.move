@@ -29,6 +29,7 @@ module retro_nft::retro_nft_generator_da {
     const COLLECTION_DESCRIPTION: vector<u8> = b"A collection of randomly generated retro 80s style NFTs with unique backgrounds, shapes, and word combinations using Aptos Digital Asset Standard";
     const COLLECTION_URI: vector<u8> = b"https://retrowave.nft/collection/2025-01-08-unique";
     const MAX_SUPPLY: u64 = 10000;
+    const FOUR_LETTER_WORDS_LENGTH: u64 = 100;  // Length of FOUR_LETTER_WORDS vector
 
     // Background colors (13 options)
     const NEON_PINK: vector<u8> = b"#FF0080";
@@ -433,9 +434,9 @@ module retro_nft::retro_nft_generator_da {
 
         // Generate three random words using hash-based randomization  
         let word_base_seed = seed + (token_id << 16) + 0x3000;
-        let word1_index = (word_base_seed % vector::length(&FOUR_LETTER_WORDS));
-        let word2_index = ((word_base_seed ^ (token_id * 1000003)) % vector::length(&FOUR_LETTER_WORDS));
-        let word3_index = ((word_base_seed ^ (token_id * 2000003)) % vector::length(&FOUR_LETTER_WORDS));
+        let word1_index = (word_base_seed % FOUR_LETTER_WORDS_LENGTH);
+        let word2_index = ((word_base_seed ^ (token_id * 1000003)) % FOUR_LETTER_WORDS_LENGTH);
+        let word3_index = ((word_base_seed ^ (token_id * 2000003)) % FOUR_LETTER_WORDS_LENGTH);
         
         let word1 = string::utf8(*vector::borrow(&FOUR_LETTER_WORDS, word1_index));
         let word2 = string::utf8(*vector::borrow(&FOUR_LETTER_WORDS, word2_index));
@@ -496,9 +497,9 @@ module retro_nft::retro_nft_generator_da {
 
         // Generate three random words using hash-based randomization  
         let word_base_seed = seed + (token_id << 16) + 0x3000;
-        let word1_index = (word_base_seed % vector::length(&FOUR_LETTER_WORDS));
-        let word2_index = ((word_base_seed ^ (token_id * 1000003)) % vector::length(&FOUR_LETTER_WORDS));
-        let word3_index = ((word_base_seed ^ (token_id * 2000003)) % vector::length(&FOUR_LETTER_WORDS));
+        let word1_index = (word_base_seed % FOUR_LETTER_WORDS_LENGTH);
+        let word2_index = ((word_base_seed ^ (token_id * 1000003)) % FOUR_LETTER_WORDS_LENGTH);
+        let word3_index = ((word_base_seed ^ (token_id * 2000003)) % FOUR_LETTER_WORDS_LENGTH);
         
         let word_combination = string::utf8(*vector::borrow(&FOUR_LETTER_WORDS, word1_index));
         string::append(&mut word_combination, string::utf8(b" "));
