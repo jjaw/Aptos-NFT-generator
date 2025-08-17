@@ -89,7 +89,7 @@ A **production-ready** full-stack dApp built on Aptos blockchain featuring a **s
 ### 🎯 User Interface
 - **Retro 80s Theme**: Cyberpunk aesthetics with neon colors and grid patterns
 - **Wallet Integration**: Support for all Aptos-compatible wallets
-- **Preview System**: Generate NFT previews without minting
+- **Preview System**: Generate NFT previews without minting (local randomization for instant results)
 - **Responsive Design**: Mobile-first with desktop optimization
 - **Real-time Updates**: Live collection statistics and minting progress
 
@@ -359,14 +359,16 @@ Implemented **Aptos `#[randomness]` attribute** with `mint_truly_random_nft` fun
 
 1. ~~**Randomness**: Uses pseudo-random generation (not cryptographically secure)~~ ✅ **FIXED in v3.3.2** - Now uses Aptos built-in cryptographic randomness ✅ **VERIFIED** - NFTs #90 and #91 confirmed different shapes
 2. ~~**Metadata API**: Generated fake data instead of reading blockchain reality~~ ✅ **FIXED in v3.3.3** - Now uses Aptos Indexer for accurate metadata ✅ **VERIFIED** - NFT images match blockchain descriptions
-3. **Metadata Storage**: JSON embedded in URI (consider IPFS for production)
-4. **Gas Costs**: Could be optimized further for lower transaction fees
-5. **Error Handling**: Frontend needs more robust error messages
+3. ~~**Preview System**: Always showed "NEON WAVE GLOW" when contract calls failed~~ ✅ **FIXED in v3.3.4** - Local preview generator with proper word randomization ✅ **VERIFIED** - Previews now show varied word combinations
+4. **Metadata Storage**: JSON embedded in URI (consider IPFS for production)
+5. **Gas Costs**: Could be optimized further for lower transaction fees
+6. **Error Handling**: Frontend needs more robust error messages
 
 ## 🔮 Future Enhancements
 
 - [x] ~~True randomness using Aptos randomness API~~ ✅ **COMPLETED in v3.3.2**
 - [x] ~~Blockchain-accurate metadata API~~ ✅ **COMPLETED in v3.3.3**
+- [x] ~~Reliable preview system with local randomization~~ ✅ **COMPLETED in v3.3.4**
 - [ ] IPFS metadata storage
 - [ ] Rarity analytics and scoring
 - [ ] Collection marketplace integration

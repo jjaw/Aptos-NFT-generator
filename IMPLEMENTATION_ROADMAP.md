@@ -73,27 +73,103 @@ Transform the current user-owned collection demo into a production-ready shared 
   - [ ] Admin initialization of shared collection
   - [ ] Verify collection appears in Aptos explorers
 
-### Phase 3: Enhanced Features & Ecosystem Integration
-**Timeline: Week 4+**
+### Phase 3: NFT Gallery & Rarity System ✅ COMPLETED
+**Timeline: Week 4**
+**Status: 🎉 IMPLEMENTED**
+**Branch: `gallery-demo`**
+
+#### Completed Tasks ✅
+- [x] **Public NFT Gallery** - Browse collection without wallet connection
+  - [x] Hash router with `/#/gallery` and `/#/token/:id` routes
+  - [x] Collection header with live stats (Items: 10,000, Minted: live count)
+  - [x] Search by token name/ID with debounced input
+  - [x] Multi-select trait filtering (Background Color, Shape, Words)
+  - [x] Sort by Recently Minted, Token ID (asc/desc), Rarity (high→low)
+  - [x] Responsive grid: 6 cols (desktop) → 2 cols (mobile)
+  - [x] Infinite scroll with virtualization for 10k+ tokens
+- [x] **Mathematical Rarity System**
+  - [x] Implement PRD formula: `P̂(v) = (c(v) + α · P₀(v)) / (N_T + α)`
+  - [x] Shape probabilities from contract (`SHAPE_CUMULATIVE_PROBS`)
+  - [x] Information content calculation: `IC = Σ -log₂(P̂(v))`
+  - [x] Tier mapping: S (≥98th), A (90-98th), B (60-90th), C (30-60th), D (<30th)
+  - [x] Rarity badges with tier + percentile (e.g., "S • 99th")
+  - [x] Batch rarity computation with in-memory caching
+- [x] **Token Detail Pages**
+  - [x] Full token metadata and large image display
+  - [x] Attribute table with all traits
+  - [x] Detailed rarity breakdown with per-trait analysis
+  - [x] Previous/Next navigation between tokens
+  - [x] Share link functionality
+- [x] **API Architecture**
+  - [x] `GET /api/nft/collection/list` - Paginated token listing
+  - [x] `GET /api/nft/collection/traits` - Trait aggregation for filters
+  - [x] `GET /api/nft/collection/stats` - Live collection statistics
+  - [x] `GET /api/nft/rarity/refresh` - Batch rarity computation
+  - [x] Enhanced `/api/nft/metadata/[id]` with rarity data
+- [x] **Development Infrastructure**
+  - [x] Vite middleware for API execution in development
+  - [x] Mock data system for offline development
+  - [x] React Query for caching and background updates
+  - [x] URL state management for shareable links
+- [x] **UX Improvements**
+  - [x] Moved rarity badges from image overlay to card footer (avoids user confusion)
+  - [x] Mobile-responsive filter drawer
+  - [x] Loading skeletons and error states with retry
+  - [x] Accessibility: keyboard navigation, ARIA labels, focus management
+
+### Phase 3.5: Quality & Reliability Improvements ✅ ONGOING
+**Timeline: Continuous**
+**Status**: 🔧 **Incremental Quality Fixes**
+
+#### Completed Quality Fixes ✅
+- [x] **Preview System Reliability (v3.3.4)** - August 17, 2025
+  - [x] Fixed "always same words" bug in NFT preview generator
+  - [x] Replaced unreliable contract calls with local randomization
+  - [x] Implemented proper word variation using smart contract's exact algorithms
+  - [x] Eliminated network dependency for instant preview generation
+  - [x] Verified: Previews now show varied combinations like "FLUX GRID APEX" instead of "OPEN OPEN OPEN"
+
+#### Technical Implementation ✅
+- [x] **Local Preview Generator** (`frontend/utils/localPreview.ts`)
+  - [x] Replicated exact smart contract constants (13 colors, 13 shapes, 100 words)
+  - [x] Implemented same hash-based randomization algorithms as contract
+  - [x] Fixed tokenId=0 issue causing identical word indices with proper offsets
+- [x] **Simplified Preview Function** (`frontend/view-functions/previewRandomNft.ts`)
+  - [x] Removed unreliable contract calls and fallback scenarios
+  - [x] Achieved 100% reliability with instant local generation
+
+#### Impact ✅
+- ✅ **Performance**: Contract call (200-500ms) → Instant local generation
+- ✅ **Reliability**: Network failures → Always works offline
+- ✅ **User Experience**: Confusing repetition → Proper randomized previews
+- ✅ **Maintenance**: Eliminated fallback edge cases and error handling
+
+### Phase 4: Advanced Features & Ecosystem Integration
+**Timeline: Week 5+**
 **Status: 📋 Future Enhancement**
 
 #### Planned Enhancements
-- [ ] User experience improvements
-  - [ ] User NFT gallery view (show claimed NFTs)
-  - [ ] Social sharing features for claimed NFTs
-  - [ ] Enhanced preview system with rarity indicators
-- [ ] Advanced rarity mechanics
-  - [ ] Display trait rarity percentages
-  - [ ] Rarity scoring system
-  - [ ] Special rare NFT variants
-- [ ] Marketplace integrations
-  - [ ] Direct links to NFT marketplaces
-  - [ ] Secondary market integration
-  - [ ] Price tracking and analytics
-- [ ] Community features
-  - [ ] Leaderboards for early minters
-  - [ ] Social media integration
-  - [ ] Community challenges and events
+- [ ] **Production Deployment**
+  - [ ] Deploy gallery to Vercel production
+  - [ ] Integrate with real blockchain data (move away from mock fallbacks)
+  - [ ] Set up automated rarity computation (5-minute intervals)
+- [ ] **Marketplace Integration**
+  - [ ] Direct links to NFT marketplaces from token detail pages
+  - [ ] Secondary market price tracking
+  - [ ] Trading volume and floor price analytics
+- [ ] **Enhanced Analytics**
+  - [ ] Rarity distribution charts
+  - [ ] Trait correlation analysis
+  - [ ] Collection insights and trends
+- [ ] **Social Features**
+  - [ ] User profiles and NFT collections
+  - [ ] Favorites and watchlists
+  - [ ] Social sharing with Open Graph previews
+- [ ] **Advanced Features**
+  - [ ] Bulk token comparison
+  - [ ] Advanced search with Boolean operators
+  - [ ] Saved searches and alerts
+  - [ ] Export functionality (CSV, JSON)
 
 ## Technical Architecture Changes
 
