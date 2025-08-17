@@ -242,11 +242,19 @@ function parseTokenDescription(description) {
   };
 }
 
-// Demo rarity generation (simplified)
+// Hash-based rarity generation (eliminates predictable patterns)
 function generateDemoRarity(tokenId) {
-  // Use token ID for deterministic demo rarity
+  // Use simple hash function to break linear patterns
   const seed = tokenId || 1;
-  const score = 20 + (seed * 7919) % 80; // Score between 20-100
+  
+  // Create hash-like mixing to eliminate predictable sequences
+  let hash = seed;
+  hash = ((hash * 17) + 31) ^ (hash >> 3);
+  hash = ((hash * 7919) + 1013) ^ (hash >> 7);
+  hash = ((hash * 2971) + 8191) ^ (hash >> 11);
+  
+  // Generate score between 20-100 using the hash
+  const score = 20 + (Math.abs(hash) % 80);
   const percentile = Math.floor(score);
   
   let tier;
