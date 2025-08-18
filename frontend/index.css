@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile-friendly wallet selector styles */
+@media (max-width: 640px) {
+  .ant-btn {
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+    height: auto !important;
+    min-height: 28px !important;
+    border-radius: 4px !important;
+  }
+  
+  .wallet-selector-button {
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

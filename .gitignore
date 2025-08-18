@@ -30,3 +30,9 @@ pnpm-lock.yaml
 *.njsproj
 *.sln
 *.sw?
+
+# Claude Code local settings
+.claude/
+
+# Playwright MCP temporary files
+.playwright-mcp/
