@@ -6,7 +6,10 @@
       "mcp__aptos-mcp__build_dapp_on_aptos",
       "mcp__aptos-mcp__build_smart_contract_on_aptos",
       "mcp__aptos-mcp__list_aptos_resources",
-      "mcp__sequential-thinking__sequentialthinking"
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__playwright__browser_resize",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_click"
     ],
     "deny": []
   }
