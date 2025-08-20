@@ -4,6 +4,40 @@ A comprehensive evolution log showing the transformation from MVP concept to pro
 
 ---
 
+## 📱 v3.3.4 - Mobile Navigation & Responsive Layout Fix (August 18, 2025)
+
+**Status**: ✅ **COMPLETE - Mobile UX Issues Resolved**
+
+### 🚨 Critical Mobile Navigation Issues Fixed
+**Problem**: Mobile users could not navigate between Gallery and Mint pages due to invisible hamburger menu and layout overflow issues.
+
+### 💥 Root Cause & Solutions
+**Issue 1**: Invisible Hamburger Button  
+- **Problem**: Mantine Burger component rendered with 0px dimensions  
+- **Solution**: Replaced with custom CSS hamburger icon with proper animations
+
+**Issue 2**: FILTERS Button Overflow  
+- **Problem**: Gallery toolbar elements overflowed viewport on small screens  
+- **Solution**: Added responsive flex-wrap layout and compact "F" button for mobile
+
+**Issue 3**: Header Layout Cramped  
+- **Problem**: Logo, TESTNET, and Connect Wallet button too close together  
+- **Solution**: Improved mobile spacing with responsive gaps and smaller TESTNET font
+
+### 🛠️ Technical Implementation
+- **Custom Hamburger**: CSS-only 3-line hamburger with smooth rotate animation
+- **Responsive Wrapping**: Gallery toolbar uses `flex-wrap` to prevent overflow  
+- **Mobile-First Sizing**: Optimized font sizes and spacing for mobile viewports
+- **Mantine Removal**: Eliminated dependency on invisible Mantine Burger component
+
+### ✅ User Experience Improvements
+- ✅ Visible and functional mobile navigation menu
+- ✅ No more horizontal scrolling on small screens  
+- ✅ Proper spacing between header elements
+- ✅ Maintains retro theme across all screen sizes
+
+---
+
 ## 🚀 v3.3.3 - Metadata API Blockchain Integration (August 14, 2025)
 
 **Contract**: [`099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`](https://explorer.aptoslabs.com/object/0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b?network=testnet)  

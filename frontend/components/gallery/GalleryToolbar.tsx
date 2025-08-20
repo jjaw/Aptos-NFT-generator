@@ -55,13 +55,13 @@ export function GalleryToolbar({
           </div>
 
           {/* Right Side - Sort & Filters */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 lg:gap-3">
             {/* Sort Dropdown */}
-            <div className="relative">
+            <div className="relative min-w-0 flex-shrink">
               <select
                 value={sortBy}
                 onChange={(e) => onSortChange(e.target.value)}
-                className="appearance-none bg-black/50 border border-gray-600 rounded-lg px-3 py-2 pr-8 text-white font-mono text-sm focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:outline-none cursor-pointer"
+                className="appearance-none bg-black/50 border border-gray-600 rounded-lg px-3 py-2 pr-8 text-white font-mono text-sm focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:outline-none cursor-pointer w-full min-w-[140px]"
               >
                 {sortOptions.map((option) => (
                   <option key={option.value} value={option.value} className="bg-black">
@@ -79,14 +79,15 @@ export function GalleryToolbar({
             {/* Mobile Filter Toggle */}
             <button
               onClick={onToggleFilters}
-              className={`lg:hidden flex items-center gap-2 px-3 py-2 rounded-lg border font-mono text-sm transition-colors ${
+              className={`lg:hidden flex items-center gap-1 px-2 py-2 rounded-lg border font-mono text-xs transition-colors flex-shrink-0 ${
                 showMobileFilters
                   ? 'bg-cyan-400/20 border-cyan-400 text-cyan-400'
                   : 'bg-black/50 border-gray-600 text-gray-300 hover:border-cyan-400 hover:text-cyan-400'
               }`}
             >
-              <Filter className="w-4 h-4" />
-              FILTERS
+              <Filter className="w-3 h-3" />
+              <span className="hidden xs:inline">FILTERS</span>
+              <span className="xs:hidden">F</span>
             </button>
 
             {/* View Toggle (Future) */}

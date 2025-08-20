@@ -1,5 +1,48 @@
 # Retro NFT Generator - Release Notes
 
+## v3.3.7 - Mobile Navigation & Responsive Layout Fix (August 18, 2025)
+
+**Release Date**: August 18, 2025  
+**Network**: Aptos Testnet  
+**Contract Address**: `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`  
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**  
+**Status**: ✅ **CRITICAL MOBILE UX FIX - Navigation Now Functional**
+
+### 🎯 **Mobile Navigation Emergency Fix**
+
+**Problem**: Mobile users couldn't access Gallery/Mint navigation due to invisible hamburger menu and layout overflow issues preventing core app functionality.
+
+**Solution**: Complete mobile navigation overhaul with custom hamburger implementation and responsive layout fixes.
+
+### ✨ **What's Fixed**
+
+#### **✅ Functional Mobile Navigation**
+- **Visible Hamburger Menu**: Replaced invisible Mantine Burger with custom CSS hamburger icon
+- **Working Dropdown**: Mobile users can now toggle between Gallery and Mint pages
+- **Smooth Animations**: Hamburger transforms to X when menu is open
+
+#### **✅ Layout Overflow Prevention**
+- **FILTERS Button**: Compact "F" button on mobile prevents horizontal overflow
+- **Responsive Wrapping**: Gallery toolbar elements wrap properly on small screens
+- **No Horizontal Scroll**: All elements fit within viewport boundaries
+
+#### **✅ Improved Header Spacing**
+- **Better Mobile Layout**: Optimized gaps between logo, navigation, and wallet button  
+- **Smaller TESTNET Font**: Reduced font size for better mobile fit
+- **Proper Element Sizing**: Connect Wallet button no longer cuts off screen edge
+
+### 🛠️ **Technical Changes**
+- **Removed Mantine Dependency**: Custom hamburger eliminates 0px dimension bug
+- **Mobile-First CSS**: Responsive breakpoints for optimal mobile experience
+- **Flex Layout Improvements**: Better space distribution and wrapping behavior
+
+### 🚀 **User Impact**
+- 📱 **Mobile users can now navigate the app** (previously broken)
+- 🎨 **Maintains retro aesthetic** across all screen sizes
+- ⚡ **Faster loading** without unnecessary Mantine components
+
+---
+
 ## v3.3.6 - Gallery Numerical Sorting Fix (August 17, 2025)
 
 **Release Date**: August 17, 2025  

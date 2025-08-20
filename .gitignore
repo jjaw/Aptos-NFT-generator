@@ -2,6 +2,7 @@
 .aptos
 .env
 contract/build
+contract/boogie.bpl
 
 # Logs
 logs
@@ -33,3 +34,9 @@ pnpm-lock.yaml
 
 # MCP Enhancement Analysis
 /mcp-issues
+
+# Claude Code local settings
+.claude/
+
+# Playwright MCP temporary files
+.playwright-mcp/
