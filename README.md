@@ -99,6 +99,8 @@ A **production-ready** full-stack dApp built on Aptos blockchain featuring a **s
 - **Retro 80s Theme**: Cyberpunk aesthetics with neon colors and grid patterns
 - **Wallet Integration**: Support for all Aptos-compatible wallets
 - **Preview System**: Generate NFT previews without minting (local randomization for instant results)
+- **Enhanced Search & Filtering**: Search by NFT name, ID, or individual words from combinations
+- **Individual Word Filtering**: Filter NFTs by specific words (e.g., "CATS") rather than full 3-word phrases
 - **Responsive Design**: Mobile-first with desktop optimization
 - **Real-time Updates**: Live collection statistics and minting progress
 - **Performance Optimized**: Route-based code splitting for faster loading
@@ -331,6 +333,8 @@ subdir = "aptos-token-objects"
 ### Word Combinations
 3 random words selected from 100 cyberpunk/tech terms:
 `NEON, WAVE, GLOW, BEAM, FLUX, SYNC, GRID, CODE, BYTE, HACK, ECHO, VIBE, NOVA, ZETA, APEX, CORE, EDGE, FLOW, HYPE, IRIS, JADE, KILO, LOOP, MAZE, NEXT, OMNI, PACE, QUAD, RAVE, SAGE, TECH, UNIT, VOID, WARP, XRAY, YARN, ZOOM, BOLT, CALM, DAWN, FURY, GATE, HERO, ICON, JACK, KICK, LOCK, MECH, NODE, OPEN, PEAK, QUIT, RISK, SLIM, TANK, USER, VERY, WILD, XBOX, YEAR, ZERO, ATOM, BLUE, CHIP, DATA, EPIC, FAST, GOLD, HARD, ITEM, JOLT, KEEP, LOAD, MEGA, NANO, OPAL, PLUG, QUIZ, RUSH, SOUL, TIDE, UBER, VOLT, WISE, OXEN, YOGI, ZINC, ALTO, BETA, CURE, DUNE, ECHO, FIRE, GURU, HOPE, ICON, JUMP, KING, LION, MINT, NOVA, ONYX, PURE, QUIT`
+
+**Enhanced Word Discovery**: Users can search and filter by individual words rather than full 3-word combinations. For example, searching "CATS" will find all NFTs containing that word, regardless of the other two words in the combination.
 
 ## 🔍 Explorer Integration
 

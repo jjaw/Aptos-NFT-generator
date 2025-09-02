@@ -58,7 +58,7 @@
   - Omit owners/floor/volume at MVP (or show `—` if preferred).
 
 ### 3.2 Toolbar (Items tab)
-- **Search:** by token name/ID (contains, debounced input).
+- **Search:** by token name/ID (contains, debounced input) **+ individual words from word combinations**.
 - **Sort:**  
   - `Recently Minted` (desc, default)  
   - `Token ID: Low → High`  
@@ -68,6 +68,7 @@
 
 ### 3.3 Filters (left panel / drawer on mobile)
 - **Traits:** multi-select within a trait type (OR), combine across types (AND).
+- **Enhanced Word Filtering**: Individual words from word combinations are filterable (e.g., filter by "CATS" to see all NFTs containing that word, regardless of other words in the 3-word combination).
 - **Clear all** to reset filters.
 - **Active filter chips** with individual remove buttons.
 - Attributes are guaranteed for all tokens.
@@ -501,8 +502,8 @@ frontend/gallery.css        # Responsive & accessibility styles
 - Automatic redirect: `/` → `/#/gallery`
 
 ### Key Features Working
-1. **Search**: Debounced token name/ID search with URL persistence
-2. **Filtering**: Multi-select traits (Background Color, Shape, Words) with active chips
+1. **Enhanced Search**: Debounced search by token name/ID **+ individual words** from word combinations with URL persistence
+2. **Individual Word Filtering**: Multi-select traits including **individual words** (Background Color, Shape, individual Words) with active chips
 3. **Sorting**: Recently Minted, Token ID (asc/desc), Rarity (high→low)
 4. **Infinite Scroll**: Virtualized grid handling 10k+ tokens smoothly
 5. **Responsive**: 2-6 columns based on screen size, mobile drawer filters

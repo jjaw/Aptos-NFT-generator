@@ -162,6 +162,14 @@ Transform the current user-owned collection demo into a production-ready shared 
 **Timeline: Week 5+**
 **Status: 📋 Future Enhancement**
 
+#### Completed Enhancements ✅
+- [x] **Enhanced Word Discovery (v3.3.6)** - September 2, 2025
+  - [x] Individual word filtering: Filter by specific words (e.g., "CATS") instead of full 3-word combinations
+  - [x] Enhanced search: Search by individual words from word combinations
+  - [x] Updated trait counting to show individual word frequencies
+  - [x] Updated search UI to reflect new capabilities
+  - [x] Improved user experience for word-based NFT discovery
+
 #### Planned Enhancements
 - [ ] **Production Deployment**
   - [ ] Deploy gallery to Vercel production
