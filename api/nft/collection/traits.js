@@ -87,10 +87,14 @@ module.exports = async (req, res) => {
         traitCounts['Shape'][shape] = (traitCounts['Shape'][shape] || 0) + 1;
       }
 
-      // Count word combinations
+      // Count individual words from word combinations
       if (attributes.wordCombination) {
-        const words = attributes.wordCombination;
-        traitCounts['Words'][words] = (traitCounts['Words'][words] || 0) + 1;
+        const individualWords = attributes.wordCombination.split(' ');
+        individualWords.forEach(word => {
+          if (word.trim()) {
+            traitCounts['Words'][word.trim()] = (traitCounts['Words'][word.trim()] || 0) + 1;
+          }
+        });
       }
     });
 

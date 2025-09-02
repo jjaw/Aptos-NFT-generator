@@ -52,7 +52,10 @@ module.exports = async (req, res) => {
 
     // Add search filter
     if (q.trim()) {
-      whereClause.token_name = { _ilike: `%${q.trim()}%` };
+      whereClause._or = [
+        { token_name: { _ilike: `%${q.trim()}%` } },
+        { description: { _ilike: `%${q.trim()}%` } }
+      ];
     }
 
     // Add trait filters (simplified for demo - in real implementation would parse token descriptions)
@@ -186,8 +189,17 @@ module.exports = async (req, res) => {
     if (Object.keys(traitFilters).length > 0) {
       filteredTokens = processedTokens.filter(token => {
         return Object.entries(traitFilters).every(([traitType, values]) => {
-          const tokenValue = token.attributes.find(attr => attr.trait_type === traitType)?.value;
-          return tokenValue && values.includes(tokenValue);
+          if (traitType === 'Words') {
+            // For words, check if any individual word in the combination matches any selected word
+            const tokenValue = token.attributes.find(attr => attr.trait_type === traitType)?.value;
+            if (!tokenValue) return false;
+            const tokenWords = tokenValue.split(' ').map(w => w.trim());
+            return values.some(selectedWord => tokenWords.includes(selectedWord));
+          } else {
+            // For other traits, use exact matching
+            const tokenValue = token.attributes.find(attr => attr.trait_type === traitType)?.value;
+            return tokenValue && values.includes(tokenValue);
+          }
         });
       });
     }

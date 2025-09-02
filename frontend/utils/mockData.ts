@@ -139,7 +139,10 @@ export const mockTraitCounts = {
     return acc;
   }, {} as Record<string, number>),
   
-  'Words': {}
+  'Words': WORDS.reduce((acc, word) => {
+    acc[word] = Math.floor(Math.random() * 300) + 50; // Individual word counts
+    return acc;
+  }, {} as Record<string, number>)
 };
 
 // API-like functions for development
@@ -164,18 +167,37 @@ export async function fetchMockTokens(params: {
   
   // Apply search filter
   if (q) {
-    tokens = tokens.filter(token => 
-      token.name.toLowerCase().includes(q.toLowerCase()) ||
-      token.tokenId.includes(q)
-    );
+    const searchTerm = q.toLowerCase();
+    tokens = tokens.filter(token => {
+      // Search by name or ID
+      const nameMatch = token.name.toLowerCase().includes(searchTerm);
+      const idMatch = token.tokenId.includes(q);
+      
+      // Search by individual words in word combination
+      const wordsAttribute = token.attributes.find(attr => attr.trait_type === 'Words');
+      const wordMatch = wordsAttribute ? 
+        wordsAttribute.value.split(' ').some(word => word.toLowerCase().includes(searchTerm)) : 
+        false;
+      
+      return nameMatch || idMatch || wordMatch;
+    });
   }
   
   // Apply trait filters
   if (Object.keys(traitFilters).length > 0) {
     tokens = tokens.filter(token => {
       return Object.entries(traitFilters).every(([traitType, values]) => {
-        const tokenValue = token.attributes.find(attr => attr.trait_type === traitType)?.value;
-        return tokenValue && values.includes(tokenValue);
+        if (traitType === 'Words') {
+          // For words, check if any individual word in the combination matches any selected word
+          const tokenValue = token.attributes.find(attr => attr.trait_type === traitType)?.value;
+          if (!tokenValue) return false;
+          const tokenWords = tokenValue.split(' ').map(w => w.trim());
+          return values.some(selectedWord => tokenWords.includes(selectedWord));
+        } else {
+          // For other traits, use exact matching
+          const tokenValue = token.attributes.find(attr => attr.trait_type === traitType)?.value;
+          return tokenValue && values.includes(tokenValue);
+        }
       });
     });
   }
