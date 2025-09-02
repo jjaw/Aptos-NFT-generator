@@ -43,3 +43,6 @@ pnpm-lock.yaml
 
 # Aptos MCP Repository (local analysis copy)
 aptos-npm-mcp/
+.claude/settings.local.json
+contract/*.bpl
+contract/*.mv.disas
