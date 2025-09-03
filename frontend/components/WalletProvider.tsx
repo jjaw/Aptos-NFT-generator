@@ -3,6 +3,7 @@ import { PropsWithChildren } from "react";
 import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
 import { useToast } from "@/components/ui/use-toast";
 import { APTOS_API_KEY, NETWORK } from "@/constants";
+import { aptosClient } from "@/utils/aptosClient";
 
 export function WalletProvider({ children }: PropsWithChildren) {
   const { toast } = useToast();
@@ -12,8 +13,10 @@ export function WalletProvider({ children }: PropsWithChildren) {
       autoConnect
       dappConfig={{
         network: NETWORK,
-        // keep using the per-network map your version expects
         aptosApiKeys: { [NETWORK]: APTOS_API_KEY },
+        aptosClient: aptosClient(),
+        // Add transaction submitter for gas station integration per MCP guidance
+        transactionSubmitter: aptosClient().config.getTransactionSubmitter(),
       }}
       onError={(error) => {
         const msg =

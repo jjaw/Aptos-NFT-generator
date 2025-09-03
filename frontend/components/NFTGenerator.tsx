@@ -3,6 +3,7 @@ import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { mintTrulyRandomNft } from "@/entry-functions/mintTrulyRandomNft";
+import { submitTransactionViaGasStationDirect } from "@/utils/aptosClient";
 import { initializeCollection } from "@/entry-functions/initializeCollection";
 import { getCollectionStats } from "@/view-functions/getCollectionStats";
 import { previewRandomNft } from "@/view-functions/previewRandomNft";
@@ -16,7 +17,11 @@ interface NFTMetadata {
 }
 
 export function NFTGenerator() {
-  const { account, signAndSubmitTransaction } = useWallet();
+  const wallet = useWallet();
+  const { account, signAndSubmitTransaction, signTransaction } = wallet;
+  
+  // Debug available wallet methods
+  console.log("Available wallet methods:", Object.keys(wallet));
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [totalMinted, setTotalMinted] = useState<number>(0);
@@ -122,13 +127,40 @@ export function NFTGenerator() {
 
     setIsLoading(true);
     try {
-      const response = await signAndSubmitTransaction(
-        mintTrulyRandomNft()
-      );
-
+      const transaction = mintTrulyRandomNft();
+      
+      // Try direct gas station approach first
+      let response;
+      try {
+        response = await submitTransactionViaGasStationDirect(
+          account.address,
+          transaction.data
+        );
+      } catch (error) {
+        console.log("Direct gas station failed, using wallet adapter");
+        response = null;
+      }
+      
+      // Fallback to wallet adapter if direct approach fails
+      if (!response) {
+        console.log("🔄 Using wallet adapter with configured gas station");
+        const transactionWithFeePayer = {
+          ...transaction,
+          withFeePayer: true,
+        };
+        console.log("🎯 Transaction with fee payer:", transactionWithFeePayer);
+        response = await signAndSubmitTransaction(transactionWithFeePayer);
+      }
+      
+      // Log transaction details for analysis
+      console.log("🔍 TRANSACTION ANALYSIS:");
+      console.log("Hash:", response.hash);
+      console.log("Explorer:", `https://explorer.aptoslabs.com/txn/${response.hash}?network=testnet`);
+      console.log("Full response:", response);
+      
       toast({
-        title: "NFT Minted! 🎉",
-        description: `Transaction: ${response.hash}`,
+        title: "NFT Minted! 🎉", 
+        description: `Hash: ${response.hash} - Check console for analysis link`,
         variant: "default",
       });
 
@@ -143,6 +175,14 @@ export function NFTGenerator() {
       }, 2000);
 
     } catch (error: any) {
+      console.error("Minting error:", error);
+      console.error("Error details:", {
+        message: error.message,
+        stack: error.stack,
+        gasStationAvailable: !!gasStationSubmitter,
+        accountConnected: !!account
+      });
+      
       toast({
         title: "Minting failed",
         description: error.message || "An error occurred while minting",
