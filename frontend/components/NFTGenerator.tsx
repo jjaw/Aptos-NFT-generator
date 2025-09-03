@@ -18,7 +18,7 @@ interface NFTMetadata {
 
 export function NFTGenerator() {
   const wallet = useWallet();
-  const { account, signAndSubmitTransaction, signTransaction } = wallet;
+  const { account, signAndSubmitTransaction } = wallet;
   
   // Debug available wallet methods
   console.log("Available wallet methods:", Object.keys(wallet));
@@ -133,7 +133,7 @@ export function NFTGenerator() {
       let response;
       try {
         response = await submitTransactionViaGasStationDirect(
-          account.address,
+          account.address.toString(),
           transaction.data
         );
       } catch (error) {
@@ -179,7 +179,7 @@ export function NFTGenerator() {
       console.error("Error details:", {
         message: error.message,
         stack: error.stack,
-        gasStationAvailable: !!gasStationSubmitter,
+        gasStationAvailable: !!account,
         accountConnected: !!account
       });
       

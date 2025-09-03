@@ -1,4 +1,4 @@
-import { NETWORK, APTOS_API_KEY, GAS_STATION_API_KEY, MODULE_ADDRESS } from "@/constants";
+import { NETWORK, APTOS_API_KEY, GAS_STATION_API_KEY } from "@/constants";
 import { Aptos, AptosConfig } from "@aptos-labs/ts-sdk";
 import { GasStationTransactionSubmitter } from "@aptos-labs/gas-station-client";
 

@@ -14,7 +14,6 @@ export function WalletProvider({ children }: PropsWithChildren) {
       dappConfig={{
         network: NETWORK,
         aptosApiKeys: { [NETWORK]: APTOS_API_KEY },
-        aptosClient: aptosClient(),
         // Add transaction submitter for gas station integration per MCP guidance
         transactionSubmitter: aptosClient().config.getTransactionSubmitter(),
       }}
