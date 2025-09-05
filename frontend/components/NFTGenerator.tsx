@@ -54,7 +54,7 @@ export function NFTGenerator() {
     };
 
     loadStats();
-    const interval = setInterval(loadStats, 10000); // Update every 10 seconds
+    const interval = setInterval(loadStats, 5000); // Update every 5 seconds
     return () => clearInterval(interval);
   }, []); // No dependency on account - shared collection is global
 
