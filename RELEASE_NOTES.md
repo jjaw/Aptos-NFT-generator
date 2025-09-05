@@ -1,8 +1,53 @@
 # Retro NFT Generator - Release Notes
 
-## v3.3.8 - Post-Mint NFT Display & User Experience Enhancement (January 5, 2025)
+## v3.3.9 - Mock Data Removal & Honest Error Messaging (September 5, 2025)
 
-**Release Date**: January 5, 2025  
+**Release Date**: September 5, 2025  
+**Network**: Aptos Testnet  
+**Contract Address**: `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`  
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**  
+**Status**: ✅ **TRUST & TRANSPARENCY IMPROVEMENT - No More Misleading Mock Data**
+
+### 🎯 **Mock Data Elimination for User Trust**
+
+**Problem**: Unminted tokens (beyond collection count) showed fake NFT previews, creating false expectations about what users would actually receive when minting.
+
+**Solution**: Complete removal of mock data with honest, themed error messages that maintain user trust and provide clear information.
+
+### ✨ **What's Fixed**
+
+#### **✅ Honest Token Validation**
+- **Real Data Only**: Tokens 1-122 show actual NFT data or honest error messages
+- **No Fake Previews**: Tokens 123+ show clear "NFT Not Minted Yet" message
+- **Collection Stats Integration**: Real-time validation against actual minted count
+
+#### **✅ Themed Error Messages**
+- **🚫 "NFT Not Minted Yet"**: For tokens beyond current minted count with helpful range info
+- **⚡ "System Glitch Detected"**: Retro-themed message for API failures on existing tokens
+- **⏳ "NFT Processing..."**: Special handling for recently minted tokens with indexing delays
+
+#### **✅ Trust-Building Communication**
+- **Transparent Messaging**: Users know exactly what's happening with their requests
+- **No False Expectations**: Eliminates confusion about what minted NFTs will actually look like
+- **Consistent Experience**: Same honest communication across all error scenarios
+
+### 🛠️ **Technical Implementation**
+- **Collection Stats Validation**: Query minted count before attempting NFT data fetch
+- **Typed Error Handling**: Specific error types for different failure scenarios  
+- **React Query Integration**: Proper caching and dependency management for stats
+- **Mobile-Responsive Errors**: Themed error pages work perfectly on all devices
+
+### 🚀 **User Impact**
+- 🎯 **Eliminates false expectations** - No more fake NFT previews for unminted tokens
+- 💬 **Clear communication** - Users understand exactly what's happening
+- 🔒 **Builds trust** - Honest error messages instead of misleading mock data
+- ⚡ **Retro-themed UX** - Error messages fit the app's aesthetic while being informative
+
+---
+
+## v3.3.8 - Post-Mint NFT Display & User Experience Enhancement (September 5, 2025)
+
+**Release Date**: September 5, 2025  
 **Network**: Aptos Testnet  
 **Contract Address**: `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`  
 **Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**  
