@@ -1,5 +1,55 @@
 # Retro NFT Generator - Release Notes
 
+## v3.3.8 - Post-Mint NFT Display & User Experience Enhancement (January 5, 2025)
+
+**Release Date**: January 5, 2025  
+**Network**: Aptos Testnet  
+**Contract Address**: `099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b`  
+**Live Site**: **[https://www.aptosnft.com/](https://www.aptosnft.com/)**  
+**Status**: ✅ **MAJOR UX IMPROVEMENT - Users Now See Their Minted NFT Immediately**
+
+### 🎯 **Post-Mint Experience Revolution**
+
+**Problem**: Users minted NFTs but had no idea what they got, leading to confusion: *"Minting is immediate... but what did I get?"*
+
+**Solution**: Direct redirect to minted NFT page with success banner, transaction details, and clear next actions.
+
+### ✨ **What's New**
+
+#### **✅ Direct NFT Page Redirect**
+- **Immediate Gratification**: After successful mint, users are redirected to `/token/{id}` showing their exact NFT
+- **Token ID Extraction**: Smart prediction using pre-mint collection stats to determine newly minted token ID
+- **No More Hunting**: Users see exactly what they minted instead of searching through gallery
+
+#### **✅ Rich Success Banner**
+- **Celebration Message**: "🎉 Congratulations! You just minted this NFT!" 
+- **Transaction Details**: Display transaction hash with direct link to Aptos Explorer
+- **Responsive Design**: Mobile-optimized banner with retro grid pattern background
+
+#### **✅ Action-Oriented Navigation**
+- **Mint Another Button**: Quick return to mint page for additional NFTs
+- **View Gallery Button**: Easy navigation to explore the full collection
+- **Dismissible Banner**: Users can close banner when ready
+
+#### **✅ Edge Case Handling**
+- **Processing State**: Special message when NFT hasn't been indexed yet: *"Your NFT was minted successfully! It may take a moment to appear in our system."*
+- **Refresh Option**: One-click page refresh for delayed indexing
+- **Session Management**: 5-minute session storage with automatic cleanup
+
+### 🛠️ **Technical Implementation**
+- **SessionStorage Integration**: Mint data persists across page navigation
+- **React Router Navigation**: Seamless redirect using useNavigate hook
+- **Collection Stats API**: Real-time token counting for accurate ID prediction
+- **Fallback Handling**: Graceful degradation when API calls fail
+
+### 🚀 **User Impact**
+- 🎉 **Immediate NFT visibility** - Users see their minted NFT instantly
+- 🔗 **Easy transaction verification** - Direct Explorer links for transparency  
+- ⚡ **Streamlined workflow** - Clear next actions reduce user confusion
+- 📱 **Mobile-optimized** - Banner and buttons work perfectly on all devices
+
+---
+
 ## v3.3.7 - Mobile Navigation & Responsive Layout Fix (August 18, 2025)
 
 **Release Date**: August 18, 2025  
