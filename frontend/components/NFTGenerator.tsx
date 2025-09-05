@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { mintTrulyRandomNft } from "@/entry-functions/mintTrulyRandomNft";
@@ -19,6 +20,7 @@ interface NFTMetadata {
 export function NFTGenerator() {
   const wallet = useWallet();
   const { account, signAndSubmitTransaction } = wallet;
+  const navigate = useNavigate();
   
   // Debug available wallet methods
   console.log("Available wallet methods:", Object.keys(wallet));
@@ -52,7 +54,7 @@ export function NFTGenerator() {
     };
 
     loadStats();
-    const interval = setInterval(loadStats, 10000); // Update every 10 seconds
+    const interval = setInterval(loadStats, 5000); // Update every 5 seconds
     return () => clearInterval(interval);
   }, []); // No dependency on account - shared collection is global
 
@@ -127,6 +129,13 @@ export function NFTGenerator() {
 
     setIsLoading(true);
     try {
+      // Capture current total before minting to determine new token ID
+      const preMintStats = await getCollectionStats();
+      const predictedTokenId = preMintStats.totalMinted + 1;
+      
+      console.log("🎯 Pre-mint stats:", preMintStats);
+      console.log("🎯 Predicted token ID:", predictedTokenId);
+      
       const transaction = mintTrulyRandomNft();
       
       // Try direct gas station approach first
@@ -158,21 +167,21 @@ export function NFTGenerator() {
       console.log("Explorer:", `https://explorer.aptoslabs.com/txn/${response.hash}?network=testnet`);
       console.log("Full response:", response);
       
-      toast({
-        title: "NFT Minted! 🎉", 
-        description: `Hash: ${response.hash} - Check console for analysis link`,
-        variant: "default",
-      });
+      // Store mint data in sessionStorage for the NFT page
+      const mintData = {
+        tokenId: predictedTokenId,
+        transactionHash: response.hash,
+        timestamp: Date.now()
+      };
+      sessionStorage.setItem('recentMint', JSON.stringify(mintData));
+      
+      console.log("🎉 Mint successful, redirecting to NFT page:", `/token/${predictedTokenId}`);
+      
+      // Redirect to the specific NFT page
+      navigate(`/token/${predictedTokenId}`);
 
-      // Refresh stats
-      setTimeout(async () => {
-        try {
-          const stats = await getCollectionStats();
-          setTotalMinted(stats.totalMinted);
-        } catch (error) {
-          console.error("Failed to refresh stats:", error);
-        }
-      }, 2000);
+      // Note: Removed toast notification since user will see success banner on NFT page
+      // Note: Removed stats refresh since user is leaving this page
 
     } catch (error: any) {
       console.error("Minting error:", error);

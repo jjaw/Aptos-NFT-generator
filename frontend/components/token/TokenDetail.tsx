@@ -1,9 +1,11 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Share2, ChevronLeft, ChevronRight } from "lucide-react";
 import { RarityBadge } from "../gallery/RarityBadge";
 import { AttributeTable } from "./AttributeTable";
 import { RarityBreakdown } from "./RarityBreakdown";
+import { PostMintBanner } from "./PostMintBanner";
 import { generateMockTokens } from "@/utils/mockData";
 
 interface TokenMetadata {
@@ -25,9 +27,16 @@ interface TokenMetadata {
   };
 }
 
+interface RecentMintData {
+  tokenId: number;
+  transactionHash: string;
+  timestamp: number;
+}
+
 export function TokenDetail() {
   const { id } = useParams<{ id: string }>();
   const tokenId = parseInt(id || '0');
+  const [recentMintData, setRecentMintData] = useState<RecentMintData | null>(null);
 
   const { data: metadata, isLoading, error } = useQuery<TokenMetadata>({
     queryKey: ['token-metadata', tokenId],
@@ -64,6 +73,40 @@ export function TokenDetail() {
     },
     enabled: !!tokenId,
   });
+
+  // Check for recent mint data on component mount
+  useEffect(() => {
+    const checkRecentMint = () => {
+      try {
+        const storedMintData = sessionStorage.getItem('recentMint');
+        if (storedMintData) {
+          const mintData: RecentMintData = JSON.parse(storedMintData);
+          
+          // Check if this token matches the recently minted one
+          // and if the mint was recent (within last 5 minutes)
+          const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+          
+          if (mintData.tokenId === tokenId && mintData.timestamp > fiveMinutesAgo) {
+            setRecentMintData(mintData);
+            console.log("🎉 Detected recent mint for token:", tokenId);
+          } else {
+            // Clear stale data
+            sessionStorage.removeItem('recentMint');
+          }
+        }
+      } catch (error) {
+        console.error('Error checking recent mint data:', error);
+        sessionStorage.removeItem('recentMint');
+      }
+    };
+
+    checkRecentMint();
+  }, [tokenId]);
+
+  const handleDismissPostMintBanner = () => {
+    setRecentMintData(null);
+    sessionStorage.removeItem('recentMint');
+  };
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -104,23 +147,52 @@ export function TokenDetail() {
   }
 
   if (error || !metadata) {
+    // Special handling for recently minted NFTs that haven't been indexed yet
+    const isRecentlyMinted = recentMintData && recentMintData.tokenId === tokenId;
+    
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto text-center">
-          <div className="text-6xl mb-4">❌</div>
+          {/* Show post-mint banner even if NFT not found */}
+          {recentMintData && (
+            <div className="mb-8">
+              <PostMintBanner
+                transactionHash={recentMintData.transactionHash}
+                onDismiss={handleDismissPostMintBanner}
+              />
+            </div>
+          )}
+          
+          <div className={`${isRecentlyMinted ? 'text-4xl' : 'text-6xl'} mb-4`}>
+            {isRecentlyMinted ? '⏳' : '❌'}
+          </div>
           <h2 className="text-xl font-bold text-white font-mono mb-2">
-            Token not found
+            {isRecentlyMinted ? 'NFT Processing...' : 'Token not found'}
           </h2>
           <p className="text-gray-400 font-mono mb-4">
-            The token you're looking for doesn't exist or hasn't been minted yet.
+            {isRecentlyMinted 
+              ? 'Your NFT was minted successfully! It may take a moment to appear in our system. Try refreshing in a few seconds.'
+              : 'The token you\'re looking for doesn\'t exist or hasn\'t been minted yet.'
+            }
           </p>
-          <Link
-            to="/gallery"
-            className="inline-flex items-center gap-2 bg-cyan-400 hover:bg-cyan-500 text-black font-mono font-bold px-4 py-2 rounded transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Gallery
-          </Link>
+          
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            {isRecentlyMinted && (
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-cyan-400 hover:bg-cyan-500 text-black font-mono font-bold px-4 py-2 rounded transition-colors"
+              >
+                Refresh Page
+              </button>
+            )}
+            <Link
+              to="/gallery"
+              className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-mono font-bold px-4 py-2 rounded transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Gallery
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -171,6 +243,14 @@ export function TokenDetail() {
             </button>
           </div>
         </div>
+
+        {/* Post-Mint Success Banner */}
+        {recentMintData && (
+          <PostMintBanner
+            transactionHash={recentMintData.transactionHash}
+            onDismiss={handleDismissPostMintBanner}
+          />
+        )}
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
