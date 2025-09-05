@@ -6,7 +6,7 @@ import { RarityBadge } from "../gallery/RarityBadge";
 import { AttributeTable } from "./AttributeTable";
 import { RarityBreakdown } from "./RarityBreakdown";
 import { PostMintBanner } from "./PostMintBanner";
-import { generateMockTokens } from "@/utils/mockData";
+import { getCollectionStats, type CollectionStats } from "@/view-functions/getCollectionStats";
 
 interface TokenMetadata {
   name: string;
@@ -38,40 +38,31 @@ export function TokenDetail() {
   const tokenId = parseInt(id || '0');
   const [recentMintData, setRecentMintData] = useState<RecentMintData | null>(null);
 
+  // Get collection stats to check if token exists
+  const { data: collectionStats } = useQuery<CollectionStats>({
+    queryKey: ['collection-stats'],
+    queryFn: () => getCollectionStats(),
+    staleTime: 5000, // Keep fresh for 5 seconds
+  });
+
   const { data: metadata, isLoading, error } = useQuery<TokenMetadata>({
-    queryKey: ['token-metadata', tokenId],
+    queryKey: ['token-metadata', tokenId, collectionStats?.totalMinted],
     queryFn: async () => {
-      try {
-        const response = await fetch(`/api/nft/metadata/${tokenId}`);
-        if (response.ok && response.headers.get('content-type')?.includes('application/json')) {
-          return response.json();
-        } else {
-          throw new Error('API not available');
-        }
-      } catch (apiError) {
-        console.warn('Token metadata API failed, using mock data:', apiError);
-        
-        // Generate mock token data
-        const mockToken = generateMockTokens(1, tokenId - 1)[0];
-        return {
-          name: mockToken.name,
-          description: `A unique retro 80s NFT with ${mockToken.attributes[0].value} background, ${mockToken.attributes[1].value} shape, and words: ${mockToken.attributes[2].value}`,
-          image: mockToken.image,
-          attributes: mockToken.attributes,
-          rarity: mockToken.rarity ? {
-            ...mockToken.rarity,
-            components: mockToken.attributes.map(attr => ({
-              trait_type: attr.trait_type,
-              value: attr.value,
-              ic: Math.random() * 5 + 1,
-              frequency: Math.floor(Math.random() * 100) + 1,
-              total: 1000
-            }))
-          } : undefined
-        };
+      // Check if token exists first
+      if (collectionStats && tokenId > collectionStats.totalMinted) {
+        throw new Error('TOKEN_NOT_MINTED');
       }
+      
+      // Try to get real data
+      const response = await fetch(`/api/nft/metadata/${tokenId}`);
+      if (response.ok && response.headers.get('content-type')?.includes('application/json')) {
+        return response.json();
+      }
+      
+      // If we get here, the token should exist but API failed
+      throw new Error('API_ERROR');
     },
-    enabled: !!tokenId,
+    enabled: !!tokenId && !!collectionStats, // Wait for both tokenId and collection stats
   });
 
   // Check for recent mint data on component mount
@@ -147,8 +138,36 @@ export function TokenDetail() {
   }
 
   if (error || !metadata) {
-    // Special handling for recently minted NFTs that haven't been indexed yet
     const isRecentlyMinted = recentMintData && recentMintData.tokenId === tokenId;
+    const errorMessage = error?.message || '';
+    
+    // Determine error type and appropriate messaging
+    const isTokenNotMinted = errorMessage === 'TOKEN_NOT_MINTED';
+    const isApiError = errorMessage === 'API_ERROR';
+    
+    let emoji, title, description;
+    
+    if (isRecentlyMinted && isApiError) {
+      // Recently minted but API can't load it yet
+      emoji = '⏳';
+      title = 'NFT Processing...';
+      description = 'Your NFT was minted successfully! It may take a moment to appear in our system. Try refreshing in a few seconds.';
+    } else if (isTokenNotMinted) {
+      // Token ID is beyond minted count
+      emoji = '🚫';
+      title = 'NFT Not Minted Yet';
+      description = 'This NFT hasn\'t been minted yet. Only NFTs 1-' + (collectionStats?.totalMinted || 0) + ' are currently available.';
+    } else if (isApiError) {
+      // Token should exist but API failed
+      emoji = '⚡';
+      title = 'System Glitch Detected';
+      description = 'We\'re experiencing technical difficulties accessing this NFT\'s data. Our retro systems are working to resolve this glitch. Please try again in a few moments.';
+    } else {
+      // Generic error
+      emoji = '❌';
+      title = 'Token Not Found';
+      description = 'Unable to locate this NFT in our database.';
+    }
     
     return (
       <div className="container mx-auto px-4 py-8">
@@ -163,26 +182,17 @@ export function TokenDetail() {
             </div>
           )}
           
-          <div className={`${isRecentlyMinted ? 'text-4xl' : 'text-6xl'} mb-4`}>
-            {isRecentlyMinted ? '⏳' : '❌'}
-          </div>
-          <h2 className="text-xl font-bold text-white font-mono mb-2">
-            {isRecentlyMinted ? 'NFT Processing...' : 'Token not found'}
-          </h2>
-          <p className="text-gray-400 font-mono mb-4">
-            {isRecentlyMinted 
-              ? 'Your NFT was minted successfully! It may take a moment to appear in our system. Try refreshing in a few seconds.'
-              : 'The token you\'re looking for doesn\'t exist or hasn\'t been minted yet.'
-            }
-          </p>
+          <div className="text-6xl mb-4">{emoji}</div>
+          <h2 className="text-xl font-bold text-white font-mono mb-2">{title}</h2>
+          <p className="text-gray-400 font-mono mb-4 leading-relaxed">{description}</p>
           
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            {isRecentlyMinted && (
+            {(isRecentlyMinted || isApiError) && (
               <button
                 onClick={() => window.location.reload()}
                 className="bg-cyan-400 hover:bg-cyan-500 text-black font-mono font-bold px-4 py-2 rounded transition-colors"
               >
-                Refresh Page
+                ⚡ Refresh Page
               </button>
             )}
             <Link
