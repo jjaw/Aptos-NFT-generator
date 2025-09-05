@@ -7,7 +7,7 @@ A **production-ready** full-stack dApp built on Aptos blockchain featuring a **s
 *Connect your Aptos wallet and mint your retro NFT in seconds!*
 
 ![Retro NFT Generator](https://img.shields.io/badge/Aptos-NFT_Generator-00D4AA?style=for-the-badge&logo=aptos)
-![Version](https://img.shields.io/badge/version-3.3.3-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-3.3.9-blue?style=for-the-badge)
 ![Network](https://img.shields.io/badge/network-testnet-orange?style=for-the-badge)
 ![Status](https://img.shields.io/badge/status-Production_Ready-green?style=for-the-badge)
 
@@ -101,6 +101,9 @@ A **production-ready** full-stack dApp built on Aptos blockchain featuring a **s
 - **Preview System**: Generate NFT previews without minting (local randomization for instant results)
 - **Enhanced Search & Filtering**: Search by NFT name, ID, or individual words from combinations
 - **Individual Word Filtering**: Filter NFTs by specific words (e.g., "CATS") rather than full 3-word phrases
+- **Post-Mint Experience**: Direct redirect to minted NFT with success banner and transaction details
+- **Honest Error Messaging**: No mock data - clear themed messages for unminted tokens and API failures
+- **Trust-First Design**: Real data only, eliminating false expectations from fake NFT previews
 - **Responsive Design**: Mobile-first with desktop optimization
 - **Real-time Updates**: Live collection statistics and minting progress
 - **Performance Optimized**: Route-based code splitting for faster loading
