@@ -13,26 +13,26 @@ export function RarityBadge({ tier, percentile, className = '' }: RarityBadgePro
       shadow: 'shadow-yellow-400/30'
     },
     A: { 
-      bg: 'bg-gradient-to-r from-purple-400 to-pink-500', 
-      text: 'text-white', 
-      border: 'border-purple-400',
-      shadow: 'shadow-purple-400/30'
+      bg: 'bg-gradient-to-r from-sky-500 to-fuchsia-500', 
+      text: 'text-slate-100', 
+      border: 'border-sky-400',
+      shadow: 'shadow-sky-400/30'
     },
     B: { 
       bg: 'bg-gradient-to-r from-blue-400 to-cyan-500', 
-      text: 'text-white', 
+      text: 'text-slate-100', 
       border: 'border-blue-400',
       shadow: 'shadow-blue-400/30'
     },
     C: { 
       bg: 'bg-gradient-to-r from-green-400 to-emerald-500', 
-      text: 'text-white', 
+      text: 'text-slate-100', 
       border: 'border-green-400',
       shadow: 'shadow-green-400/30'
     },
     D: { 
       bg: 'bg-gradient-to-r from-gray-400 to-gray-600', 
-      text: 'text-white', 
+      text: 'text-slate-100', 
       border: 'border-gray-400',
       shadow: 'shadow-gray-400/30'
     }

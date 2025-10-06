@@ -218,7 +218,7 @@ export function NFTGenerator() {
         
         {/* Words */}
         <div className="bg-black/50 backdrop-blur-sm rounded px-3 py-2 z-10">
-          <div className="text-white text-sm font-bold tracking-wider">
+          <div className="text-slate-100 text-sm font-bold tracking-wider">
             {metadata.word_combination}
           </div>
         </div>
@@ -268,7 +268,7 @@ export function NFTGenerator() {
             <div className="text-gray-300 text-sm font-mono">MAX SUPPLY</div>
           </div>
           <div>
-            <div className="text-3xl font-bold text-purple-400 font-mono">
+            <div className="text-3xl font-bold text-sky-400 font-mono">
               {progressPercentage.toFixed(1)}%
             </div>
             <div className="text-gray-300 text-sm font-mono">COMPLETE</div>
@@ -289,7 +289,7 @@ export function NFTGenerator() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Preview Section */}
         <div className="bg-black/50 backdrop-blur-sm border border-cyan-400 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-white font-mono mb-4 text-center">
+          <h3 className="text-xl font-bold text-slate-100 font-mono mb-4 text-center">
             PREVIEW GENERATOR
           </h3>
           
@@ -298,7 +298,7 @@ export function NFTGenerator() {
             
             <Button
               onClick={generatePreview}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-mono border border-purple-400"
+              className="bg-gradient-to-r from-cyan-500 to-fuchsia-500 hover:from-cyan-500/90 hover:to-fuchsia-500/90 text-slate-100 font-mono border border-cyan-400"
             >
               GENERATE PREVIEW
             </Button>
@@ -311,13 +311,13 @@ export function NFTGenerator() {
 
         {/* Mint Section */}
         <div className="bg-black/50 backdrop-blur-sm border border-cyan-400 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-white font-mono mb-4 text-center">
+          <h3 className="text-xl font-bold text-slate-100 font-mono mb-4 text-center">
             CLAIM YOUR NFT
           </h3>
           
           <div className="space-y-6">
             <div className="text-center">
-              <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-cyan-400 to-pink-400 rounded-full flex items-center justify-center text-4xl">
+              <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-cyan-400 to-fuchsia-400 rounded-full flex items-center justify-center text-4xl">
                 🎯
               </div>
               <p className="text-gray-300 font-mono text-sm">
@@ -334,7 +334,7 @@ export function NFTGenerator() {
               <Button
                 onClick={handleInitializeCollection}
                 disabled={isInitializing}
-                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-mono border border-green-400 text-lg py-6"
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-slate-100 font-mono border border-green-400 text-lg py-6"
               >
                 {isInitializing ? (
                   <div className="flex items-center space-x-2">
@@ -349,7 +349,7 @@ export function NFTGenerator() {
               <Button
                 onClick={handleMint}
                 disabled={isLoading || totalMinted >= maxSupply}
-                className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-mono border border-cyan-400 text-lg py-6"
+                className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-slate-100 font-mono border border-cyan-400 text-lg py-6"
               >
                 {isLoading ? (
                   <div className="flex items-center space-x-2">

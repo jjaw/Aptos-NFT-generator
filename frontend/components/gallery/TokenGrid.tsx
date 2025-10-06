@@ -75,7 +75,7 @@ export function TokenGrid({
     return (
       <div className={`flex flex-col items-center justify-center py-16 ${className}`}>
         <div className="text-6xl mb-4">🔍</div>
-        <h3 className="text-xl font-bold text-white font-mono mb-2">No items found</h3>
+        <h3 className="text-xl font-bold text-slate-100 font-mono mb-2">No items found</h3>
         <p className="text-gray-400 font-mono text-center max-w-md">
           No items match your current filters. Try adjusting your search or clearing some filters.
         </p>

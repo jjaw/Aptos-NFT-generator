@@ -30,7 +30,7 @@ export function RarityBreakdown({ components }: RarityBreakdownProps) {
               className="bg-black/30 border border-gray-600 rounded-lg p-3"
             >
               <div className="flex items-center justify-between mb-2">
-                <div className="text-white font-mono font-semibold">
+                <div className="text-slate-100 font-mono font-semibold">
                   {component.trait_type}: {component.value}
                 </div>
                 <div className={`text-xs font-mono font-bold px-2 py-1 rounded ${
