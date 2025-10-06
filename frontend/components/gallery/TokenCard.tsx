@@ -42,14 +42,14 @@ export function TokenCard({ tokenId, name, image, rarity, className = '' }: Toke
           {name}
         </h3>
         {rarity && (
-          <div className="mt-2 flex items-center justify-between">
-            <RarityBadge 
-              tier={rarity.tier} 
+          <div className="mt-2 grid w-full grid-cols-[auto,1fr] items-center gap-3">
+            <RarityBadge
+              tier={rarity.tier}
               percentile={rarity.percentile}
               className="text-xs px-2 py-1"
             />
-            <div className="text-xs text-gray-400 font-mono">
-              Score: {rarity.score}
+            <div className="justify-self-end text-xs text-gray-400 font-mono text-right leading-tight">
+              Score: <span className="text-sm text-cyan-100 align-middle">{rarity.score}</span>
             </div>
           </div>
         )}
