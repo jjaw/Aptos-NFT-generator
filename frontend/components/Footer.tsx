@@ -12,7 +12,7 @@ export function Footer() {
               Behind The Scenes
             </p>
             <h2 className="text-2xl font-bold text-slate-100 font-mono">
-              Retro NFTs with a lightweight stack
+              APTOS NFTs with a lightweight stack
             </h2>
             <p className="text-sm leading-relaxed text-cyan-100/90 font-mono">
               Will (@jjaw) vibe coded this Aptos testnet lab to explore generative art, wallet UX, and neon nostalgia. Claude keeps the ideas flowing while the Aptos MCP server handles the chain choreography.
