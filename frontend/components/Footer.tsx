@@ -1,5 +1,25 @@
 const GITHUB_URL = "https://github.com/jjaw/Aptos-NFT-generator";
 
+const SHOUTOUTS = [
+  {
+    icon: "⚡",
+    label: "Aptos MCP server",
+    detail: "powering the mint + wallet pipeline",
+    href: "https://github.com/aptos-labs/aptos-npm-mcp",
+  },
+  {
+    icon: "🤖",
+    label: "Claude",
+    detail: "for rapid prototyping and code pairing",
+  },
+  {
+    icon: "✨",
+    label: "Tippi Fifestarr (@tippi-fifestarr)",
+    detail: "for keeping the energy high",
+    href: "https://github.com/tippi-fifestarr",
+  },
+];
+
 export function Footer() {
   const year = new Date().getFullYear();
 
@@ -24,9 +44,24 @@ export function Footer() {
               Shoutouts
             </p>
             <ul className="space-y-2 text-sm text-cyan-100 font-mono">
-              <li>⚡ Aptos MCP server for the mint + wallet pipeline</li>
-              <li>🤖 Claude for rapid prototyping and code pairing</li>
-              <li>✨ Vibe coach Tippi Fifestarr for keeping the energy high</li>
+              {SHOUTOUTS.map(({ icon, label, detail, href }) => (
+                <li key={label}>
+                  {icon}{" "}
+                  {href ? (
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-cyan-200 underline decoration-cyan-400/60 decoration-dotted hover:text-white"
+                    >
+                      {label}
+                    </a>
+                  ) : (
+                    label
+                  )}{" "}
+                  {detail}
+                </li>
+              ))}
             </ul>
             <a
               href={GITHUB_URL}
