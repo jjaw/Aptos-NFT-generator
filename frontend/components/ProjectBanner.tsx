@@ -18,7 +18,7 @@ export function ProjectBanner() {
               href={GITHUB_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-cyan-400/60 bg-white/5 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-white/10 hover:border-cyan-200"
+              className="inline-flex items-center gap-2 rounded-full border border-cyan-400/60 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:bg-white/10 hover:border-cyan-200"
             >
               View the code on GitHub
               <span aria-hidden="true" className="text-base">↗</span>

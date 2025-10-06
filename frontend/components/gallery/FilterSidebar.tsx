@@ -115,7 +115,7 @@ export function FilterSidebar({
       <div className="space-y-4">
         {traitsData?.traits && Object.entries(traitsData.traits).map(([traitType, values]) => (
           <div key={traitType}>
-            <h4 className="text-sm font-semibold text-white font-mono mb-2 border-b border-gray-600 pb-1">
+            <h4 className="text-sm font-semibold text-slate-100 font-mono mb-2 border-b border-gray-600 pb-1">
               {traitType}
             </h4>
             <div className="space-y-1 max-h-48 overflow-y-auto">

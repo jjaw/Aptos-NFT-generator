@@ -183,7 +183,7 @@ export function TokenDetail() {
           )}
           
           <div className="text-6xl mb-4">{emoji}</div>
-          <h2 className="text-xl font-bold text-white font-mono mb-2">{title}</h2>
+          <h2 className="text-xl font-bold text-slate-100 font-mono mb-2">{title}</h2>
           <p className="text-gray-400 font-mono mb-4 leading-relaxed">{description}</p>
           
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -197,7 +197,7 @@ export function TokenDetail() {
             )}
             <Link
               to="/gallery"
-              className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-mono font-bold px-4 py-2 rounded transition-colors"
+              className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-slate-100 font-mono font-bold px-4 py-2 rounded transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Gallery
@@ -265,7 +265,7 @@ export function TokenDetail() {
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Image */}
-          <div className="aspect-square bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg overflow-hidden border border-cyan-400/30">
+          <div className="aspect-square bg-gradient-to-br from-slate-950/70 to-sky-950/30 rounded-lg overflow-hidden border border-cyan-400/30">
             <img
               src={metadata.image}
               alt={metadata.name}
@@ -278,7 +278,7 @@ export function TokenDetail() {
             {/* Title & Rarity */}
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl font-bold text-white font-mono">
+                <h1 className="text-3xl font-bold text-slate-100 font-mono">
                   {metadata.name}
                 </h1>
                 {metadata.rarity && (

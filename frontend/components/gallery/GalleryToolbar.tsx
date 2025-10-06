@@ -49,7 +49,7 @@ export function GalleryToolbar({
                 placeholder="Search by name, ID, or words..."
                 value={localSearch}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-black/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:outline-none font-mono text-sm"
+                className="w-full pl-10 pr-4 py-2 bg-black/50 border border-gray-600 rounded-lg text-slate-100 placeholder-gray-400 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:outline-none font-mono text-sm"
               />
             </div>
           </div>
@@ -61,7 +61,7 @@ export function GalleryToolbar({
               <select
                 value={sortBy}
                 onChange={(e) => onSortChange(e.target.value)}
-                className="appearance-none bg-black/50 border border-gray-600 rounded-lg px-3 py-2 pr-8 text-white font-mono text-sm focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:outline-none cursor-pointer w-full min-w-[140px]"
+                className="appearance-none bg-black/50 border border-gray-600 rounded-lg px-3 py-2 pr-8 text-slate-100 font-mono text-sm focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:outline-none cursor-pointer w-full min-w-[140px]"
               >
                 {sortOptions.map((option) => (
                   <option key={option.value} value={option.value} className="bg-black">

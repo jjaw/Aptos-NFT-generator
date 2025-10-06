@@ -11,7 +11,7 @@ export function Footer() {
             <p className="text-[10px] uppercase tracking-[0.35em] text-cyan-300 font-mono">
               Behind The Scenes
             </p>
-            <h2 className="text-2xl font-bold text-white font-mono">
+            <h2 className="text-2xl font-bold text-slate-100 font-mono">
               Retro NFTs with a lightweight stack
             </h2>
             <p className="text-sm leading-relaxed text-cyan-100/90 font-mono">
@@ -32,7 +32,7 @@ export function Footer() {
               href={GITHUB_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-cyan-400/60 bg-gradient-to-r from-purple-500/30 via-transparent to-pink-500/30 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-cyan-200"
+              className="inline-flex items-center gap-2 rounded-full border border-cyan-400/60 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:bg-white/10 hover:border-cyan-200"
             >
               Star the project on GitHub
               <span aria-hidden="true" className="text-base">★</span>

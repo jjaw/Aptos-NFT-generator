@@ -176,7 +176,7 @@ export function Gallery() {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
           <div className="text-6xl mb-4">⚠️</div>
-          <h2 className="text-xl font-bold text-white font-mono mb-2">
+          <h2 className="text-xl font-bold text-slate-100 font-mono mb-2">
             Failed to load collection
           </h2>
           <p className="text-gray-400 font-mono mb-4">
@@ -231,7 +231,7 @@ export function Gallery() {
                 </div>
                 <button
                   onClick={() => setShowMobileFilters(false)}
-                  className="absolute top-4 right-4 text-white hover:text-cyan-400 transition-colors"
+                  className="absolute top-4 right-4 text-slate-100 hover:text-cyan-400 transition-colors"
                 >
                   ✕
                 </button>

@@ -20,7 +20,7 @@ export function TokenCard({ tokenId, name, image, rarity, className = '' }: Toke
       className={`group block bg-black/40 backdrop-blur-sm border border-cyan-400/30 rounded-lg overflow-hidden hover:border-cyan-400/60 hover:shadow-xl hover:shadow-cyan-400/10 hover:-translate-y-1 transition-all duration-300 ${className}`}
     >
       {/* Image Container */}
-      <div className="relative aspect-square bg-gradient-to-br from-purple-900/50 to-pink-900/50 overflow-hidden">
+      <div className="relative aspect-square bg-gradient-to-br from-slate-950/70 to-sky-950/30 overflow-hidden">
         <img 
           src={image} 
           alt={name}
@@ -30,7 +30,7 @@ export function TokenCard({ tokenId, name, image, rarity, className = '' }: Toke
         
         {/* Hover Overlay */}
         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <div className="text-white font-mono text-sm font-bold bg-black/50 px-3 py-1 rounded">
+          <div className="text-slate-100 font-mono text-sm font-bold bg-black/50 px-3 py-1 rounded">
             VIEW DETAILS
           </div>
         </div>

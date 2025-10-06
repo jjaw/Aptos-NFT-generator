@@ -25,7 +25,7 @@ export function AttributeTable({ attributes }: AttributeTableProps) {
             <div className="text-xs text-gray-400 font-mono uppercase tracking-wider mb-1">
               {attribute.trait_type}
             </div>
-            <div className="text-white font-mono font-semibold">
+            <div className="text-slate-100 font-mono font-semibold">
               {attribute.value}
             </div>
           </div>

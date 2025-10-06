@@ -31,11 +31,11 @@ export function GalleryHeader() {
       <div className="text-center mb-8">
         {/* Collection Avatar & Title */}
         <div className="flex items-center justify-center mb-4">
-          <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-pink-400 rounded-full flex items-center justify-center text-2xl mr-4">
+          <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-fuchsia-400 rounded-full flex items-center justify-center text-2xl mr-4">
             🌆
           </div>
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 via-pink-400 to-purple-400 bg-clip-text text-transparent font-mono tracking-wider">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-300 via-sky-400 to-pink-400 bg-clip-text text-transparent font-mono tracking-wider">
               RETRO 80S COLLECTION
             </h1>
           </div>
@@ -80,7 +80,7 @@ export function GalleryHeader() {
         
         {/* Decorative Line */}
         <div className="mt-6 flex justify-center">
-          <div className="bg-gradient-to-r from-cyan-500 to-pink-500 h-1 w-32 rounded"></div>
+          <div className="h-1 w-32 rounded bg-gradient-to-r from-cyan-400 to-fuchsia-400"></div>
         </div>
       </div>
     </div>

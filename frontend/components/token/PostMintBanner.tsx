@@ -31,7 +31,7 @@ export function PostMintBanner({ transactionHash, onDismiss }: PostMintBannerPro
         {/* Dismiss button */}
         <button
           onClick={handleDismiss}
-          className="absolute top-4 right-4 p-1 text-gray-400 hover:text-white transition-colors z-10"
+          className="absolute top-4 right-4 p-1 text-gray-400 hover:text-slate-100 transition-colors z-10"
           aria-label="Dismiss notification"
         >
           <X className="w-5 h-5" />
@@ -42,7 +42,7 @@ export function PostMintBanner({ transactionHash, onDismiss }: PostMintBannerPro
           <div className="flex items-center gap-3 mb-4">
             <div className="text-4xl">🎉</div>
             <div>
-              <h2 className="text-xl font-bold text-white font-mono">
+              <h2 className="text-xl font-bold text-slate-100 font-mono">
                 Congratulations!
               </h2>
               <p className="text-cyan-300 font-mono">
@@ -76,7 +76,7 @@ export function PostMintBanner({ transactionHash, onDismiss }: PostMintBannerPro
           <div className="flex flex-col sm:flex-row gap-3">
             <Link
               to="/mint"
-              className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-mono font-bold px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 text-center"
+              className="flex-1 bg-gradient-to-r from-cyan-500 to-fuchsia-500 hover:from-cyan-500/90 hover:to-fuchsia-500/90 text-slate-100 font-mono font-bold px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 text-center"
             >
               <Zap className="w-4 h-4" />
               Mint Another
@@ -84,7 +84,7 @@ export function PostMintBanner({ transactionHash, onDismiss }: PostMintBannerPro
             
             <Link
               to="/gallery"
-              className="flex-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-mono font-bold px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 text-center"
+              className="flex-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-slate-100 font-mono font-bold px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 text-center"
             >
               <Grid3X3 className="w-4 h-4" />
               View Gallery
