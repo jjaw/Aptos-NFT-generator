@@ -14,7 +14,7 @@ export function Header() {
           <Link to="/gallery" className="flex items-center gap-1.5 sm:gap-2 hover:opacity-80 transition-opacity flex-shrink min-w-0">
             <div className="text-lg sm:text-xl md:text-2xl">🌆</div>
             <h1 className="text-sm sm:text-lg md:text-xl font-bold text-cyan-400 font-mono tracking-wider whitespace-nowrap">
-              RETRO.NFT
+              APTOS.NFT
             </h1>
           </Link>
         </div>
