@@ -10,7 +10,7 @@ export function ProjectBanner() {
               Vibe Coded By
             </p>
             <p className="text-sm text-cyan-100 sm:text-left font-mono">
-              Will (@jjaw) + Claude code + Aptos MCP
+              Will (@jjaw) + Claude Code + Aptos MCP
             </p>
           </div>
           <div className="flex justify-center">
