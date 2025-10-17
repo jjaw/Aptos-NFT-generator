@@ -4,7 +4,7 @@ A **production-ready** full-stack dApp built on Aptos blockchain featuring a **s
 
 ## 🚀 **Try It Live!**
 ### **[https://www.aptosnft.com/](https://www.aptosnft.com/)**
-*Connect your Aptos wallet and mint your retro NFT in seconds!*
+*Connect your with Google or your Aptos wallet to mint your retro NFT in seconds!*
 
 ![Retro NFT Generator](https://img.shields.io/badge/Aptos-NFT_Generator-00D4AA?style=for-the-badge&logo=aptos)
 ![Version](https://img.shields.io/badge/version-3.3.9-blue?style=for-the-badge)
