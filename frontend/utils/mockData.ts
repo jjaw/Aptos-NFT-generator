@@ -128,22 +128,43 @@ export const mockCollectionStats = {
   lastUpdated: new Date().toISOString()
 };
 
-export const mockTraitCounts = {
-  'Background Color': BACKGROUND_COLORS.reduce((acc, color) => {
-    acc[color] = Math.floor(Math.random() * 100) + 10;
-    return acc;
-  }, {} as Record<string, number>),
-  
-  'Shape': SHAPES.reduce((acc, shape) => {
-    acc[shape.name] = Math.floor(shape.probability * 1000);
-    return acc;
-  }, {} as Record<string, number>),
-  
-  'Words': WORDS.reduce((acc, word) => {
-    acc[word] = Math.floor(Math.random() * 300) + 50; // Individual word counts
-    return acc;
-  }, {} as Record<string, number>)
-};
+// Calculate actual trait counts based on generated tokens
+function calculateActualTraitCounts(sampleSize: number = 1000): Record<string, Record<string, number>> {
+  const counts: Record<string, Record<string, number>> = {
+    'Background Color': {},
+    'Shape': {},
+    'Words': {}
+  };
+
+  // Generate a sample of tokens and count their traits
+  const tokens = generateMockTokens(sampleSize, 0);
+
+  tokens.forEach(token => {
+    token.attributes.forEach(attr => {
+      const traitType = attr.trait_type;
+
+      if (!counts[traitType]) {
+        counts[traitType] = {};
+      }
+
+      if (traitType === 'Words') {
+        // For words, count each individual word
+        const words = attr.value.split(' ');
+        words.forEach(word => {
+          const trimmedWord = word.trim();
+          counts[traitType][trimmedWord] = (counts[traitType][trimmedWord] || 0) + 1;
+        });
+      } else {
+        // For other traits, count the full value
+        counts[traitType][attr.value] = (counts[traitType][attr.value] || 0) + 1;
+      }
+    });
+  });
+
+  return counts;
+}
+
+export const mockTraitCounts = calculateActualTraitCounts(1000);
 
 // API-like functions for development
 export async function fetchMockTokens(params: {
