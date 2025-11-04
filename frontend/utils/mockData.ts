@@ -179,12 +179,17 @@ export async function fetchMockTokens(params: {
   total: number;
 }> {
   const { q = '', sort = 'minted_desc', limit = 48, cursor = '0', traitFilters = {} } = params;
-  
+
   // Simulate delay
   await new Promise(resolve => setTimeout(resolve, 500));
-  
+
   const offset = parseInt(cursor);
-  let tokens = generateMockTokens(limit, offset);
+  const hasFilters = q || Object.keys(traitFilters).length > 0;
+
+  // When filters are applied, generate all tokens to filter correctly
+  // Otherwise only generate the page of tokens needed
+  const TOTAL_TOKENS = 1000;
+  let tokens = hasFilters ? generateMockTokens(TOTAL_TOKENS, 0) : generateMockTokens(limit, offset);
   
   // Apply search filter
   if (q) {
@@ -239,12 +244,15 @@ export async function fetchMockTokens(params: {
       tokens.sort((a, b) => new Date(b.mintedAt).getTime() - new Date(a.mintedAt).getTime());
       break;
   }
-  
-  const hasMore = offset + limit < 1000; // Simulate finite collection
-  
+
+  // Apply pagination to filtered results
+  const totalFiltered = tokens.length;
+  const paginatedTokens = hasFilters ? tokens.slice(offset, offset + limit) : tokens;
+  const hasMore = offset + limit < totalFiltered;
+
   return {
-    items: tokens,
+    items: paginatedTokens,
     nextCursor: hasMore ? (offset + limit).toString() : undefined,
-    total: 1000
+    total: totalFiltered
   };
 }

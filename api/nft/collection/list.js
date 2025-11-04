@@ -22,11 +22,11 @@ module.exports = async (req, res) => {
     const COLLECTION_NAME = '0x7981b8f6eda3d2b0ce7ee77ce99dbcf9b26e2cfd1b50bf6cf7ad97fb6b99d575';
     
     // Parse query parameters
-    const { 
-      q = '', 
-      sort = 'minted_desc', 
-      limit = '48', 
-      cursor = '0' 
+    const {
+      q = '',
+      sort = 'minted_desc',
+      limit = '48',
+      cursor = '0'
     } = req.query;
 
     const limitNum = Math.min(parseInt(limit) || 48, 100); // Cap at 100
@@ -42,6 +42,12 @@ module.exports = async (req, res) => {
         traitFilters[traitType] = values;
       }
     });
+
+    // When trait filters are applied, we need to fetch ALL tokens to filter correctly
+    // Otherwise we only filter within the first page of results
+    const hasTraitFilters = Object.keys(traitFilters).length > 0;
+    const fetchLimit = hasTraitFilters ? 10000 : limitNum; // Fetch all tokens if filtering by traits
+    const fetchOffset = hasTraitFilters ? 0 : offsetNum; // Start from beginning if filtering
 
     // Build GraphQL query
     let whereClause = {
@@ -106,8 +112,8 @@ module.exports = async (req, res) => {
         }
       `,
       variables: {
-        limit: limitNum,
-        offset: offsetNum,
+        limit: fetchLimit,
+        offset: fetchOffset,
         where: whereClause,
         order_by: orderBy
       }
@@ -135,8 +141,6 @@ module.exports = async (req, res) => {
     }
 
     const tokens = data.data?.current_token_datas_v2 || [];
-    // Since aggregate query is not available, estimate total count for pagination
-    const totalCount = tokens.length === limitNum ? offsetNum + limitNum + 1 : offsetNum + tokens.length;
 
     // Try to get cached rarity data
     let rarityData = null;
@@ -209,8 +213,12 @@ module.exports = async (req, res) => {
       filteredTokens.sort((a, b) => (b.rarity?.score || 0) - (a.rarity?.score || 0));
     }
 
-    // Pagination for filtered results
-    const hasMore = offsetNum + limitNum < totalCount && filteredTokens.length === limitNum;
+    // Apply pagination to filtered results
+    const totalFiltered = filteredTokens.length;
+    const paginatedTokens = filteredTokens.slice(offsetNum, offsetNum + limitNum);
+
+    // Calculate pagination metadata
+    const hasMore = offsetNum + limitNum < totalFiltered;
     const nextCursor = hasMore ? (offsetNum + limitNum).toString() : undefined;
 
     // Set response headers
@@ -223,9 +231,9 @@ module.exports = async (req, res) => {
     }
 
     return res.status(200).json({
-      items: filteredTokens,
+      items: paginatedTokens,
       nextCursor,
-      total: totalCount,
+      total: totalFiltered,
       query: { q, sort, traitFilters, limit: limitNum, cursor: offsetNum }
     });
 
