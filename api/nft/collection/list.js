@@ -43,11 +43,11 @@ module.exports = async (req, res) => {
       }
     });
 
-    // When trait filters are applied, we need to fetch ALL tokens to filter correctly
+    // When search query or trait filters are applied, we need to fetch ALL tokens to filter correctly
     // Otherwise we only filter within the first page of results
-    const hasTraitFilters = Object.keys(traitFilters).length > 0;
-    const fetchLimit = hasTraitFilters ? 10000 : limitNum; // Fetch all tokens if filtering by traits
-    const fetchOffset = hasTraitFilters ? 0 : offsetNum; // Start from beginning if filtering
+    const hasFilters = q.trim() || Object.keys(traitFilters).length > 0;
+    const fetchLimit = hasFilters ? 10000 : limitNum; // Fetch all tokens if filtering
+    const fetchOffset = hasFilters ? 0 : offsetNum; // Start from beginning if filtering
 
     // Build GraphQL query
     let whereClause = {
@@ -56,16 +56,8 @@ module.exports = async (req, res) => {
       // creator_address: { _eq: process.env.APTOS_CREATOR_ADDRESS }
     };
 
-    // Add search filter
-    if (q.trim()) {
-      whereClause._or = [
-        { token_name: { _ilike: `%${q.trim()}%` } },
-        { description: { _ilike: `%${q.trim()}%` } }
-      ];
-    }
-
-    // Add trait filters (simplified for demo - in real implementation would parse token descriptions)
-    // For now, we'll implement trait filtering in post-processing
+    // Note: Search and trait filtering are done in post-processing for accuracy
+    // This allows for word-level matching instead of simple pattern matching
 
     // Build order clause
     let orderBy = [];
@@ -188,10 +180,29 @@ module.exports = async (req, res) => {
       };
     });
 
-    // Apply trait filters in post-processing
+    // Apply search filter in post-processing (to match mock data behavior)
     let filteredTokens = processedTokens;
+
+    if (q.trim()) {
+      const searchTerm = q.trim().toLowerCase();
+      filteredTokens = filteredTokens.filter(token => {
+        // Search by name or ID
+        const nameMatch = token.name.toLowerCase().includes(searchTerm);
+        const idMatch = token.tokenId.includes(q.trim());
+
+        // Search by individual words in word combination
+        const wordsAttribute = token.attributes.find(attr => attr.trait_type === 'Words');
+        const wordMatch = wordsAttribute ?
+          wordsAttribute.value.split(' ').some(word => word.toLowerCase().includes(searchTerm)) :
+          false;
+
+        return nameMatch || idMatch || wordMatch;
+      });
+    }
+
+    // Apply trait filters in post-processing
     if (Object.keys(traitFilters).length > 0) {
-      filteredTokens = processedTokens.filter(token => {
+      filteredTokens = filteredTokens.filter(token => {
         return Object.entries(traitFilters).every(([traitType, values]) => {
           if (traitType === 'Words') {
             // For words, check if any individual word in the combination matches any selected word
