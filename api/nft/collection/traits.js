@@ -62,7 +62,14 @@ module.exports = async (req, res) => {
     }
 
     const tokens = data.data?.current_token_datas_v2 || [];
-    const totalMinted = tokens.length; // Use actual token count since aggregate is not available
+
+    // Deduplicate tokens by token_data_id to ensure each unique token is counted only once
+    const uniqueTokens = Array.from(
+      new Map(tokens.map(token => [token.token_data_id || token.token_name, token])).values()
+    );
+    const totalMinted = uniqueTokens.length; // Use unique token count
+
+    console.log(`Traits API: Fetched ${tokens.length} records, ${uniqueTokens.length} unique tokens`);
 
     // Initialize trait counters
     const traitCounts = {
@@ -71,8 +78,8 @@ module.exports = async (req, res) => {
       'Words': {}
     };
 
-    // Process each token to extract and count traits
-    tokens.forEach(token => {
+    // Process each unique token to extract and count traits
+    uniqueTokens.forEach(token => {
       const attributes = parseTokenDescription(token.description || '');
       
       // Count background colors
