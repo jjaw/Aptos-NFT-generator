@@ -134,17 +134,38 @@ module.exports = async (req, res) => {
 
     const tokens = data.data?.current_token_datas_v2 || [];
 
+    // Deduplicate tokens by token_data_id to ensure each unique token is processed only once
+    const uniqueTokens = Array.from(
+      new Map(tokens.map(token => [token.token_data_id || token.token_name, token])).values()
+    );
+
+    console.log(`List API: Fetched ${tokens.length} records, ${uniqueTokens.length} unique tokens`);
+
     // Try to get cached rarity data
     let rarityData = null;
     if (global.rarityCache && global.rarityCache.data) {
       rarityData = global.rarityCache.data;
     }
 
-    // Process tokens and add rarity
-    const processedTokens = tokens.map((token, index) => {
-      // Extract token ID from name
-      const tokenIdMatch = token.token_name?.match(/Retro NFT #(\d+)/);
-      const tokenId = tokenIdMatch ? tokenIdMatch[1] : '0';
+    // Process unique tokens and add rarity
+    const processedTokens = uniqueTokens.map((token, index) => {
+      // Extract token ID from name with improved parsing
+      // First, strip control characters from the name
+      const cleanName = token.token_name?.replace(/[\x00-\x1F\x7F]/g, '');
+      const tokenIdMatch = cleanName?.match(/Retro NFT #(\d+)/);
+
+      // If name parsing fails, try to extract from token_data_id
+      let tokenId = tokenIdMatch ? tokenIdMatch[1] : null;
+      if (!tokenId && token.token_data_id) {
+        // token_data_id format: address::module::TokenName
+        const idParts = token.token_data_id.split('::');
+        const lastPart = idParts[idParts.length - 1];
+        const idFromDataId = lastPart.match(/\d+/);
+        tokenId = idFromDataId ? idFromDataId[0] : String(index);
+      }
+
+      // Final fallback to index if all parsing fails
+      tokenId = tokenId || String(index);
 
       // Parse attributes from description (fallback)
       const attributes = parseTokenDescription(token.description || '');
