@@ -23,25 +23,26 @@ module.exports = async (req, res) => {
     const NEW_CONTRACT_ADDRESS = '0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b';
 
     // Query to get all tokens in the collection for trait analysis
+    // Using same ordering as List API to ensure both fetch the same 100 tokens
     const graphqlQuery = {
       query: `
-        query GetCollectionTraits($collection_id: String!, $creator_pattern: String!) {
+        query GetCollectionTraits($collection_id: String!) {
           current_token_datas_v2(
             where: {
               collection_id: { _eq: $collection_id }
-              token_data_id: { _like: $creator_pattern }
             }
-            limit: 10000
+            limit: 100
+            order_by: [{ last_transaction_timestamp: desc }]
           ) {
             token_name
             token_data_id
             description
+            last_transaction_timestamp
           }
         }
       `,
       variables: {
-        collection_id: COLLECTION_NAME,
-        creator_pattern: `${NEW_CONTRACT_ADDRESS}::%`
+        collection_id: COLLECTION_NAME
       }
     };
 
@@ -71,7 +72,6 @@ module.exports = async (req, res) => {
     const uniqueTokens = Array.from(
       new Map(tokens.map(token => [token.token_data_id || token.token_name, token])).values()
     );
-    const totalMinted = uniqueTokens.length; // Use unique token count
 
     console.log(`Traits API: Fetched ${tokens.length} records, ${uniqueTokens.length} unique tokens`);
 
@@ -81,6 +81,48 @@ module.exports = async (req, res) => {
     }));
     console.log('Traits API - Creator addresses found:', Array.from(creatorAddresses));
 
+    // ========== MALFORMED TOKEN VALIDATION ==========
+    // Identify and skip tokens with invalid name formats (non-numeric token IDs)
+    const validTokenPattern = /^Retro NFT #(\d+)$/;
+    const malformedTokens = [];
+    const validTokens = [];
+
+    uniqueTokens.forEach(token => {
+      // Clean control characters for validation
+      const cleanName = token.token_name?.replace(/[\x00-\x1F\x7F]/g, '') || '';
+      const isValid = validTokenPattern.test(cleanName);
+
+      if (!isValid) {
+        // Extract words from description for diagnostic logging
+        const attributes = parseTokenDescription(token.description || '');
+        const words = attributes.wordCombination ? attributes.wordCombination.split(' ') : [];
+
+        malformedTokens.push({
+          name: token.token_name,
+          cleanName,
+          words,
+          token_data_id: token.token_data_id
+        });
+      } else {
+        validTokens.push(token);
+      }
+    });
+
+    // Log comprehensive malformed token summary ONCE at the start
+    console.log('========== TRAITS API: MALFORMED TOKENS SUMMARY ==========');
+    console.log(`Total malformed tokens being skipped: ${malformedTokens.length}`);
+    console.log('All malformed tokens:', JSON.stringify(malformedTokens.map(t => ({
+      name: t.name,
+      cleanName: t.cleanName,
+      words: t.words
+    })), null, 2));
+    console.log('==========================================================');
+
+    // Calculate total minted from VALID tokens only
+    const totalMinted = validTokens.length;
+
+    console.log(`DEBUG: Processing ${validTokens.length} valid tokens (${malformedTokens.length} malformed tokens skipped)`);
+
     // Initialize trait counters
     const traitCounts = {
       'Background Color': {},
@@ -88,8 +130,8 @@ module.exports = async (req, res) => {
       'Words': {}
     };
 
-    // Process each unique token to extract and count traits
-    uniqueTokens.forEach(token => {
+    // Process each VALID token to extract and count traits
+    validTokens.forEach(token => {
       const attributes = parseTokenDescription(token.description || '');
       
       // Count background colors
@@ -114,6 +156,47 @@ module.exports = async (req, res) => {
         });
       }
     });
+
+    // Debug: Log specific word counts for verification
+    const debugWords = ['APEX', 'EPIC', 'JUMP', 'CURE', 'WARP'];
+    debugWords.forEach(word => {
+      if (traitCounts['Words'][word]) {
+        const tokensWithWord = validTokens.filter(t => {
+          const attrs = parseTokenDescription(t.description || '');
+          return attrs.wordCombination?.includes(word);
+        });
+        console.log(`DEBUG: Found ${traitCounts['Words'][word]} tokens with ${word} word`);
+        console.log(`DEBUG: Tokens with ${word}:`, JSON.stringify(tokensWithWord.map(t => ({
+          name: t.token_name,
+          description: t.description,
+          wordCombination: parseTokenDescription(t.description || '').wordCombination,
+          token_data_id: t.token_data_id
+        })), null, 2));
+      }
+    });
+
+    // Debug: Log background color counts for #8000FF specifically
+    const debugColor = '#8000FF';
+    if (traitCounts['Background Color'][debugColor]) {
+      const tokensWithColor = validTokens.filter(t => {
+        const attrs = parseTokenDescription(t.description || '');
+        return attrs.backgroundColor === debugColor;
+      });
+      console.log(`DEBUG: Found ${traitCounts['Background Color'][debugColor]} tokens with ${debugColor} background`);
+      console.log(`DEBUG: Tokens with ${debugColor}:`, JSON.stringify(tokensWithColor.map(t => ({
+        name: t.token_name,
+        description: t.description,
+        backgroundColor: parseTokenDescription(t.description || '').backgroundColor,
+        token_data_id: t.token_data_id
+      })), null, 2));
+    }
+
+    // Also check for case variations
+    const tokensWithColorCaseInsensitive = validTokens.filter(t => {
+      const attrs = parseTokenDescription(t.description || '');
+      return attrs.backgroundColor?.toUpperCase() === debugColor.toUpperCase();
+    });
+    console.log(`DEBUG: Total tokens with ${debugColor} (case-insensitive): ${tokensWithColorCaseInsensitive.length}`);
 
     // If no minted tokens found, provide default trait structure based on contract
     if (totalMinted === 0) {
