@@ -4,7 +4,62 @@
 **Issue:** Filter sidebar showed 15 tokens for "Background Color: #8000FF" but gallery displayed only 13 NFTs
 **Status:** Resolved
 
-## Root Cause Analysis
+## What Happened Before
+
+Prior to this investigation, a separate filter count discrepancy issue was identified and resolved in an earlier session. That issue involved **malformed token validation**.
+
+### Previous Issue: Malformed Token Validation
+
+The collection contained 36 tokens with malformed names from an old buggy smart contract mixed with tokens from the new contract. These malformed tokens had:
+
+**Control characters:**
+- `\r`, `\n`, `\u001a`, `\u001b`, and other non-printable characters (`\x01` through `\x1F`)
+
+**Invalid name formats:**
+- `Retro NFT #,`
+- `Retro NFT ##`
+- `Retro NFT #!`
+- `Retro NFT #$`
+- And other variations that don't match the expected pattern `Retro NFT #(\d+)`
+
+### Previous Symptoms
+
+Word filter discrepancies:
+- APEX filter: Sidebar showed "10" but only 7 NFTs displayed
+- EPIC filter: Sidebar showed "1" but 2 NFTs displayed
+- JUMP filter: Sidebar showed "2" but 3 NFTs displayed
+
+**Root cause:**
+- Traits API was counting ALL tokens including malformed ones
+- List API was inconsistently including malformed tokens
+- Result: Sidebar counts didn't match grid display counts
+
+### Previous Fix
+
+Implemented consistent malformed token validation in both APIs:
+
+```javascript
+const validTokenPattern = /^Retro NFT #(\d+)$/;
+const cleanName = token.token_name?.replace(/[\x00-\x1F\x7F]/g, '') || '';
+const isValid = validTokenPattern.test(cleanName);
+
+if (!isValid) {
+  // Skip this malformed token
+  malformedTokens.push(token);
+} else {
+  validTokens.push(token);
+}
+```
+
+This ensured both APIs consistently skipped all 36 malformed tokens when counting traits and displaying NFTs.
+
+### Relevant Commits (Previous Session)
+
+- Malformed token validation implementation
+- Updated indexer URL from deprecated endpoint to `https://api.testnet.aptoslabs.com/v1/graphql`
+- Comprehensive logging of all malformed tokens
+
+## Root Cause Analysis (Current Session)
 
 ### Primary Issue: Aptos GraphQL Indexer Hard Limit
 
@@ -134,10 +189,11 @@ All critical logic verified to be identical across both APIs:
 - `api/nft/collection/traits.js` - Added pagination loop (always fetches all tokens)
 - `api/nft/collection/list.js` - Added conditional pagination (fetches all when filtering)
 
-## Commits
+## Commits (Current Session)
 
 - `9e61746` - Initial attempt: Increased limit from 100 to 10,000 (ineffective due to indexer limit)
 - `c05245c` - Final fix: Implemented pagination to work around indexer limit
+- `f27ec84` - Documentation: Added this technical summary
 
 ## Verification
 
@@ -153,3 +209,19 @@ If collection grows beyond 1,000 tokens:
 1. Implement parallel batch fetching (5-10x speedup)
 2. Add server-side caching layer (Vercel KV or Redis)
 3. Consider lazy loading for trait counts (fetch on-demand vs upfront)
+
+## Summary
+
+Two separate but related issues were resolved to fix filter count discrepancies:
+
+**Issue 1 (Previous Session): Malformed Token Validation**
+- Problem: 36 tokens with invalid names from buggy old contract
+- Symptom: Word filters showed incorrect counts (APEX: 10 vs 7, EPIC: 1 vs 2, etc.)
+- Solution: Consistent validation to skip malformed tokens in both APIs
+
+**Issue 2 (Current Session): Pagination Implementation**
+- Problem: Aptos indexer 100-record hard limit, different ordering strategies
+- Symptom: Background Color #8000FF showed 15 vs 13
+- Solution: Implemented pagination to fetch entire collection (133 tokens)
+
+Both fixes ensure the Traits API and List API now analyze identical datasets and produce consistent filter counts across the entire application.
