@@ -71,7 +71,6 @@ module.exports = async (req, res) => {
     const uniqueTokens = Array.from(
       new Map(tokens.map(token => [token.token_data_id || token.token_name, token])).values()
     );
-    const totalMinted = uniqueTokens.length; // Use unique token count
 
     console.log(`Traits API: Fetched ${tokens.length} records, ${uniqueTokens.length} unique tokens`);
 
@@ -81,6 +80,48 @@ module.exports = async (req, res) => {
     }));
     console.log('Traits API - Creator addresses found:', Array.from(creatorAddresses));
 
+    // ========== MALFORMED TOKEN VALIDATION ==========
+    // Identify and skip tokens with invalid name formats (non-numeric token IDs)
+    const validTokenPattern = /^Retro NFT #(\d+)$/;
+    const malformedTokens = [];
+    const validTokens = [];
+
+    uniqueTokens.forEach(token => {
+      // Clean control characters for validation
+      const cleanName = token.token_name?.replace(/[\x00-\x1F\x7F]/g, '') || '';
+      const isValid = validTokenPattern.test(cleanName);
+
+      if (!isValid) {
+        // Extract words from description for diagnostic logging
+        const attributes = parseTokenDescription(token.description || '');
+        const words = attributes.wordCombination ? attributes.wordCombination.split(' ') : [];
+
+        malformedTokens.push({
+          name: token.token_name,
+          cleanName,
+          words,
+          token_data_id: token.token_data_id
+        });
+      } else {
+        validTokens.push(token);
+      }
+    });
+
+    // Log comprehensive malformed token summary ONCE at the start
+    console.log('========== TRAITS API: MALFORMED TOKENS SUMMARY ==========');
+    console.log(`Total malformed tokens being skipped: ${malformedTokens.length}`);
+    console.log('All malformed tokens:', JSON.stringify(malformedTokens.map(t => ({
+      name: t.name,
+      cleanName: t.cleanName,
+      words: t.words
+    })), null, 2));
+    console.log('==========================================================');
+
+    // Calculate total minted from VALID tokens only
+    const totalMinted = validTokens.length;
+
+    console.log(`DEBUG: Processing ${validTokens.length} valid tokens (${malformedTokens.length} malformed tokens skipped)`);
+
     // Initialize trait counters
     const traitCounts = {
       'Background Color': {},
@@ -88,8 +129,8 @@ module.exports = async (req, res) => {
       'Words': {}
     };
 
-    // Process each unique token to extract and count traits
-    uniqueTokens.forEach(token => {
+    // Process each VALID token to extract and count traits
+    validTokens.forEach(token => {
       const attributes = parseTokenDescription(token.description || '');
       
       // Count background colors
@@ -112,6 +153,24 @@ module.exports = async (req, res) => {
             traitCounts['Words'][word.trim()] = (traitCounts['Words'][word.trim()] || 0) + 1;
           }
         });
+      }
+    });
+
+    // Debug: Log specific word counts for verification
+    const debugWords = ['APEX', 'EPIC', 'JUMP', 'CURE', 'WARP'];
+    debugWords.forEach(word => {
+      if (traitCounts['Words'][word]) {
+        const tokensWithWord = validTokens.filter(t => {
+          const attrs = parseTokenDescription(t.description || '');
+          return attrs.wordCombination?.includes(word);
+        });
+        console.log(`DEBUG: Found ${traitCounts['Words'][word]} tokens with ${word} word`);
+        console.log(`DEBUG: Tokens with ${word}:`, JSON.stringify(tokensWithWord.map(t => ({
+          name: t.token_name,
+          description: t.description,
+          wordCombination: parseTokenDescription(t.description || '').wordCombination,
+          token_data_id: t.token_data_id
+        })), null, 2));
       }
     });
 
