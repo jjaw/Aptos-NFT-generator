@@ -20,6 +20,7 @@ module.exports = async (req, res) => {
   try {
     const INDEXER_API_URL = 'https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql';
     const COLLECTION_NAME = '0x7981b8f6eda3d2b0ce7ee77ce99dbcf9b26e2cfd1b50bf6cf7ad97fb6b99d575';
+    const NEW_CONTRACT_ADDRESS = '0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b';
     
     // Parse query parameters
     const {
@@ -52,8 +53,7 @@ module.exports = async (req, res) => {
     // Build GraphQL query
     let whereClause = {
       collection_id: { _eq: COLLECTION_NAME },
-      // Note: In a real implementation, we'd also filter by creator_address
-      // creator_address: { _eq: process.env.APTOS_CREATOR_ADDRESS }
+      token_data_id: { _like: `${NEW_CONTRACT_ADDRESS}::%` }
     };
 
     // Note: Search and trait filtering are done in post-processing for accuracy
@@ -140,6 +140,12 @@ module.exports = async (req, res) => {
     );
 
     console.log(`List API: Fetched ${tokens.length} records, ${uniqueTokens.length} unique tokens`);
+
+    // Diagnostic logging: identify all creator addresses in the collection
+    const creatorAddresses = new Set(uniqueTokens.map(t => {
+      return t.token_data_id?.split('::')[0];
+    }));
+    console.log('List API - Creator addresses found:', Array.from(creatorAddresses));
 
     // Try to get cached rarity data
     let rarityData = null;
