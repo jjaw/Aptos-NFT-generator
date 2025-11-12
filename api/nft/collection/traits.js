@@ -23,7 +23,6 @@ module.exports = async (req, res) => {
     const NEW_CONTRACT_ADDRESS = '0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b';
 
     // Query to get all tokens in the collection for trait analysis
-    // TEMPORARILY removing token_data_id filter for debugging
     const graphqlQuery = {
       query: `
         query GetCollectionTraits($collection_id: String!) {
@@ -45,7 +44,6 @@ module.exports = async (req, res) => {
     };
 
     console.log('Fetching traits for collection:', COLLECTION_NAME);
-    console.log('DEBUG: Querying WITHOUT token_data_id filter to see all tokens');
 
     const response = await fetch(INDEXER_API_URL, {
       method: 'POST',

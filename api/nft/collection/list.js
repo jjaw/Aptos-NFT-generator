@@ -51,12 +51,9 @@ module.exports = async (req, res) => {
     const fetchOffset = hasFilters ? 0 : offsetNum; // Start from beginning if filtering
 
     // Build GraphQL query
-    // TEMPORARILY removing token_data_id filter for debugging
     let whereClause = {
       collection_id: { _eq: COLLECTION_NAME }
     };
-
-    console.log('DEBUG: Querying WITHOUT token_data_id filter to see all tokens');
 
     // Note: Search and trait filtering are done in post-processing for accuracy
     // This allows for word-level matching instead of simple pattern matching
