@@ -47,8 +47,6 @@ module.exports = async (req, res) => {
     // When search query or trait filters are applied, we need to fetch ALL tokens to filter correctly
     // Otherwise we only filter within the first page of results
     const hasFilters = q.trim() || Object.keys(traitFilters).length > 0;
-    const fetchLimit = hasFilters ? 10000 : limitNum; // Fetch all tokens if filtering
-    const fetchOffset = hasFilters ? 0 : offsetNum; // Start from beginning if filtering
 
     // Build GraphQL query
     let whereClause = {
@@ -80,58 +78,138 @@ module.exports = async (req, res) => {
         orderBy = [{ last_transaction_timestamp: 'desc' }];
     }
 
-    const graphqlQuery = {
-      query: `
-        query GetCollectionTokens(
-          $limit: Int!,
-          $offset: Int!,
-          $where: current_token_datas_v2_bool_exp!,
-          $order_by: [current_token_datas_v2_order_by!]!
-        ) {
-          current_token_datas_v2(
-            where: $where,
-            limit: $limit,
-            offset: $offset,
-            order_by: $order_by
-          ) {
-            token_name
-            token_data_id
-            token_uri
-            description
-            last_transaction_timestamp
+    // Fetch tokens with pagination when filters are applied (indexer limits to 100 per request)
+    let tokens = [];
+
+    if (hasFilters) {
+      // Fetch ALL tokens using pagination
+      const BATCH_SIZE = 100;
+      let offset = 0;
+      let hasMore = true;
+
+      console.log('Filters applied, fetching all tokens with pagination...');
+
+      while (hasMore) {
+        const graphqlQuery = {
+          query: `
+            query GetCollectionTokens(
+              $limit: Int!,
+              $offset: Int!,
+              $where: current_token_datas_v2_bool_exp!,
+              $order_by: [current_token_datas_v2_order_by!]!
+            ) {
+              current_token_datas_v2(
+                where: $where,
+                limit: $limit,
+                offset: $offset,
+                order_by: $order_by
+              ) {
+                token_name
+                token_data_id
+                token_uri
+                description
+                last_transaction_timestamp
+              }
+            }
+          `,
+          variables: {
+            limit: BATCH_SIZE,
+            offset: offset,
+            where: whereClause,
+            order_by: orderBy
           }
+        };
+
+        const response = await fetch(INDEXER_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(graphqlQuery)
+        });
+
+        if (!response.ok) {
+          throw new Error(`Indexer API error: ${response.status}`);
         }
-      `,
-      variables: {
-        limit: fetchLimit,
-        offset: fetchOffset,
-        where: whereClause,
-        order_by: orderBy
+
+        const data = await response.json();
+
+        if (data.errors) {
+          throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
+        }
+
+        const batch = data.data?.current_token_datas_v2 || [];
+        tokens = tokens.concat(batch);
+
+        console.log(`Fetched batch at offset ${offset}: ${batch.length} tokens (total so far: ${tokens.length})`);
+
+        // Continue if we got a full batch, stop if we got less (end of data)
+        if (batch.length < BATCH_SIZE) {
+          hasMore = false;
+        } else {
+          offset += BATCH_SIZE;
+        }
+
+        // Safety limit: stop after fetching 10,000 tokens
+        if (offset >= 10000) {
+          console.log('Reached safety limit of 10,000 tokens');
+          hasMore = false;
+        }
       }
-    };
+    } else {
+      // No filters, fetch single page only
+      const graphqlQuery = {
+        query: `
+          query GetCollectionTokens(
+            $limit: Int!,
+            $offset: Int!,
+            $where: current_token_datas_v2_bool_exp!,
+            $order_by: [current_token_datas_v2_order_by!]!
+          ) {
+            current_token_datas_v2(
+              where: $where,
+              limit: $limit,
+              offset: $offset,
+              order_by: $order_by
+            ) {
+              token_name
+              token_data_id
+              token_uri
+              description
+              last_transaction_timestamp
+            }
+          }
+        `,
+        variables: {
+          limit: limitNum,
+          offset: offsetNum,
+          where: whereClause,
+          order_by: orderBy
+        }
+      };
 
-    console.log('GraphQL Query:', JSON.stringify(graphqlQuery, null, 2));
+      console.log('No filters, fetching single page:', JSON.stringify({ limit: limitNum, offset: offsetNum }));
 
-    const response = await fetch(INDEXER_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(graphqlQuery)
-    });
+      const response = await fetch(INDEXER_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(graphqlQuery)
+      });
 
-    if (!response.ok) {
-      throw new Error(`Indexer API error: ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`Indexer API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.errors) {
+        throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
+      }
+
+      tokens = data.data?.current_token_datas_v2 || [];
     }
-
-    const data = await response.json();
-    console.log('Indexer response:', JSON.stringify(data, null, 2));
-
-    if (data.errors) {
-      throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
-    }
-
-    const tokens = data.data?.current_token_datas_v2 || [];
 
     // Deduplicate tokens by token_data_id to ensure each unique token is processed only once
     const uniqueTokens = Array.from(
