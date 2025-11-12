@@ -265,6 +265,9 @@ module.exports = async (req, res) => {
 
     // Apply trait filters in post-processing
     if (Object.keys(traitFilters).length > 0) {
+      console.log('DEBUG LIST API: Applying trait filters:', JSON.stringify(traitFilters));
+      console.log('DEBUG LIST API: Total tokens before filtering:', filteredTokens.length);
+
       filteredTokens = filteredTokens.filter(token => {
         return Object.entries(traitFilters).every(([traitType, values]) => {
           if (traitType === 'Words') {
@@ -280,6 +283,17 @@ module.exports = async (req, res) => {
           }
         });
       });
+
+      console.log('DEBUG LIST API: Total tokens after filtering:', filteredTokens.length);
+
+      // Debug: If filtering by #8000FF, show all matched tokens
+      if (traitFilters['Background Color']?.includes('#8000FF')) {
+        console.log('DEBUG LIST API: Tokens with #8000FF background:', JSON.stringify(filteredTokens.map(t => ({
+          name: t.name,
+          tokenId: t.tokenId,
+          backgroundColor: t.attributes.find(attr => attr.trait_type === 'Background Color')?.value
+        })), null, 2));
+      }
     }
 
     // Sort by rarity if requested (demo implementation)

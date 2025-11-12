@@ -172,6 +172,29 @@ module.exports = async (req, res) => {
       }
     });
 
+    // Debug: Log background color counts for #8000FF specifically
+    const debugColor = '#8000FF';
+    if (traitCounts['Background Color'][debugColor]) {
+      const tokensWithColor = validTokens.filter(t => {
+        const attrs = parseTokenDescription(t.description || '');
+        return attrs.backgroundColor === debugColor;
+      });
+      console.log(`DEBUG: Found ${traitCounts['Background Color'][debugColor]} tokens with ${debugColor} background`);
+      console.log(`DEBUG: Tokens with ${debugColor}:`, JSON.stringify(tokensWithColor.map(t => ({
+        name: t.token_name,
+        description: t.description,
+        backgroundColor: parseTokenDescription(t.description || '').backgroundColor,
+        token_data_id: t.token_data_id
+      })), null, 2));
+    }
+
+    // Also check for case variations
+    const tokensWithColorCaseInsensitive = validTokens.filter(t => {
+      const attrs = parseTokenDescription(t.description || '');
+      return attrs.backgroundColor?.toUpperCase() === debugColor.toUpperCase();
+    });
+    console.log(`DEBUG: Total tokens with ${debugColor} (case-insensitive): ${tokensWithColorCaseInsensitive.length}`);
+
     // If no minted tokens found, provide default trait structure based on contract
     if (totalMinted === 0) {
       traitCounts['Background Color'] = getDefaultBackgroundColors();
