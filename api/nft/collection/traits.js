@@ -20,24 +20,28 @@ module.exports = async (req, res) => {
   try {
     const INDEXER_API_URL = 'https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql';
     const COLLECTION_NAME = '0x7981b8f6eda3d2b0ce7ee77ce99dbcf9b26e2cfd1b50bf6cf7ad97fb6b99d575';
+    const NEW_CONTRACT_ADDRESS = '0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b';
 
     // Query to get all tokens in the collection for trait analysis
     const graphqlQuery = {
       query: `
-        query GetCollectionTraits($collection_id: String!) {
+        query GetCollectionTraits($collection_id: String!, $creator_pattern: String!) {
           current_token_datas_v2(
             where: {
               collection_id: { _eq: $collection_id }
+              token_data_id: { _like: $creator_pattern }
             }
             limit: 10000
           ) {
             token_name
+            token_data_id
             description
           }
         }
       `,
       variables: {
-        collection_id: COLLECTION_NAME
+        collection_id: COLLECTION_NAME,
+        creator_pattern: `${NEW_CONTRACT_ADDRESS}::%`
       }
     };
 
@@ -70,6 +74,12 @@ module.exports = async (req, res) => {
     const totalMinted = uniqueTokens.length; // Use unique token count
 
     console.log(`Traits API: Fetched ${tokens.length} records, ${uniqueTokens.length} unique tokens`);
+
+    // Diagnostic logging: identify all creator addresses in the collection
+    const creatorAddresses = new Set(uniqueTokens.map(t => {
+      return t.token_data_id?.split('::')[0];
+    }));
+    console.log('Traits API - Creator addresses found:', Array.from(creatorAddresses));
 
     // Initialize trait counters
     const traitCounts = {
