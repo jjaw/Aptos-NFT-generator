@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const INDEXER_API_URL = 'https://api.testnet.aptoslabs.com/v1/graphql';
+    const INDEXER_API_URL = 'https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql';
     const COLLECTION_NAME = '0x7981b8f6eda3d2b0ce7ee77ce99dbcf9b26e2cfd1b50bf6cf7ad97fb6b99d575';
     const NEW_CONTRACT_ADDRESS = '0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b';
 

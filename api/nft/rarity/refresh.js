@@ -42,7 +42,7 @@ module.exports = async (req, res) => {
 
     console.log('Starting rarity refresh at:', updateStartTime);
 
-    const INDEXER_API_URL = 'https://api.testnet.aptoslabs.com/v1/graphql';
+    const INDEXER_API_URL = 'https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql';
     const COLLECTION_NAME = 'Retro 80s NFT Collection 2025-01-08-v2-unique';
 
     // Fetch all tokens in the collection

@@ -32,7 +32,7 @@ module.exports = async (req, res) => {
 
   try {
     const APTOS_API_URL = 'https://fullnode.testnet.aptoslabs.com/v1';
-    const INDEXER_API_URL = 'https://api.testnet.aptoslabs.com/v1/graphql';
+    const INDEXER_API_URL = 'https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql';
     const MODULE_ADDRESS = '0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b';
     
     let tokenDescription = null;
