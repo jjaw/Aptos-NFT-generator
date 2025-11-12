@@ -147,14 +147,51 @@ module.exports = async (req, res) => {
     }));
     console.log('List API - Creator addresses found:', Array.from(creatorAddresses));
 
+    // ========== MALFORMED TOKEN VALIDATION ==========
+    // Identify and skip tokens with invalid name formats (non-numeric token IDs)
+    const validTokenPattern = /^Retro NFT #(\d+)$/;
+    const malformedTokens = [];
+    const validTokens = [];
+
+    uniqueTokens.forEach(token => {
+      // Clean control characters for validation
+      const cleanName = token.token_name?.replace(/[\x00-\x1F\x7F]/g, '') || '';
+      const isValid = validTokenPattern.test(cleanName);
+
+      if (!isValid) {
+        // Extract words from description for diagnostic logging
+        const attributes = parseTokenDescription(token.description || '');
+        const words = attributes.wordCombination ? attributes.wordCombination.split(' ') : [];
+
+        malformedTokens.push({
+          name: token.token_name,
+          cleanName,
+          words,
+          token_data_id: token.token_data_id
+        });
+      } else {
+        validTokens.push(token);
+      }
+    });
+
+    // Log comprehensive malformed token summary ONCE at the start
+    console.log('========== LIST API: MALFORMED TOKENS SUMMARY ==========');
+    console.log(`Total malformed tokens being skipped: ${malformedTokens.length}`);
+    console.log('All malformed tokens:', JSON.stringify(malformedTokens.map(t => ({
+      name: t.name,
+      cleanName: t.cleanName,
+      words: t.words
+    })), null, 2));
+    console.log('==========================================================');
+
     // Try to get cached rarity data
     let rarityData = null;
     if (global.rarityCache && global.rarityCache.data) {
       rarityData = global.rarityCache.data;
     }
 
-    // Process unique tokens and add rarity
-    const processedTokens = uniqueTokens.map((token, index) => {
+    // Process ONLY valid tokens and add rarity
+    const processedTokens = validTokens.map((token, index) => {
       // Extract token ID from name with improved parsing
       // First, strip control characters from the name
       const cleanName = token.token_name?.replace(/[\x00-\x1F\x7F]/g, '');
