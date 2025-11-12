@@ -22,51 +22,78 @@ module.exports = async (req, res) => {
     const COLLECTION_NAME = '0x7981b8f6eda3d2b0ce7ee77ce99dbcf9b26e2cfd1b50bf6cf7ad97fb6b99d575';
     const NEW_CONTRACT_ADDRESS = '0x099d43f357f7993b7021e53c6a7cf9d74a81c11924818a0230ed7625fbcddb2b';
 
-    // Query to get all tokens in the collection for trait analysis
-    // Using same limit as List API (10000) to ensure trait counts match filtered results
-    const graphqlQuery = {
-      query: `
-        query GetCollectionTraits($collection_id: String!) {
-          current_token_datas_v2(
-            where: {
-              collection_id: { _eq: $collection_id }
-            }
-            limit: 10000
-            order_by: [{ last_transaction_timestamp: desc }]
-          ) {
-            token_name
-            token_data_id
-            description
-            last_transaction_timestamp
-          }
-        }
-      `,
-      variables: {
-        collection_id: COLLECTION_NAME
-      }
-    };
-
     console.log('Fetching traits for collection:', COLLECTION_NAME);
 
-    const response = await fetch(INDEXER_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(graphqlQuery)
-    });
+    // Fetch ALL tokens using pagination (indexer limits to 100 per request)
+    const BATCH_SIZE = 100;
+    let allTokens = [];
+    let offset = 0;
+    let hasMore = true;
 
-    if (!response.ok) {
-      throw new Error(`Indexer API error: ${response.status}`);
+    while (hasMore) {
+      const graphqlQuery = {
+        query: `
+          query GetCollectionTraits($collection_id: String!, $limit: Int!, $offset: Int!) {
+            current_token_datas_v2(
+              where: {
+                collection_id: { _eq: $collection_id }
+              }
+              limit: $limit
+              offset: $offset
+              order_by: [{ last_transaction_timestamp: desc }]
+            ) {
+              token_name
+              token_data_id
+              description
+              last_transaction_timestamp
+            }
+          }
+        `,
+        variables: {
+          collection_id: COLLECTION_NAME,
+          limit: BATCH_SIZE,
+          offset: offset
+        }
+      };
+
+      const response = await fetch(INDEXER_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(graphqlQuery)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Indexer API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.errors) {
+        throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
+      }
+
+      const batch = data.data?.current_token_datas_v2 || [];
+      allTokens = allTokens.concat(batch);
+
+      console.log(`Fetched batch at offset ${offset}: ${batch.length} tokens (total so far: ${allTokens.length})`);
+
+      // Continue if we got a full batch, stop if we got less (end of data)
+      if (batch.length < BATCH_SIZE) {
+        hasMore = false;
+      } else {
+        offset += BATCH_SIZE;
+      }
+
+      // Safety limit: stop after fetching 10,000 tokens
+      if (offset >= 10000) {
+        console.log('Reached safety limit of 10,000 tokens');
+        hasMore = false;
+      }
     }
 
-    const data = await response.json();
-
-    if (data.errors) {
-      throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
-    }
-
-    const tokens = data.data?.current_token_datas_v2 || [];
+    const tokens = allTokens;
 
     // Deduplicate tokens by token_data_id to ensure each unique token is counted only once
     const uniqueTokens = Array.from(
